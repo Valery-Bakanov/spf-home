@@ -1,0 +1,32 @@
+Russian version see below...
+
+=============================================================
+
+Software complex SPF@home for the study of thin information
+structures of algorithms and simulation/execution optimization
+programs on parallel computing systems
+
+Idea, user interface, programming and support -
+Valery Bakanov, mailto:e881e@mail.ru, http://vbakanov.ru/left_1.htm,
+2015-2019. See additional http://vbakanov.ru/spf@home/spf@home.htm.
+
+Fully free use of this computer is allowed.
+programs "as is" at the level of executable files (format files
+PE GUI 4.0 for MS Windows 32 bit). Developer link required
+when using this software product in research work.
+
+=============================================================
+
+Программный комплекс SPF@home для исследования тонкой информационной 
+структуры алгоритмов и моделирования/оптимизации выполнения 
+программ на параллельных вычислительных системах
+
+Идея, пользовательский интерфейс, программирование и поддержка -
+Баканов Валерий, mailto:e881e@mail.ru , http://vbakanov.ru/left_1.htm ,
+2015-2019. Дополнительно см. http://vbakanov.ru/spf@home/spf@home.htm .
+
+Допускается полностью свободное использование данной компьютерной
+программы "как есть" на уровне исполняемых файлов (файлы формата 
+PE GUI 4.0 для MS Windows 32 бит). Ссылка на разработчика обязательна 
+при использовании данного программного продукта в исследовательской 
+работе.

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SchemeList root='Main'>
+
+    <Scheme name='Text' inherit='Numbers'>                
+    
+        <Regex token0='email'>
+            [_a-zA-Z\d\-\.]{1,40}
+            @ 
+            ([_ a-z A-Z \d \-]+ 
+            (\. [_ a-z A-Z \d \-]+ )+ )
+        </Regex>
+    </Scheme>
+
+
+    <Scheme name='Numbers'>
+        <Regex token0='number'>
+            \b (0x \d+ [lL]? | \d+ (e \d*)? [lLdDfF]? ) \b
+        </Regex>
+        
+        <Regex token0='number'>
+            \b [+\-]? \d+ (\. \d+)? ([eE] [+\-]? \d+) \b
+        </Regex>
+    </Scheme>
+
+
+    <Scheme name='Comment' inherit='Text' defaultToken='comment' />
+
+
+    <Scheme name='String' inherit='Text' defaultToken='string'>
+    </Scheme>
+
+
+    <Scheme name='StringInterpolation' inherit='String' defaultToken='string'>
+        <Regex token0='escaped' regex='\\[a-z 0 &quot; &apos; ]' />
+        <Regex token0='escaped' regex='\\ \d{1,3}' />
+    </Scheme>
+ 
+
+    <Scheme name='Main' inherit='Numbers' 
+            defaultToken='default'           
+            keywordsIgnoreCase='false' >
+            
+        <KeywordRegex>\b[a-zA-Z_]\w*\b</KeywordRegex>
+
+<!--================================================================================-->
+
+        <Keywords> <!-- ключевые слова Lua -->
+         and       break     do        else      elseif
+         end       false     for       function  if
+         in        local     nil       not       or
+         repeat    return    then      true      until     
+         while     require   pairs     ipairs    pcall     
+         goto      ENV       load      _index     _newindex 
+        </Keywords>    
+
+<!--================================================================================-->
+
+        <!-- имена библиотек Lua -->
+
+        <Regex token0 = 'LuaLibKeywords' regex = '\bmath\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bos\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bio\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bbit32\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\btable\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bstring\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bprint\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\buserdata\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bthread\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\bfile\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\btonumber\b' />
+        <Regex token0 = 'LuaLibKeywords' regex = '\btostring\b' />
+
+<!--================================================================================-->
+
+        <!-- имена API-функций системы SPF@home -->
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bAddLineToTextFrame\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bAddTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bDelTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMaxTierMaybeOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMinTierMaybeOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bMoveOpTierToTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutTiersToTextFrame\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutEdgesToTextFrame\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bClearTextFrame\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bDrawDiagrTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bClearDiagrTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bDelayMS\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bAddLineToTextFrame\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountOpsOnTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountEdges\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetOpByNumbOnTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountInEdgesByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbInEdgeByOp\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountOutEdgesByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCreateTiersByEdges_Bottom\b' />        
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCreateTiersByEdges\b' />        
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOutEdgeByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSoundPlay\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetOpsMoves\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCountMovesZeroing\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTierFirstMinOps\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTierLastMinOps\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTierFirstMaxOps\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTierLastMaxOps\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTierByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bReadEdges\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveEdges\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bReadTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveTiersVizu\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveEdgesVizu\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveInOutOpVizu\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveParamsVizu\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutParamsTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetParamsByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountParamsByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbParamByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNameNumbParamByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMinValNumbParamByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMaxValNumbParamByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOpAll\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOp\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetParamsByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountParamsByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbParamByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNameNumbParamByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetValNumbParamByOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCanExecOpCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bTestCanExecAllOpsCalcs\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutParamsAll\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTestParamsByCalc\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetTestParamsByOp\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bLoadFileNameParamsCalcs\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bLoadFileNameParamsOps\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bLoadFileNameParamsEdges\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bLoadFileNameParamsVertices\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountCalcs\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountOps\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOp\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountOpsInput\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOpInput\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountOpsOutput\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbOpOutput\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bInputDialog\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bMessageDialog\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bOutLine\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMetricOpByName\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMetricEdgeByName\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bGetOpByMaxTierLowerPreset\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutDataLiveDiagrToTextFrame\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveDataLiveDiagr\b' />
+
+        <Regex token0 = 'SPF_API_Keywords' regex = '\blWinExec\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\blShellExecute\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\blCreateProcess\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bLuaCallByTimer\b' />
+
+<!--================================================================================-->
+
+        <RegexBlock innerScheme='StringInterpolation' start_token0='string' 
+                    end_token0='string' >
+
+            <Start> &quot; | &apos;  </Start>        
+            <End> $0 </End>        
+        </RegexBlock>
+
+        <RegexBlock innerScheme='String' start_token0='string' priority='100'
+                    end_token0='string' >
+
+            <Start> \[ (\=*) \[  </Start>        
+            <End> \] $1 \] </End>        
+        </RegexBlock>
+
+
+        <RegexBlock innerScheme='Comment' 
+                    start_token0='comment' priority='100'
+                    end_token0='comment' >
+
+            <Start> --\[ (\=*) \[  </Start>        
+            <End> \] $1 \] </End>        
+        </RegexBlock>
+
+        <Regex innerScheme='Comment' priority='1000' regex='--([^ \[ ].*)?$' />
+        
+        <RegexBlock start='\/\*' end='\*\/' 
+                    end_token0='comment' 
+                    innerScheme='Comment'/>
+
+        <Regex token0='symbol' regex='[   \}   \{    \]  \#  \[  \( \) &gt; &lt; ]' />
+        <Regex token0='symbol' regex='[-:?\~=+!^;,]' />
+
+        <SkipSyntaxToken token='comment' />
+
+
+        <SyntaxBlock capture="true">
+            <Start> ( kw:local )? kw:function  </Start>
+            <End> kw:end  </End>
+        </SyntaxBlock>
+
+        <SyntaxBlock capture="true">
+            <Start> kw:if </Start>
+            <End> kw:end  </End>
+        </SyntaxBlock>
+
+        <SyntaxBlock capture="true">
+            <Start> kw:repeat </Start>
+            <End> kw:until  </End>
+        </SyntaxBlock>
+
+        <SyntaxBlock capture="true">
+            <Start> [ kw:while kw:for ] .+? kw:do  </Start>
+            <End> kw:end  </End>
+        </SyntaxBlock>
+
+        <SyntaxBlock capture="true">
+            <Start> kw:do  </Start>
+            <End> kw:end  </End>
+        </SyntaxBlock>
+    </Scheme>
+
+
+</SchemeList>

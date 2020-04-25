@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="spf_client.exe"/>
+    <OBJFILES value="SPF_client.obj unit1c.obj Unit2c.obj"/>
+    <RESFILES value="SPF_client.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) unit1c.dfm Unit2c.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="indy.lib nmfast.lib lmdrtl.lib vclx.lib lmdrtrtlx.lib lmdrtprint.lib 
+      lmdrtsyntax.lib rtl.lib vcl.lib"/>
+    <SPARELIBS value="vcl.lib rtl.lib lmdrtsyntax.lib lmdrtprint.lib lmdrtrtlx.lib vclx.lib 
+      lmdrtl.lib nmfast.lib indy.lib"/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vclie.bpi xmlrtl.bpi inet.bpi 
+      inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
+      bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
+      indy.bpi bcb2kaxserver.bpi lmdrtl.bpi lmdrtsyntax.bpi lmdrtprint.bpi 
+      lmdrtrtlx.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value=""/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="SPF_client.cpp"/>
+    <INCLUDEPATH value="$(BCB)\LMD2018\lib\b6;C:\SPF_client;&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;C:\_RKF45_;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\LMD2018\lib\b6;C:\SPF_client;&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;C:\_RKF45_;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I$(BCB)\LMD2018\lib\b6 -IC:\SPF_client 
+      -I&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot; -IC:\_RKF45_ 
+      -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp -boa"/>
+    <CFLAG1 value="-O2 -w- -Vx -Ve -C -X- -a2 -5 -b- -k- -vi -c -tW -tWM"/>
+    <PFLAGS value="-$Y- -$R -$Q -$L- -$D- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zn"/>
+    <LFLAGS value="-D&quot;&quot; -Sc:0x4000 -aa -Tpe -GD -x -M -w"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="SPF_client.res" FORMNAME="" UNITNAME="SPF_client.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="SPF_client.cpp" FORMNAME="" UNITNAME="SPF_client" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="unit1c.cpp" FORMNAME="F1" UNITNAME="Unit1c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit2c.cpp" FORMNAME="F2" UNITNAME="Unit2c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=1
+MajorVer=3
+MinorVer=9
+Release=9
+Build=31
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1049
+CodePage=1251
+
+[Version Info Keys]
+CompanyName=Bakanov (http://vbakanov.ru/left_1.htm)
+FileDescription=SPF@home
+FileVersion=3.9.9.31
+InternalName=2015-2020
+LegalCopyright=
+LegalTrademarks=SPF@home
+OriginalFilename=
+ProductName=SPF@home
+ProductVersion=4.3 September 2019
+Comments=http://vbakanov.ru/spf@home/
+
+[HistoryLists\hlIncludePath]
+Count=3
+Item0=$(BCB)\LMD2018\lib\b6;C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\include;$(BCB)\include\vcl
+Item1=$(BCB)\LMD2017\lib\b6;C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\include;$(BCB)\include\vcl
+Item2=C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=5
+Item0=$(BCB)\LMD2018\lib\b6;C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\lib\obj;$(BCB)\lib
+Item1=$(BCB)\LMD2017\lib\b6;C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\lib\obj;$(BCB)\lib
+Item2=C:\SPF_client;C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\_RKF45_;$(BCB)\lib\obj;$(BCB)\lib
+Item3=
+Item4=
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

@@ -1,0 +1,29 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 21
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file SQUA_EQU_2.SET */
+#
+digraph SQUA_EQU_2 {
+100 -> 109 ; [[100]MUL A,TWO,A2,true; 2 * A -> A2] -> [[109]DIV W1,A2,X1,true; W1 / A2 -> X1 // #9  | #109]
+100 -> 110 ; [[100]MUL A,TWO,A2,true; 2 * A -> A2] -> [[110]DIV W2,A2,X2,true; W2 / A2 -> X2 // #10 | #110]
+101 -> 104 ; [[101]MUL A,FOUR,A4,true; 4 * A -> A4] -> [[104]MUL A4,C,AC4,true; A4 * C -> AC4]
+102 -> 107 ; [[102]MUL B,NEG_ONE,B_NEG,true; NEG_ONE * B -> B_NEG] -> [[107]ADD B_NEG,sqrt_D,W1,true; B_NEG + sqrt_D -> W1]
+102 -> 108 ; [[102]MUL B,NEG_ONE,B_NEG,true; NEG_ONE * B -> B_NEG] -> [[108]SUB B_NEG,sqrt_D,W2,true; B_NEG - sqrt_D -> W2]
+103 -> 105 ; [[103]POW B,TWO,BB,true; B^2 -> BB] -> [[105]SUB BB,AC4,D,true; BB - AC4 -> D[iskriminant]]
+104 -> 105 ; [[104]MUL A4,C,AC4,true; A4 * C -> AC4] -> [[105]SUB BB,AC4,D,true; BB - AC4 -> D[iskriminant]]
+105 -> 106 ; [[105]SUB BB,AC4,D,true; BB - AC4 -> D[iskriminant]] -> [[106]SQR D,,sqrt_D,true; sqrt(D) -> sqrt_D]
+106 -> 107 ; [[106]SQR D,,sqrt_D,true; sqrt(D) -> sqrt_D] -> [[107]ADD B_NEG,sqrt_D,W1,true; B_NEG + sqrt_D -> W1]
+106 -> 108 ; [[106]SQR D,,sqrt_D,true; sqrt(D) -> sqrt_D] -> [[108]SUB B_NEG,sqrt_D,W2,true; B_NEG - sqrt_D -> W2]
+107 -> 109 ; [[107]ADD B_NEG,sqrt_D,W1,true; B_NEG + sqrt_D -> W1] -> [[109]DIV W1,A2,X1,true; W1 / A2 -> X1 // #9  | #109]
+108 -> 110 ; [[108]SUB B_NEG,sqrt_D,W2,true; B_NEG - sqrt_D -> W2] -> [[110]DIV W2,A2,X2,true; W2 / A2 -> X2 // #10 | #110]
+111 -> 100 ; [[111]SET 1.0,,A,true; 1.0 -> A] -> [[100]MUL A,TWO,A2,true; 2 * A -> A2]
+111 -> 101 ; [[111]SET 1.0,,A,true; 1.0 -> A] -> [[101]MUL A,FOUR,A4,true; 4 * A -> A4]
+112 -> 102 ; [[112]SET 7.0,,B,true; 7.0 -> B] -> [[102]MUL B,NEG_ONE,B_NEG,true; NEG_ONE * B -> B_NEG]
+112 -> 103 ; [[112]SET 7.0,,B,true; 7.0 -> B] -> [[103]POW B,TWO,BB,true; B^2 -> BB]
+113 -> 104 ; [[113]SET 3.0,,C,true; 3.0 -> C] -> [[104]MUL A4,C,AC4,true; A4 * C -> AC4]
+114 -> 100 ; [[114]SET 2,,TWO,true; 2 -> TWO] -> [[100]MUL A,TWO,A2,true; 2 * A -> A2]
+114 -> 103 ; [[114]SET 2,,TWO,true; 2 -> TWO] -> [[103]POW B,TWO,BB,true; B^2 -> BB]
+115 -> 101 ; [[115]SET 4,,FOUR,true; 4 -> FOUR] -> [[101]MUL A,FOUR,A4,true; 4 * A -> A4]
+116 -> 102 ; [[116]SET -1,,NEG_ONE,true; (-1) -> NEG_ONE] -> [[102]MUL B,NEG_ONE,B_NEG,true; NEG_ONE * B -> B_NEG]
+}

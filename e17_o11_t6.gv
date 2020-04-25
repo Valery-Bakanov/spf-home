@@ -1,0 +1,25 @@
+#
+// Valery Bakanov research computer complex (2008-2019); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 17
+/* This file was automatically created thru 
+   program GREATE_GRAPH.EXE */
+#
+digraph e17_o11_t6 {
+   12 -> 14 ;
+   12 -> 3 ;
+   11 -> 2 ;
+   11 -> 1 ;
+   13 -> 4 ;
+   14 -> 9 ;
+   14 -> 10 ;
+   3 -> 4 ;
+   2 -> 7 ;
+   2 -> 8 ;
+   1 -> 6 ;
+   4 -> 6 ;
+   6 -> 5 ;
+   5 -> 7 ;
+   7 -> 9 ;
+   5 -> 8 ;
+   8 -> 10 ;
+}

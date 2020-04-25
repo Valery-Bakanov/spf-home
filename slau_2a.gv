@@ -1,0 +1,26 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 18
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file SLAU_2A.SET */
+#
+digraph SLAU_2A {
+100 -> 106 ; [[100]SET 5.0,,a11(00),true; a11(нулевое приближение)] -> [[106]DIV a21(00),a11(00),K21,true; K21=a21/a11]
+100 -> 114 ; [[100]SET 5.0,,a11(00),true; a11(нулевое приближение)] -> [[114]DIV temp_01,a11(00),X1,true; вычислили X1]
+101 -> 107 ; [[101]SET 2.0,,a12(00),true;  ] -> [[107]MUL a12(00),K21,a12(00)xK21,true;  ]
+101 -> 112 ; [[101]SET 2.0,,a12(00),true;  ] -> [[112]MUL a12(00),X2,a12(00)xX2,true;  ]
+102 -> 109 ; [[102]SET 23.0,,y1(00),true; y1(нулевое приближение)] -> [[109]MUL y1(00),K21,y1(00)xK21,true;  ]
+102 -> 113 ; [[102]SET 23.0,,y1(00),true; y1(нулевое приближение)] -> [[113]SUB y1(00),a12(00)xX2,temp_01,true;  ]
+103 -> 106 ; [[103]SET 2.0,,a21(00),true;  ] -> [[106]DIV a21(00),a11(00),K21,true; K21=a21/a11]
+104 -> 108 ; [[104]SET 1.0,,a22(00),true;  ] -> [[108]SUB a22(00),a12(00)xK21,a22(01),true;  ]
+105 -> 110 ; [[105]SET 10.0,,y2(00),true; y2(нулевое приближение)] -> [[110]SUB y2(00),y1(00)xK21,y2(01),true;  ]
+106 -> 107 ; [[106]DIV a21(00),a11(00),K21,true; K21=a21/a11] -> [[107]MUL a12(00),K21,a12(00)xK21,true;  ]
+106 -> 109 ; [[106]DIV a21(00),a11(00),K21,true; K21=a21/a11] -> [[109]MUL y1(00),K21,y1(00)xK21,true;  ]
+107 -> 108 ; [[107]MUL a12(00),K21,a12(00)xK21,true;  ] -> [[108]SUB a22(00),a12(00)xK21,a22(01),true;  ]
+108 -> 111 ; [[108]SUB a22(00),a12(00)xK21,a22(01),true;  ] -> [[111]DIV y2(01),a22(01),X2,true; вычислили X2]
+109 -> 110 ; [[109]MUL y1(00),K21,y1(00)xK21,true;  ] -> [[110]SUB y2(00),y1(00)xK21,y2(01),true;  ]
+110 -> 111 ; [[110]SUB y2(00),y1(00)xK21,y2(01),true;  ] -> [[111]DIV y2(01),a22(01),X2,true; вычислили X2]
+111 -> 112 ; [[111]DIV y2(01),a22(01),X2,true; вычислили X2] -> [[112]MUL a12(00),X2,a12(00)xX2,true;  ]
+112 -> 113 ; [[112]MUL a12(00),X2,a12(00)xX2,true;  ] -> [[113]SUB y1(00),a12(00)xX2,temp_01,true;  ]
+113 -> 114 ; [[113]SUB y1(00),a12(00)xX2,temp_01,true;  ] -> [[114]DIV temp_01,a11(00),X1,true; вычислили X1]
+}
