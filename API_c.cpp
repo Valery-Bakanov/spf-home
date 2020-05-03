@@ -1,4 +1,4 @@
-//
+//   
 //#define TEST_PRINT
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
