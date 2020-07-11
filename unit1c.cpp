@@ -147,6 +147,12 @@ TF1 *F1;
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 //
+char *spf_pt0  = "=\\d{1,}/\\d{1,}:", // =12/155: // шаблоны дл€ регул€рных выражений
+     *spf_pt00 = "-[a-zA-Zа-€ј-я]{1}[_a-zA-Zа-€ј-я0-9]{0,}", // -param_1
+     *spf_pt01 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}", // -par_1 m1
+     *spf_pt02 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}", // -parr_2 m1 m2
+     *spf_pt03 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}(\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}){2}"; // -parr_2 m1 m2
+//
 #define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
 // !!!!! при >=5 всЄ нормально, при <5 имеем останов в metametod "__newindex" строка 274 OpsCalcs[subTiers][mCalc]=iOp
 //
