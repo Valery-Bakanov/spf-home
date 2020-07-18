@@ -165,6 +165,9 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\blCreateProcess\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bLuaCallByTimer\b' />
 
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcAverMeanOpsOnTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcStdDevOpsOnTiers\b' />
+
 <!--================================================================================-->
 
         <RegexBlock innerScheme='StringInterpolation' start_token0='string' 

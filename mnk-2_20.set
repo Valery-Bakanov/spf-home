@@ -1,0 +1,410 @@
+; МГУПИ, ИТ-4, Баканов В.М., e881e@mail.ru
+; Квадратичная MHK-аппроксимация методом наименьших квадратов
+; y(x) = X1 + X2 * x + X3 * х^2 || Решение: X1=1.0, X2=2.0, X3=3.0
+; X1,X2,X3 находятся решением СЛАУ 3-го порядка (slau_3a.set), 2017
+
+SET  20, N   ;  число пар  x | y
+
+SET    1, x01 ;  параметр - х 
+SET    2, x02
+SET    3, x03 
+SET    4, x04
+SET    5, x05
+SET    6, x06
+SET    7, x07
+SET    8, x08
+SET    9, x09
+SET   10, x10
+SET   11, x11 
+SET   12, x12
+SET   13, x13 
+SET   14, x14
+SET   15, x15
+SET   16, x16
+SET   17, x17
+SET   18, x18
+SET   19, x19
+SET   20, x20
+
+SET    6, y01 ;  функция - y
+SET   17, y02
+SET   34, y03 
+SET   57, y04
+SET   86, y05
+SET  121, y06
+SET  162, y07
+SET  209, y08
+SET  262, y09
+SET  321, y10
+SET  386, y11
+SET  457, y12 
+SET  534, y13
+SET  617, y14 
+SET  706, y15
+SET  801, y16
+SET  902, y17
+SET 1009, y18
+SET 1122, y19
+SET 1241, y20
+;
+; суммируем xi ===============================================================
+ADD x01,    x02, sx_002 ; sx_NNN - сумма xi после добавления NNN-ного элемента 
+ADD sx_002, x03, sx_003
+ADD sx_003, x04, sx_004
+ADD sx_004, x05, sx_005
+ADD sx_005, x06, sx_006
+ADD sx_006, x07, sx_007
+ADD sx_007, x08, sx_008
+ADD sx_008, x09, sx_009
+ADD sx_009, x10, sx_010
+ADD sx_010, x11, sx_011
+ADD sx_011, x12, sx_012
+ADD sx_012, x13, sx_013
+ADD sx_013, x14, sx_014
+ADD sx_014, x15, sx_015
+ADD sx_015, x16, sx_016
+ADD sx_016, x17, sx_017
+ADD sx_017, x18, sx_018
+ADD sx_018, x19, sx_019
+ADD sx_019, x20, sum_x ; сумма всех xi содержится в sum_x
+;
+; суммируем yi ==============================================================
+ADD y01,    y02, sy_002 ; syx_NNN - сумма yi после добавления NNN-ного элемента 
+ADD sy_002, y03, sy_003
+ADD sy_003, y04, sy_004
+ADD sy_004, y05, sy_005
+ADD sy_005, y06, sy_006
+ADD sy_006, y07, sy_007
+ADD sy_007, y08, sy_008
+ADD sy_008, y09, sy_009
+ADD sy_009, y10, sy_010
+ADD sy_010, y11, sy_011
+ADD sy_011, y12, sy_012
+ADD sy_012, y13, sy_013
+ADD sy_013, y14, sy_014
+ADD sy_014, y15, sy_015
+ADD sy_015, y16, sy_016
+ADD sy_016, y17, sy_017
+ADD sy_017, y18, sy_018
+ADD sy_018, y19, sy_019
+ADD sy_019, y20, sum_y ; сумма всех yi содержится в sum_y
+;
+; вычисляем более сложные суммы - xi^2, xi^3, xi^4, xi*yi, xi^2 * yi
+;
+MUL x01,     x01, xx_001   ; xi^2 (xx_NNN -> xi*xi после учёта элемента NNN)
+MUL xx_001,  x01, xxx_001  ; xi^3 (xxx_NNN -> xi^3 после учёта элемента NNN)
+MUL xxx_001, x01, xxxx_001 ; xi^4 (xxxx_NNN -> xi^4 после учёта элемента NNN)
+MUL x01,     y01, xy_001  ; xi*yi (xy_NNN -> xi*yi после учёта элемента NNN)
+MUL xx_001,  y01, xxy_001 ; xi*xi*yi (xxy_NNN -> xi^2*yi после учёта элемента NNN)
+;
+MUL x02,     x02, xx_002 ; NNN = 002
+MUL xx_002,  x02, xxx_002
+MUL xxx_002, x02, xxxx_002
+MUL x02,     y02, xy_002
+MUL xx_002,  y02, xxy_002
+;
+MUL x03,     x03, xx_003 ; NNN = 003
+MUL xx_003,  x03, xxx_003
+MUL xxx_003, x03, xxxx_003
+MUL x03,     y03, xy_003
+MUL xx_003,  y03, xxy_003
+;
+MUL x04,     x04, xx_004 ; NNN = 004
+MUL xx_004,  x04, xxx_004
+MUL xxx_004, x04, xxxx_004
+MUL x04,     y04, xy_004
+MUL xx_004,  y04, xxy_004
+;
+MUL x05,     x05, xx_005 ; NNN = 005
+MUL xx_005,  x05, xxx_005
+MUL xxx_005, x05, xxxx_005
+MUL x05,     y05, xy_005
+MUL xx_005,  y05, xxy_005
+;
+MUL x06,     x06, xx_006 ; NNN = 006
+MUL xx_006,  x06, xxx_006
+MUL xxx_006, x06, xxxx_006
+MUL x06,     y06, xy_006
+MUL xx_006,  y06, xxy_006
+;
+MUL x07,     x07, xx_007 ; NNN = 007
+MUL xx_007,  x07, xxx_007
+MUL xxx_007, x07, xxxx_007
+MUL x07,     y07, xy_007
+MUL xx_007,  y07, xxy_007
+;
+MUL x08,     x08, xx_008 ; NNN = 008
+MUL xx_008,  x08, xxx_008
+MUL xxx_008, x08, xxxx_008
+MUL x08,     y08, xy_008
+MUL xx_008,  y08, xxy_008
+;
+MUL x09,     x09, xx_009 ; NNN = 009
+MUL xx_009,  x09, xxx_009
+MUL xxx_009, x09, xxxx_009
+MUL x09,     y09, xy_009
+MUL xx_009,  y09, xxy_009
+;
+MUL x10,     x10, xx_010 ; NNN = 010
+MUL xx_010,  x10, xxx_010
+MUL xxx_010, x10, xxxx_010
+MUL x10,     y10, xy_010
+MUL xx_010,  y10, xxy_010
+;
+MUL x11,     x11, xx_011 ; NNN = 011
+MUL xx_011,  x11, xxx_011
+MUL xxx_011, x11, xxxx_011
+MUL x11,     y11, xy_011
+MUL xx_011,  y11, xxy_011
+;
+MUL x12,     x12, xx_012 ; NNN = 012
+MUL xx_012,  x12, xxx_012
+MUL xxx_012, x12, xxxx_012
+MUL x12,     y12, xy_012
+MUL xx_012,  y12, xxy_012
+;
+MUL x13,     x13, xx_013 ; NNN = 013
+MUL xx_013,  x13, xxx_013
+MUL xxx_013, x13, xxxx_013
+MUL x13,     y13, xy_013
+MUL xx_013,  y13, xxy_013
+;
+MUL x14,     x14, xx_014 ; NNN = 014
+MUL xx_014,  x14, xxx_014
+MUL xxx_014, x14, xxxx_014
+MUL x14,     y14, xy_014
+MUL xx_014,  y14, xxy_014
+;
+MUL x15,     x15, xx_015 ; NNN = 015
+MUL xx_015,  x15, xxx_015
+MUL xxx_015, x15, xxxx_015
+MUL x15,     y15, xy_015
+MUL xx_015,  y15, xxy_015
+;
+MUL x16,     x16, xx_016 ; NNN = 016
+MUL xx_016,  x16, xxx_016
+MUL xxx_016, x16, xxxx_016
+MUL x16,     y16, xy_016
+MUL xx_016,  y16, xxy_016
+;
+MUL x17,     x17, xx_017 ; NNN = 017
+MUL xx_017,  x17, xxx_017
+MUL xxx_017, x17, xxxx_017
+MUL x17,     y17, xy_017
+MUL xx_017,  y17, xxy_017
+;
+MUL x18,     x18, xx_018 ; NNN = 018
+MUL xx_018,  x18, xxx_018
+MUL xxx_018, x18, xxxx_018
+MUL x18,     y18, xy_018
+MUL xx_018,  y18, xxy_018
+;
+MUL x19,     x19, xx_019 ; NNN = 019
+MUL xx_019,  x19, xxx_019
+MUL xxx_019, x19, xxxx_019
+MUL x19,     y19, xy_019
+MUL xx_019,  y19, xxy_019
+;
+MUL x20,     x20, xx_020 ; NNN = 020
+MUL xx_020,  x20, xxx_020
+MUL xxx_020, x20, xxxx_020
+MUL x20,     y20, xy_020
+MUL xx_020,  y20, xxy_020
+;
+; теперь вычисляем необходимые суммы
+;
+; sum_xx - сумма xi^2
+ADD xx_001,  xx_002, sxx_002 ;  частичные суммы xi^2 после добавления элемента NNN
+ADD sxx_002, xx_003, sxx_003
+ADD sxx_003, xx_004, sxx_004
+ADD sxx_004, xx_005, sxx_005
+ADD sxx_005, xx_006, sxx_006
+ADD sxx_006, xx_007, sxx_007
+ADD sxx_007, xx_008, sxx_008
+ADD sxx_008, xx_009, sxx_009
+ADD sxx_009, xx_010, sxx_010
+ADD sxx_010, xx_011, sxx_011
+ADD sxx_011, xx_012, sxx_012
+ADD sxx_012, xx_013, sxx_013
+ADD sxx_013, xx_014, sxx_014
+ADD sxx_014, xx_015, sxx_015
+ADD sxx_015, xx_016, sxx_016
+ADD sxx_016, xx_017, sxx_017
+ADD sxx_017, xx_018, sxx_018
+ADD sxx_018, xx_019, sxx_019
+ADD sxx_019, xx_020, sum_xx ; получили  sum_xx = сумма xi^2
+;
+; sum_xxx - сумма xi^3
+ADD xxx_001,  xxx_002, sxxx_002 ;  частичные суммы xi^3 после добавления элемента NNN
+ADD sxxx_002, xxx_003, sxxx_003
+ADD sxxx_003, xxx_004, sxxx_004
+ADD sxxx_004, xxx_005, sxxx_005
+ADD sxxx_005, xxx_006, sxxx_006
+ADD sxxx_006, xxx_007, sxxx_007
+ADD sxxx_007, xxx_008, sxxx_008
+ADD sxxx_008, xxx_009, sxxx_009
+ADD sxxx_009, xxx_010, sxxx_010
+ADD sxxx_010, xxx_011, sxxx_011
+ADD sxxx_011, xxx_012, sxxx_012
+ADD sxxx_012, xxx_013, sxxx_013
+ADD sxxx_013, xxx_014, sxxx_014
+ADD sxxx_014, xxx_015, sxxx_015
+ADD sxxx_015, xxx_016, sxxx_016
+ADD sxxx_016, xxx_017, sxxx_017
+ADD sxxx_017, xxx_018, sxxx_018
+ADD sxxx_018, xxx_019, sxxx_019
+ADD sxxx_019, xxx_020, sum_xxx ; получили  sum_xxx = сумма xi^3
+;
+; sum_xxxx - сумма xi^4
+ADD xxxx_001,  xxxx_002, sxxxx_002 ;  частичные суммы xi^4 после добавления элемента NNN
+ADD sxxxx_002, xxxx_003, sxxxx_003
+ADD sxxxx_003, xxxx_004, sxxxx_004
+ADD sxxxx_004, xxxx_005, sxxxx_005
+ADD sxxxx_005, xxxx_006, sxxxx_006
+ADD sxxxx_006, xxxx_007, sxxxx_007
+ADD sxxxx_007, xxxx_008, sxxxx_008
+ADD sxxxx_008, xxxx_009, sxxxx_009
+ADD sxxxx_009, xxxx_010, sxxxx_010
+ADD sxxxx_010, xxxx_011, sxxxx_011
+ADD sxxxx_011, xxxx_012, sxxxx_012
+ADD sxxxx_012, xxxx_013, sxxxx_013
+ADD sxxxx_013, xxxx_014, sxxxx_014
+ADD sxxxx_014, xxxx_015, sxxxx_015
+ADD sxxxx_015, xxxx_016, sxxxx_016
+ADD sxxxx_016, xxxx_017, sxxxx_017
+ADD sxxxx_017, xxxx_018, sxxxx_018
+ADD sxxxx_018, xxxx_019, sxxxx_019
+ADD sxxxx_019, xxxx_020, sum_xxxx ; получили  sum_xxxx = сумма xi^4
+;
+; sum_xy - сумма xi * yi
+ADD xy_001,  xy_002, sxy_002 ;  частичные суммы xi*yi после добавления элемента NNN
+ADD sxy_002, xy_003, sxy_003
+ADD sxy_003, xy_004, sxy_004
+ADD sxy_004, xy_005, sxy_005
+ADD sxy_005, xy_006, sxy_006
+ADD sxy_006, xy_007, sxy_007
+ADD sxy_007, xy_008, sxy_008
+ADD sxy_008, xy_009, sxy_009
+ADD sxy_009, xy_010, sxy_010
+ADD sxy_010, xy_011, sxy_011
+ADD sxy_011, xy_012, sxy_012
+ADD sxy_012, xy_013, sxy_013
+ADD sxy_013, xy_014, sxy_014
+ADD sxy_014, xy_015, sxy_015
+ADD sxy_015, xy_016, sxy_016
+ADD sxy_016, xy_017, sxy_017
+ADD sxy_017, xy_018, sxy_018
+ADD sxy_018, xy_019, sxy_019
+ADD sxy_019, xy_020, sum_xy ; получили  sum_xy = сумма xi * yi
+;
+; sum_xxy - сумма xi*xi*yi
+ADD xxy_001,  xxy_002, sxxy_002 ;  частичные суммы xi^2*yi после добавления элемента NNN
+ADD sxxy_002, xxy_003, sxxy_003
+ADD sxxy_003, xxy_004, sxxy_004
+ADD sxxy_004, xxy_005, sxxy_005
+ADD sxxy_005, xxy_006, sxxy_006
+ADD sxxy_006, xxy_007, sxxy_007
+ADD sxxy_007, xxy_008, sxxy_008
+ADD sxxy_008, xxy_009, sxxy_009
+ADD sxxy_009, xxy_010, sxxy_010
+ADD sxxy_010, xxy_011, sxxy_011
+ADD sxxy_011, xxy_012, sxxy_012
+ADD sxxy_012, xxy_013, sxxy_013
+ADD sxxy_013, xxy_014, sxxy_014
+ADD sxxy_014, xxy_015, sxxy_015
+ADD sxxy_015, xxy_016, sxxy_016
+ADD sxxy_016, xxy_017, sxxy_017
+ADD sxxy_017, xxy_018, sxxy_018
+ADD sxxy_018, xxy_019, sxxy_019
+ADD sxxy_019, xxy_020, sum_xxy ; получили sum_xxy = сумма xi^2 * yi
+;
+; собираем 3*3 элементов матрицы системы и 3 элемента матрицы правой части
+CPY N,        a11(00) ; (00) - нулевое приближение коэффиицента
+
+; SET 20,a11(00)
+
+CPY sum_x,    a12(00)
+CPY sum_xx,   a13(00)
+CPY sum_y,    y1(00)
+;
+CPY sum_x,    a21(00)
+CPY sum_xx,   a22(00)
+CPY sum_xxx,  a23(00)
+CPY sum_xy,   y2(00)
+;
+CPY sum_xx,   a31(00)
+CPY sum_xxx,  a32(00)
+CPY sum_xxxx, a33(00)
+CPY sum_xxy,  y3(00)
+;
+; решение полностью соответствует SLAU_3а.set. Убраны вычисления:
+; a31(01), a32(02), a31(02), a22(01)xK32, 
+; a21(01)xK32, a21(01), a11(00)xK21, a11(00)xK31
+;
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; 
+; наша первая ПОДЦЕЛЬ - установить a21=a31=0
+; выполнять будем последовательно: сначала цель a21=0 ...
+; для этого от 2-й строки отнимем 1-ю, умноженную на K21=a21/a11
+DIV a21(00), a11(00), K21 ; K21=a21/a11
+; вычислим НОВЫЕ значения a2j - это a2j(01),y2(01)
+;  MUL a11(00),          K21, a11(00)xK21 ; это a11(00) * K21 
+;  SUB a21(00),  a11(00)xK21, a21(01) ; знач. a21 после 1-й модиф. (должно быть = 0)
+ MUL a12(00),         K21, a12(00)xK21 
+ SUB a22(00), a12(00)xK21, a22(01)
+MUL a13(00),          K21, a13(00)xK21
+SUB a23(00),  a13(00)xK21, a23(01) 
+ MUL y1(00),          K21, y1(00)xK21
+ SUB y2(00),   y1(00)xK21, y2(01) 
+; итак, теперь имеем a21(01) = 0 
+; модиф. 2-я строка находится в a2j(01),y2(01)
+;
+; ... последовательно: потом цель a31=0 ...
+; для этого от 3-й строки отнимем 1-ю, умноженную на K31=a31/a11
+DIV a31(00), a11(00), K31 ; K31=a31/a11
+; вычислим НОВЫЕ значения a3j - это a3j(01),y3(01)
+;  MUL a11(00),          K31, a11(00)xK31 
+;  SUB a31(00),  a11(00)xK31, a31(01) ;  значение a31 после 1-й модификации (должно быть = 0)
+ MUL a12(00),         K31, a12(00)xK31
+ SUB a32(00), a12(00)xK31, a32(01) 
+MUL a13(00),          K31, a13(00)xK31
+SUB a33(00),  a13(00)xK31, a33(01) 
+ MUL y1(00),          K31, y1(00)xK31
+ SUB y3(00),   y1(00)xK31, y3(01) 
+; итак, теперь имеем a31(01) = 0 
+; модиф. 3-я строка находится в a3j(01),y3(01)
+;
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; 
+; теперь целью является а32=0
+; для этого используем 2-ю строку, в которой уже a21=0
+;
+; чтобы сделать a32=0, от 3-й строки отн.2-ю, умнож. на K32
+DIV a32(01), a22(01), K32 ; K32=a32/a22
+; вычислим НОВЫЕ значения a3j - это a3j(02),y3(02)
+;  MUL a21(01),          K32, a21(01)xK32 
+;  SUB a31(01),  a21(01)xK32, a31(02) ; как был 0, так и остался
+;  MUL a22(01),         K32, a22(01)xK32 
+;  SUB a32(01), a22(01)xK32, a32(02) ; теперь стало 0
+MUL a23(01),          K32, a23(01)xK32 
+SUB a33(01), a23(01)xK32,  a33(02)
+ MUL y2(01),          K32, y2(01)xK32
+ SUB y3(01),   y2(01)xK32, y3(02) 
+; итак, теперь третья строка в a3j(02),y3(02)
+;
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; 
+; теперь 1-я строка находится в a1j(00),y1(00)
+;        2-я                    a2j(01),y2(01)
+;        3-я                    a3j(02),y3(02)
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; 
+; матрица в прав.верхн.диаг. форме - начинаем обратный ход
+; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;     
+DIV y3(02), a33(02), X3 ; вычислили X3
+; совершаем обратный ход для вычисления X2
+MUL a23(01),         X3, a23(01)xX3
+SUB  y2(01), a23(01)xX3, temp_01
+DIV temp_01,    a22(01), X2 ; вычислили X2
+; совершаем обратный ход для вычисления X1
+MUL a13(00),         X3, a13(00)xX3
+MUL a12(00),         X2, a12(00)xX2
+SUB  y1(00), a13(00)xX3, temp_02
+SUB temp_02, a12(00)xX2, temp_03
+DIV temp_03,    a11(00),      X1 ; вычислили X1

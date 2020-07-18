@@ -987,6 +987,32 @@ static int LuaCallByTimer(lua_State *L) // описываем функцию LuaCallByTimer на С
 } // ===== конец LuaCallByTimer ================================================
 
 ////////////////////////////////////////////////////////////////////////////////
+static int CalcAverMeanOpsOnTiers(lua_State *L) // описываем функцию c_CalcAverMeanOpsOnTiers на С
+{
+// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+//     arg2 = luaL_checkinteger(L, 2);
+ APM //-------------------------------------------------------------------------
+ sp_printf(" Lua call c_CalcAverMeanOpsOnTiers()" );
+ APM //-------------------------------------------------------------------------
+ lua_settop(L, 0); // сброcим стек Lua
+ lua_pushnumber(L, c_CalcAverMeanOpsOnTiers()); // вызовем c_CalcAverMeanOpsOnTiers и результат -> стек
+ return 1 ; // число результатов выполнения функции
+} // ===== конец c_CalcAverMeanOpsOnTiers ======================================
+
+////////////////////////////////////////////////////////////////////////////////
+static int CalcStdDevOpsOnTiers(lua_State *L) // описываем функцию c_CalcStdDevOpsOnTiers на С
+{
+// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+//     arg2 = luaL_checkinteger(L, 2);
+ APM //-------------------------------------------------------------------------
+ sp_printf(" Lua call c_CalcStdDevOpsOnTiers()" );
+ APM //-------------------------------------------------------------------------
+ lua_settop(L, 0); // сброcим стек Lua
+ lua_pushnumber(L, c_CalcStdDevOpsOnTiers()); // вызовем c_CalcStdDevOpsOnTiers и результат -> стек
+ return 1 ; // число результатов выполнения функции
+} // ===== конец c_CalcAverMeanOpsOnTiers ======================================
+//
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1103,6 +1129,9 @@ void __fastcall RegisterFunctions(lua_State *L)
  lua_register(L, "lCreateProcess", lCreateProcess);
 //
  lua_register(L, "LuaCallByTimer",   LuaCallByTimer);
+//
+ lua_register(L, "CalcAverMeanOpsOnTiers", CalcAverMeanOpsOnTiers );
+ lua_register(L, "CalcStdDevOpsOnTiers", CalcStdDevOpsOnTiers );
 //
 } // ---- конец RegisterFunctions ----------------------------------------------
 

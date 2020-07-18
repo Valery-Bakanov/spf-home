@@ -1,0 +1,58 @@
+; Решение полного квадратного уравнения 
+; для получения решения в мнимых числах используем флаг предиката
+; IS_re есть true при значении дискриминанта D>=0 (вещественные корни)
+; A x X^2 + B x X + C = 0
+; великий индийский астроном и математик БРАХМАГУПТА (7-й век н.э.)
+; in case A = 1, B = 7, C = 3
+; the solve is: re_X1=-0.45862,im_X1=0; re_X2=-6.5414,im_X2=0
+; in case A = 1, B = 3, C = 3
+; the solve is: re_X1=-1.5,im_X1=0.866; re_X2=-1.5,im_X2=-0.866 
+;
+MUL A, TWO, A2, !false ; 2 * A -> A2
+MUL A, FOUR, A4 ; 4 * A -> A4
+MUL B, NEG_ONE, B_NEG ; NEG_ONE * B -> B_NEG
+POW B, TWO, BB ; B^2 -> BB
+MUL A4, C, AC4 ; A4 * C -> AC4
+SUB BB, AC4, D ; BB - AC4 -> D[iskriminant]
+;
+SQR D, sqrt_D, IS_re ; sqrt(D) -> sqrt_D
+ADD B_NEG, sqrt_D, W1, IS_re ; B_NEG + D_SQRT -> W1
+SUB B_NEG, sqrt_D, W2, IS_re ; B_NEG - D_SQRT -> W2
+DIV W1, A2, re_X1, IS_re ; W1/A2 -> re_X1 /; #9  | #109
+DIV W2, A2, re_X2, IS_re ; W2/A2 -> re_X2 /; #10 | #110 
+;
+MUL D, NEG_ONE, NEG_D, !IS_re ; NEG_ONE x D -> NEG_D
+SQR NEG_D, sqrt_D, !IS_re ; sqrt(NEG_D) -> sqrt_D
+DIV B_NEG, A2, re_X1,!IS_re ; 1-th root (real)
+DIV sqrt_D, A2, im_X1, !IS_re ; 1-th root (img)
+CPY re_X1, re_X2, !IS_re ; 2-th root (real)
+DIV sqrt_D, A2, W, !IS_re ; temp for im_X2
+MUL W, NEG_ONE, im_X2, !IS_re ; 2-th root (im)
+;
+SET 1, A ; 1 -> A
+SET 3, B ; 7/3 -> B (re/im)
+SET 3, C ; 3 -> C
+;
+SET 2,  TWO  ; 2 -> TWO
+SET 4,  FOUR ; 4 -> FOUR
+SET -1, NEG_ONE ; (-1) -> NEG_ONE
+;
+SET 0,ZERO
+;
+PGE D,ZERO, IS_re ; IS_re <- true if D>=0
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

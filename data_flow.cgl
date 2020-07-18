@@ -1,0 +1,37 @@
+Error 00151. 0x140700 (Thread 0x2CD0):
+Access underrun: Attempt to access 1 byte(s) at 0x0019FAE4-1, that is at
+ offset 0-1 in local block 0x0019FAE4(=[ebp-0x310] @data_flow.exe:0x01:0080AB)
+ (size 512).
+Call Tree:
+   0x00405545(=data_flow.exe:0x01:004545) C:\DataFlow\Unit1.cpp#641
+   0x004090AB(=data_flow.exe:0x01:0080AB) C:\DataFlow\Unit1.cpp#1061
+   0x00404F22(=data_flow.exe:0x01:003F22) C:\DataFlow\Unit1.cpp#573
+   0x0049386F(=data_flow.exe:0x01:09286F) Forms.pas#6770
+   0x00401858(=data_flow.exe:0x01:000858) C:\DataFlow\data_flow.cpp#14
+   0x004FF967(=data_flow.exe:0x01:0FE967)
+
+------------------------------------------
+Error 00152. 0x140700 (Thread 0x2CD0):
+Access underrun: Attempt to access 1 byte(s) at 0x0019FAE4-1, that is at
+ offset 0-1 in local block 0x0019FAE4(=[ebp-0x310] @data_flow.exe:0x01:0080AB)
+ (size 512).
+Call Tree:
+   0x00405561(=data_flow.exe:0x01:004561) C:\DataFlow\Unit1.cpp#641
+   0x004090AB(=data_flow.exe:0x01:0080AB) C:\DataFlow\Unit1.cpp#1061
+   0x00404F22(=data_flow.exe:0x01:003F22) C:\DataFlow\Unit1.cpp#573
+   0x0049386F(=data_flow.exe:0x01:09286F) Forms.pas#6770
+   0x00401858(=data_flow.exe:0x01:000858) C:\DataFlow\data_flow.cpp#14
+   0x004FF967(=data_flow.exe:0x01:0FE967)
+
+------------------------------------------
+Error 00153. 0x104200 (Thread 0x2CD0):
+Pointer arithmetic in invalid memory: 0x0019FAE4-0x00000000.
+Call Tree:
+   0x00409214(=data_flow.exe:0x01:008214) C:\DataFlow\Unit1.cpp#1098
+   0x00404F22(=data_flow.exe:0x01:003F22) C:\DataFlow\Unit1.cpp#573
+   0x0049386F(=data_flow.exe:0x01:09286F) Forms.pas#6770
+   0x00401858(=data_flow.exe:0x01:000858) C:\DataFlow\data_flow.cpp#14
+   0x004FF967(=data_flow.exe:0x01:0FE967)
+
+------------------------------------------
+Error 00154. 0x104200 (Thread 0x2CD0):
