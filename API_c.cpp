@@ -4792,9 +4792,11 @@ INT __fastcall c_PutParamsTiers()
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
-  (REAL)sdOps / nOps,
-  (REAL)sdTiers / nTiers,
-  (REAL)sdOps * sdTiers / (nOps*nTiers),
+//
+  (REAL)sdOps / nOps, // Vo
+  (REAL)sdTiers / nOps, // Vt
+  (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
+//
   (REAL)sDump / sEdges );
 //
  F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
