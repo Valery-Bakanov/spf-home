@@ -1,8 +1,9 @@
-=1/100:   -Type 1
-=101/200: -Type 2 
-=Def:     -Type 2.5 
-=201/300: -Type 3
 
+=1/50: -Float 100 
+=51/150: -Double 10
+=151/210: -Vect 50
+
+=Def:   -Float 10
 
 
 

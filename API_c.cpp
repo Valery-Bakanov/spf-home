@@ -103,22 +103,22 @@ INT  __fastcall TestExistInOutAtAllOps(); // тестирует наличие хоть одной ВХОДНО
 INT   __fastcall c_GetCountParamsByCalc(INT Calc); // число параметров вычислителя Calc
 char* __fastcall c_GetNumbParamByCalc(INT Numb, INT Calc); // параметр Numb (начиная с 1) вычислителя Calc
 char* __fastcall c_GetNameNumbParamByCalc(INT Numb, INT Calc); // имя параметра Numb (начиная с 1) вычислителя Calc
-REAL __fastcall c_GetMinValNumbParamByCalc(INT Numb, INT Calc); // мин значение параметра Numb (начиная с 1) вычислителя Calc
-REAL __fastcall c_GetMaxValNumbParamByCalc(INT Numb, INT Calc); // мах значение параметра Numb (начиная с 1) вычислителя Calc
+REAL  __fastcall c_GetMinValNumbParamByCalc(INT Numb, INT Calc); // мин значение параметра Numb (начиная с 1) вычислителя Calc
+REAL  __fastcall c_GetMaxValNumbParamByCalc(INT Numb, INT Calc); // мах значение параметра Numb (начиная с 1) вычислителя Calc
 // сторона операторов ----------------------------------------------------------
 INT   __fastcall c_GetCountParamsByOp(INT Op); // число параметров вычислителя Op
 char* __fastcall c_GetNumbParamByOp(INT Numb, INT Op); // параметр Numb (начиная с 1) оператора Op
 char* __fastcall c_GetNameNumbParamByOp(INT Numb, INT Op); // имя параметра Numb (начиная с 1) оператора Op
-REAL __fastcall c_GetValNumbParamByOp(INT Numb, INT Op); // значение параметра Numb (начиная с 1) оператора Op
+REAL  __fastcall c_GetValNumbParamByOp(INT Numb, INT Op); // значение параметра Numb (начиная с 1) оператора Op
 //
 // работа с МЕТРИКАМИ вершин (операторов) --------------------------------------
-REAL __fastcall c_GetMetricOpByName(INT Op, char* nameMetric); // вернуть числовое значение метрики nameMetric вершины (оператора) Op
+REAL  __fastcall c_GetMetricOpByName(INT Op, char* nameMetric); // вернуть числовое значение метрики nameMetric вершины (оператора) Op
 INT   __fastcall c_GetCountMetricsByOp(INT Op); // число параметров вершины (оператора) Op
 char* __fastcall c_GetNumbMetricByOp(INT Numb, INT Op); // взять значение Numb-й метрики nameMetric вершины (оператора) Op
 char* __fastcall c_GetMetricsByOp(INT Op); // из строки sVrt возвращает подстроку всех параметров ВЕРШИНЫ (оператора) Op
 //
 // работа с МЕТРИКАМИ дуг ------------------------------------------------------
-REAL __fastcall c_GetMetricEdgeByName(INT from_Op, INT to_Op, char* nameMetric); // вернуть числовое значение метрики nameMetric дуги между вершинами (операторами) from_Op и to_Op
+REAL  __fastcall c_GetMetricEdgeByName(INT from_Op, INT to_Op, char* nameMetric); // вернуть числовое значение метрики nameMetric дуги между вершинами (операторами) from_Op и to_Op
 INT   __fastcall c_GetCountMetricsByEdge(INT from_Op, INT to_Op); // число параметров дуги от from_Op до to_Op
 char* __fastcall c_GetNumbMetricByEdge(INT Numb, INT from_Op, INT to_Op); // взять значение метрики дуги от from_Op до to_Op
 char* __fastcall c_GetMetricsByEdge(INT from_Op, INT to_Op); // из строки sEdg возвращает подстроку всех параметров дуги  от from_Op до to_Op
