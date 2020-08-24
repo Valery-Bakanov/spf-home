@@ -1,6 +1,14 @@
 //
 //#define TEST_PRINT
 //
+char eq,sl,sll,cl,sp,vr;
+char symb[]="=/: |";
+#define Test_Not_n1n2  (sscanf(sN,"%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&cl,&sp)!= 6 || \
+                                   eq!=symb[0] || sl!=symb[1] || cl!=symb[2] || sp!=symb[3])
+//
+#define Test_Not_n1n2m1m2 (sscanf(sN,"%c%d%c%d%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&vr,&m1,&sll,&m2,&cl,&sp)!= 10 || \
+                                      eq!=symb[0] || sl!=symb[1] || sll!=symb[1] || cl!=symb[2] || sp!=symb[3] || vr!=symb[4])
+//
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
 //
 #define strEndZero(s) s[strlen(s)]='\0' // добавление '\0' в конец строки str
@@ -2156,26 +2164,33 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
 //
 ////////////////////////////////////////////////////////////////////////////////
 // по первым символам sN начинаем обработку '=n1/n2:' или '=Def:'
-  if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
+  if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:^"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
+//   F2->L_TMM->Caption = IntToStr(sscanf( sN, "=%d/%d:^", &n1, &n2 )).c_str() ;
+//   Delay( -10 );
    iStart = iEnd;
    continue; // ...do
   }
   else // всё корректно!..
   {
+//   F2->L_TMM->Caption = sN ;
+//   Delay( -5 );
    snprintf( s,sizeof(s), "=%d/%d: ", n1, n2 );  // начинаем новый "=n1/n2:^"
    strcat( sCalcs, s );
-//
+///
 // --- чистим строку sN от подстроки "xxx:" ------------------------------------
 //  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
-  strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
+//   F2->L_TMM->Caption = sN ;
+//   Delay( -5 );
+   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-  DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
-  } // конец if( sscanf( sN, ...
+  } // конец else... if( sscanf( sN, ...
   } // конец if( sN[0]=='='...
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -2302,7 +2317,8 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2441,7 +2457,8 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2|m1/m2:"
   {
 // --- начало обработки конструкции '=n1/n2|m1/m2:^' ---------------------------------
-  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1, &n2, &m1, &m2 ) != 4 ) // читаем n1/n2|m1/m2 из sN (вoзврат !=4 - ошибка )
+//  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1, &n2, &m1, &m2 ) != 4 ) // читаем n1/n2|m1/m2 из sN (вoзврат !=4 - ошибка )
+  if( Test_Not_n1n2m1m2 ) // читаем "=n1/n2|m1/m2:^" из sN (вoзврат !=10 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2589,7 +2606,8 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2693,24 +2711,24 @@ INT __fastcall c_GetCountCalcs()
 
  if( !lS ) // если sCalcs пустая...
   return 0 ;
-
+//
  do // по подстрокам '=' + цифра ( по sN )
  {
   iEnd = c_FindSubString( sCalcs, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
-
+//
   DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-
+//
 // --- проверяем корректность преобразования '=n1/n2:' -------------------------
-  if( sscanf( sN, "=%d/%d: ", &n1,&n2 ) != 2 ) // вoзврат !=2 - ошибка
-//   goto cont_i; // этот "=n1/n2:" пропускаем - некорректен!
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // вoзврат !=2 - ошибка
+  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue;
   }
-
+//
   nSum = max( nSum, max( abs(n1), abs(n2) ) ) ; // определяем общее число вычислителей
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
 //  cont_i:
   iStart = iEnd;
@@ -2727,31 +2745,31 @@ char* __fastcall c_GetNumbParamByCalc(INT Numb, INT Calc )
  char sN[_4096], sR[_2048];
  INT iStart = 0, iEnd,
      rep=0; // номер подстроки ШАБЛОНА
-
+//
  strNcpy( sN, c_GetParamsByCalc( Calc ) ); // берём подстроку параметров для вычислителя Calc
  INT lN = strlen( sN ); // длина строки sN
-
+//
  do // по подстрокам '-' + лат.буква ( по sN )
  {
   iEnd = c_FindSubString( sN, sR, iStart, 1 );
-
+//
 // --- начало обработки строки sN списка параметров параметра ------------------
-
+//
   rep ++ ; // номер вхождения sR в sN
-
+//
   if ( rep == Numb ) // нашли что надо...
   {
    DelSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
 //  cont_i:
   iStart = iEnd;
  } while( iEnd !=lN ); // пока не конец строки sN
-
+///
  return "\0" ; // если ничего не нашли...
-
+//
 } // --- конец c_GetNumbParamByCalc --------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2765,13 +2783,13 @@ char* __fastcall c_GetNumbParamByOp(INT Numb, INT Op )
 //
  strNcpy( sN, c_GetParamsByOp( Op ) ); // берём подстроку параметров для вычислителя Op
  INT lN = strlen( sN ); // длина строки sN
-
+//
  do // по подстрокам '-'+лат.буква ( по sN )
  {
   iEnd = c_FindSubString( sN, sR, iStart, 1 );
-
+//
 // --- начало обработки строки sN списка параметров параметра ------------------
-
+//
   rep ++ ; // номер вхождения sR в sN
 
   if ( rep == Numb ) // нашли что надо...
