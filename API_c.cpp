@@ -3,11 +3,11 @@
 //
 char eq,sl,sll,cl,sp,vr;
 char symb[]="=/: |";
-#define Test_Not_n1n2  (sscanf(sN,"%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&cl,&sp)!= 6 || \
-                                   eq!=symb[0] || sl!=symb[1] || cl!=symb[2] || sp!=symb[3])
+#define Test_n1n2  (sscanf(sN,"%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&cl,&sp)==6 || \
+                               eq==symb[0] || sl==symb[1] || cl==symb[2] || sp==symb[3])
 //
-#define Test_Not_n1n2m1m2 (sscanf(sN,"%c%d%c%d%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&vr,&m1,&sll,&m2,&cl,&sp)!= 10 || \
-                                      eq!=symb[0] || sl!=symb[1] || sll!=symb[1] || cl!=symb[2] || sp!=symb[3] || vr!=symb[4])
+#define Test_n1n2m1m2 (sscanf(sN,"%c%d%c%d%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&vr,&m1,&sll,&m2,&cl,&sp)==10 || \
+                                  eq==symb[0] || sl==symb[1] || sll==symb[1] || cl==symb[2] || sp==symb[3] || vr!=symb[4])
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
 //
@@ -2168,7 +2168,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
 //  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
-  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
+  if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
 //   F2->L_TMM->Caption = IntToStr(sscanf( sN, "=%d/%d:^", &n1, &n2 )).c_str() ;
 //   Delay( -10 );
@@ -2318,7 +2318,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
 //  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
-  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
+  if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2458,7 +2458,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
   {
 // --- начало обработки конструкции '=n1/n2|m1/m2:^' ---------------------------------
 //  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1, &n2, &m1, &m2 ) != 4 ) // читаем n1/n2|m1/m2 из sN (вoзврат !=4 - ошибка )
-  if( Test_Not_n1n2m1m2 ) // читаем "=n1/n2|m1/m2:^" из sN (вoзврат !=10 - ошибка )
+  if( !Test_n1n2m1m2 ) // читаем "=n1/n2|m1/m2:^" из sN (вoзврат !=10 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2607,7 +2607,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
 //  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
-  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
+  if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue; // ...do
@@ -2721,7 +2721,7 @@ INT __fastcall c_GetCountCalcs()
 //
 // --- проверяем корректность преобразования '=n1/n2:' -------------------------
 //  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // вoзврат !=2 - ошибка
-  if( Test_Not_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
+  if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
    continue;
@@ -3342,15 +3342,16 @@ char* __fastcall c_GetParamsByOp(INT Op)
    iStart = iEnd ;
    continue; // ...do
   }
-
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+//
+// if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+ if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Op >= min(n1,n2) && Op <= max(n1,n2) ) // Op в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
 
 // --- конец обработки строки sN спиcка параметров -----------------------------
   iStart = iEnd;
  } while( iEnd !=lOps ); // пока не конец строки sOps ( конец соотв. do )
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 // --- начали искать sN среди подстрок типа '=Def:'-----------------------------
 
@@ -3409,8 +3410,9 @@ char* __fastcall c_GetParamsByCalc(INT Calc)
    iStart = iEnd ;
    continue; // ...do
   }
-
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+//
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+ if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Calc >= min(n1,n2) && Calc<= max(n1,n2) ) // Calc в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
 
@@ -3860,7 +3862,8 @@ char* __fastcall c_GetMetricsByOp(INT Op)
    continue; // ...do
   }
 //
-  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
+  if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Op >= min(n1,n2) && Op <= max(n1,n2) ) // Op в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
 //
@@ -4002,7 +4005,8 @@ char* __fastcall c_GetMetricsByEdge(INT from_Op, INT to_Op)
    continue; // ...do
   }
 //
-  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1,&n2, &m1,&m2 ) == 4 ) // правильное чтение - 4 поля прочитано
+//  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1,&n2, &m1,&m2 ) == 4 ) // правильное чтение - 4 поля прочитано
+  if( Test_n1n2m1m2 ) // правильное чтение "=n1/n2|m1/m2:^" из sN
    if( ( from_Op >= min(n1,n2) && from_Op <= max(n1,n2) ) &&
        (   to_Op >= min(m1,m2) &&   to_Op <= max(m1,m2) ) ) // Op в диапазоне n1/n2 - m1/m2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
