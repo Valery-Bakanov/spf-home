@@ -1,13 +1,14 @@
 //
 //#define TEST_PRINT
 //
-char eq,sl,sll,cl,sp,vr;
-char symb[]="=/: |";
-#define Test_n1n2  (sscanf(sN,"%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&cl,&sp)==6 || \
-                               eq==symb[0] || sl==symb[1] || cl==symb[2] || sp==symb[3])
+char Test_eq,Test_sl,Test_sll,Test_cl,Test_sp,Test_vr; // "=//: |"
+char Test_symb[]="=/: |";
+#define Test_n1n2     (sscanf(sN,"%c%d%c%d%c%c",&Test_eq,&n1,&Test_sl,&n2,&Test_cl,&Test_sp)==6 || \
+                                  Test_eq==Test_symb[0]  || Test_sl==Test_symb[1] || Test_cl==Test_symb[2] || Test_sp==Test_symb[3])
 //
-#define Test_n1n2m1m2 (sscanf(sN,"%c%d%c%d%c%d%c%d%c%c",&eq,&n1,&sl,&n2,&vr,&m1,&sll,&m2,&cl,&sp)==10 || \
-                                  eq==symb[0] || sl==symb[1] || sll==symb[1] || cl==symb[2] || sp==symb[3] || vr!=symb[4])
+#define Test_n1n2m1m2 (sscanf(sN,"%c%d%c%d%c%d%c%d%c%c",&Test_eq,&n1,&Test_sl,&n2,&Test_vr,&m1,&Test_sll,&m2,&Test_cl,&Test_sp)==10 || \
+                                  Test_eq==Test_symb[0]  || Test_sl==Test_symb[1] || Test_cl==Test_symb[2] || Test_sp==Test_symb[3] || \
+                                  Test_sll==Test_symb[1] || Test_vr==Test_symb[4])
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
 //

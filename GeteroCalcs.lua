@@ -3,7 +3,7 @@
 --============================================================
 --
 --projectName = "squa_equ_2"  -- имя проекта 
---projectName = "squa_equ_2.pred"
+projectName = "--.pred"
 --
 --projectName = "max-1_mass-8.pred"
 --projectName = "max-2_mass-8.pred"
