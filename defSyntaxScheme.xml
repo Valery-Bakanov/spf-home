@@ -81,6 +81,7 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMaxTierMaybeOp\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMinTierMaybeOp\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bMoveOpTierToTier\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSwapOpsTierToTier\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bPutTiersToTextFrame\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bPutEdgesToTextFrame\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bClearTextFrame\b' />

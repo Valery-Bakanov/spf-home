@@ -51,7 +51,7 @@ static int GetMinTierMaybeOp(lua_State *L) // вызов С-функции GetMinTiermayBeOp 
 } // ===== конец GetMinTierMayBeOp =============================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int MoveOpTierToTier(lua_State *L) // --- MoveOpTierToTier
+static int MoveOpTierToTier(lua_State *L) // вызов С-функции MoveOpTierToTier из Lua
 {
  INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на число")
      arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на число")
@@ -59,9 +59,22 @@ static int MoveOpTierToTier(lua_State *L) // --- MoveOpTierToTier
  sp_printf(" Lua call c_MoveOpTierToTier(%ld,%ld)", (INT)arg1, (INT)arg2);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushinteger(L, c_MoveOpTierToTier((INT)arg1, (INT)arg2)); // вызовем ф-ю и результат -> стек
+ lua_pushinteger(L, c_MoveOpTierToTier((INT)arg1, (INT)arg2)); // вызовем конец MoveOpTierToTier и результат -> стек
  return 1 ; // число результатов выполнения функции
-} // ===== конец DelTier =======================================================
+} // ===== конец MoveOpTierToTier ==============================================
+
+////////////////////////////////////////////////////////////////////////////////
+static int SwapOpsTierToTier(lua_State *L) // вызов С-функции SwapOpsTierToTier из Lua 
+{
+ INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на число")
+     arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на число")
+ APM //-------------------------------------------------------------------------
+ sp_printf(" Lua call c_SwapOpsTierToTier(%ld,%ld)", (INT)arg1, (INT)arg2);
+ APM //-------------------------------------------------------------------------
+ lua_settop(L, 0); // сброcим стек Lua
+ lua_pushinteger(L, c_SwapOpsTierToTier((INT)arg1, (INT)arg2)); // вызовем c_SwapOpsTierToTier() и результат -> стек
+ return 1 ; // число результатов выполнения функции
+} // ===== конец SwapOpsTierToTier =============================================
 
 ////////////////////////////////////////////////////////////////////////////////
 static int PutTiersToTextFrame(lua_State *L) // описываем функцию PutTiersToTextFrame на С
@@ -1022,7 +1035,8 @@ void __fastcall RegisterFunctions(lua_State *L)
  lua_register(L, "DelTier", DelTier);
  lua_register(L, "GetMaxTierMaybeOp", GetMaxTierMaybeOp);
  lua_register(L, "GetMinTierMaybeOp", GetMinTierMaybeOp);
- lua_register(L, "MoveOpTierToTier", MoveOpTierToTier);
+ lua_register(L, "MoveOpTierToTier",  MoveOpTierToTier);
+ lua_register(L, "SwapOpsTierToTier", SwapOpsTierToTier);
  lua_register(L, "PutTiersToTextFrame", PutTiersToTextFrame);
  lua_register(L, "PutEdgesToTextFrame", PutEdgesToTextFrame);
  lua_register(L, "ClearTextFrame", ClearTextFrame);

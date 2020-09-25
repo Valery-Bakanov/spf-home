@@ -28,7 +28,7 @@ char Test_symb[]="=/: |";
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char *FileName); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
+INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[]); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
 INT  __fastcall c_PutDataLiveDiagrToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
 INT  __fastcall c_SaveDataLiveDiagr( char *FileName ); // выдать диаграмму времени жизни данных в файл
 //
@@ -51,6 +51,7 @@ bool __fastcall c_ClearTextFrame(); // очищает окно  текстового представл≈ни€
 INT  __fastcall c_GetMaxTierMaybeOp(INT Op); // возвращает MAX номер €руса, на котором ћќ∆≈“ –ј—ѕќЋј√ј“№—я оператор Op
 INT  __fastcall c_GetMinTierMaybeOp(INT Op); // возвращает MIN номер €руса, на котором ћќ∆≈“ –ј—ѕќЋј√ј“№—я оператор Op
 INT  __fastcall c_MoveOpTierToTier(INT Op, INT toTier); // переносит оператор Op на €рус toTier
+INT  __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2); // обмен между операторами Op1 и Op2
 //
 INT  __fastcall c_GetOpsMoves(); // возвращает текущее значение числа перемещений операторов с €руса на €рус return nMoves ;
 INT  __fastcall c_CountMovesZeroing(); // обнул€ет значение счЄтчика числа перемещений операторов с €руса на €рус яѕ‘
@@ -1206,13 +1207,13 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
      ( fromTier > nTiers ) ) // с последнего €руса оператор перести можно, а с более низкого - нельз€!
  {
   DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
-  return FALSE ;
+  return ERR_RANGE_IN ;
  }
 //
  if( fromTier == toTier ) // не желаем-с делать глупостев-с... Ќ» ј ќ√ќ ѕ≈–≈Ќќ—ј !!!
  {
 //  DisplayMessage( "E", __FUNC__, messParams2, FALSE ); // выдать сообщение
-  return TRUE ;
+  return ERR_RANGE_IN ;
  }
 //
  if( ( toTier < c_GetMinTierMaybeOp( Op ) ) || // проверка допуст»мости переноса
@@ -4127,15 +4128,15 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char *FileName)
+INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
 { // по массиву Tiers[][] строит и выводит в текстовый фрейм данные о распределении
 // числа сообщений между €русами (полезно дл€ определени€ числа необходимых
 // дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
 // полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
-// при Rule = 0 вывод в текстовое окно, при Rule # 0 вывод в файл FileName
- char sN[_8192], sW[_128];
+// при Rule = 0 вывод в текстовое окно, при Rule == 1 вывод в файл FileName (без расширени€)
+// при Rule == 2 вывод в строку специального формата
+ char sN[_8192], sS[_8192], sW[_128];
  INT i,j,k,l, from_Op,to_Op, to_Tier, max_to_Tier;
- FILE *fptr = NULL; // рабочий указатель на файл
 //
  if( !isTiers ) // массива Tiers[][] не существует...
  {
@@ -4144,25 +4145,14 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char *FileName)
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
-  strNcpy( FileName, ChangeFileExt(FileName,extDlg).c_str() ); // установим расширение - extDlg
-//
- if( Rule )
-  if( !(fptr = fopen(FileName, "w")) ) // открыли дл€ записи
-  {
-   t_printf( "\n-E- Ќевозможно записать файл %s времени жизни данных внутри яѕ‘ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                    FileName );
-   return FALSE ;
-  }
-//
 //  setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
- if( !Rule )
+ Tld->Clear(); // очистим на вс€кий случай...
+//
+ Tld->Add( IntToStr(nTiers+1) ); // всего строк в Tld
+//
+ if( !Rule ) // вывод в текстовое окно
   t_printf( "\n-=- »нтервалов €русов яѕ‘ = %d -=-", nTiers+1 ); // строка с числом €русов
- else
- if( fptr )
-  fprintf( fptr, "%-d\n", nTiers+1 );
 //
  for(INT iBottom=1; iBottom<=nTiers+1; iBottom++) // iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘
  {
@@ -4182,19 +4172,21 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char *FileName)
     {
      if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
      {
-      if( !Rule ) snprintf( sW,sizeof(sW), " \xAB%d|%d -> %d", from_Op, i, max_to_Tier ); // "\xAB" = "<<" ; "\x96\x9B" = "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d -> %d",    from_Op, i, max_to_Tier ); // вывод в файл
+      if( !Rule ) snprintf( sW,sizeof(sW), " \xAB%d|%d->%d", from_Op, i, max_to_Tier ); // "\xAB" = "<<" ; "\x96\x9B" = "->"
+      else        snprintf( sW,sizeof(sW), " %d|%d->%d",     from_Op, i, max_to_Tier ); // вывод в файл
      }
      else
      if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
      {
-      if( !Rule ) snprintf( sW,sizeof(sW), " %d\xBB|%d -> $", from_Op, i ); // "\xBB" = ">>"; "x96\x9B"= "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d -> $",     from_Op, i ); // вывод в файл
+      if( !Rule ) snprintf( sW,sizeof(sW), " %d\xBB|%d->$", from_Op, i ); // "\xBB" = ">>"; "x96\x9B"= "->"
+      else        snprintf( sW,sizeof(sW), " %d|%d->$",     from_Op, i ); // вывод в файл
+
      }
      else
-      snprintf( sW,sizeof(sW), " %d|%d ->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
+      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
 //
      strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
+//
      l ++ ;
     } // конец if( max_to_Tier >= iBottom )
 //
@@ -4203,22 +4195,29 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char *FileName)
   } // конец цикла по i (по всем €русам яѕ‘)
 //
  if( iBottom == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
- {
-  if( !Rule )     t_printf(      "%d/$|%d: %s",   iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
-  else if( fptr ) fprintf( fptr, "%d/$|%d: %s\n", iBottom-1, l, sN );
- }
+  if( !Rule ) t_printf(      "%d/$|%d: %s", iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
+  else      Tld->Add( Format("%d/$|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
  else // не последний (фиктивный) €рус
+  if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottom-1, iBottom,l, sN );
+  else      Tld->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
+//
+ } // конец цикла по iBottom (iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
+//
+ if( Rule == 1 ) // вывод в файл
  {
-  if( !Rule )     t_printf(      "%d/%d|%d: %s",   iBottom-1, iBottom,l, sN );
-  else if( fptr ) fprintf( fptr, "%d/%d|%d: %s\n", iBottom-1, iBottom,l, sN );
- }
+  if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
+      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
+  {
+   strNcpy( FileName, ChangeFileExt(FileName,extTld).c_str() ); // установим расширение - extTld
+   strcat( FileName, extTld );
+  }
 //
- } // конец цикла по iBot
+  Tld->SaveToFile( FileName );
 //
- if( fptr )
-  fclose( fptr ); // закрыли файл
+ } // конец  if( Rule == 1 )
 //
 } // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -4231,7 +4230,7 @@ INT __fastcall c_PutDataLiveDiagrToTextFrame()
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveDataLiveDiagr( char *FileName )
 { // выдать диаграмму времени жизни данных в файл
- c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName );
+ c_CreateAndOutputDataLiveDiagrByTiers( 1, "FileDataLive.txt" );
 } // ----- конец c_SaveDataLiveDiagr -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4733,9 +4732,6 @@ void __fastcall CallLuaThread( char *CommandLine )
  if( error1 || error2 )
   t_printf( "\n%s: ќшибка времени выполнени€ Lua: %s\n", __FUNC__, lua_tostring (L1,-1) );
 //
-// if(L1)
-//  lua_close(L1);
-//
 ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 //
 } // ----- конец CallLuaThread -------------------------------------------------
@@ -4744,7 +4740,7 @@ ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char str[_2048], w0[_256], w1[_256];
+ char str[_4096], w0[_256], w1[_256], w2[_256], w3[_256];
  REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
@@ -4766,15 +4762,15 @@ INT __fastcall c_PutParamsTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
  if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
-  snprintf(w1,sizeof(w1), "%.3f", 1.0 * Tiers( c_GetTierFirstMaxOps(1,nTiers), 0 ) / Tiers( c_GetTierFirstMinOps(1,nTiers), 0 ) );
+  snprintf( w1,sizeof(w1), "%.3f", 1.0 * Tiers( c_GetTierFirstMaxOps(1,nTiers), 0 ) / Tiers( c_GetTierFirstMinOps(1,nTiers), 0 ) );
  else
-  strNcpy( w1, " -?- " ); // не определено при нулевом чмсле операторов на €русе..!
+  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на €русе..!
 //
  if( nTiers != 1 )
   snprintf( w0,sizeof(w0), "— ќ шир.яѕ‘= %.4g, CV= %.4g", AverSqDevWidth, AverSqDevWidth / AverWidth ) ;
  else
   snprintf( w0,sizeof(w0), "— ќ шир.яѕ‘= x.x, CV= x.x") ;
-
+//
 // --- вычисл€ем ¬ј–»ј“»¬Ќќ—“№ -------------------------------------------------
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
@@ -4804,14 +4800,75 @@ INT __fastcall c_PutParamsTiers()
     sDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#€руса оператора OpFrom) - (#€руса оператора OpTo)
     sEdges += 1; // сумма числа проанализированных дуг
    } // конец цикла for( int iOutEdgers...
- } // конец цикла for( iOp=1...
-
+//
+  } // конец цикла for( iOp=1...
+//
+// === начало обработки информации о времени жижни данных между €русами яѕ‘ ====
+//
+ strcpy( w0, "" ); // очистили...
+//
+ INT n,n1,n2,m; // n1,n2 - номера промежутков между €русами яѕ‘
+ INT maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
+ REAL averTld=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
+//
+ c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+//
+ sscanf( Tld->Strings[0].c_str(), "%d", &n );
+// t_printf("\nn=%d\n",n);
+//
+ for( INT i=1; i<=n; i++) // по числу промежутков между €русами яѕ‘
+ {
+  if( i < n ) // кроме последней строки с $
+   sscanf( Tld->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
+  else // последн€€ строка формата "n/$|m"
+  {
+   sscanf( Tld->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+//  t_printf("\ni=%i n1/n2|m=%d/%d|%d:\n",i,n1,n2,m);
+//
+  if( m >= maxM ) // ищем мах число живых данных
+  {
+   maxM = max(maxM,m);
+   n1x=n1; // запомнили €рус выше
+   n2x=n2; // запомнили €рус ниже (избыточно вообще-то...)
+  }
+//
+  if( m < minM ) // ищем мin число живых данных
+  {
+   minM = min(minM,m);
+   n1n=n1; // запомнили €рус выше
+   n2n=n2; // запомнили €рус ниже (избыточно вообще-то...)
+  }
+//
+  averTld += 1.0*m; // средне-арифметическое времени жизни данных
+ } // конец цикла по промежуткам между €русами яѕ‘
+//
+// дополнение строки информацией о времени жизни данных
+ if( n2x==n )
+  sprintf( w2,"врем€ \"жизни данных\": max=%d(%d/%c), ", maxM,n1x,'$' );
+ else
+  sprintf( w2,"врем€ \"жизни данных\": max=%d(%d/%d), ", maxM,n1x,n2x );
+// t_printf( w0 );
+//
+ if( n2n==n )
+  sprintf( w3,"min=%d(%d/%c), средн.арифм.=%.4g", minM,n1n,'$', 1.0*averTld/n );
+ else
+  sprintf( w3,"min=%d(%d/%d), средн.арифм.=%.4g", minM,n1n,n2n, 1.0*averTld/n);
+//
+// t_printf( "=== %s ===", w2 );
+//
+// === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
+//
 // --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
  snprintf(str,sizeof(str),
- "ќператоров= %d, дуг= %d, €русов= %d \207\207 средн. опер./€рус= %.4g, %s \207\207 \
-операторов на €русе/€рус (min:max)= %d/%d:%d/%d \207\207 \
-неравном.ширины яѕ‘ (по €русам %d-%d)= %s \207\207 \
-вариативность яѕ‘: Vo|Vt|Vot= %.4g|%.4g|%.4g \207\207 средн€€ длина дуги: %.4g €русов яѕ‘",
+"ќператоров=%d, дуг=%d, €русов=%d \207\207 средн. опер./€рус=%.4g, %s \
+\207\207 операторов на €русе/€рус (min:max)=%d/%d:%d/%d \
+\207\207 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
+\207\207 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
+\207\207 средн.арифм. длина дуги=%.4g €русов яѕ‘ \
+\207\207 %s%s",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
@@ -4819,21 +4876,25 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sdOps / nOps, // Vo
   (REAL)sdTiers / nOps, // Vt
   (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
+  (REAL)sDump / sEdges ,
+  w2,w3 );
 //
-  (REAL)sDump / sEdges );
 //
  F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
 //
-// --- вывод рассчитанных данных в протокол расчЄта ----------------------------
+// ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
  snprintf(str,sizeof(str),
- "\nќператоров= %d, дуг= %d, €русов= %d \nсредн. опер./€рус= %.4g, %s\nоператоров на €русе/€рус (min:max)\
-= %d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)= %s\nвариативность яѕ‘: Vo|Vt|Vot= %.4g|%.4g|%.4g\nсредн€€ длина дуги: %.4g €русов яѕ‘\n\n",
+ "\nќператоров=%d, дуг=%d, €русов=%d \nсредн. опер./€рус=%.4g %s\nоператоров на €русе/€рус (min:max)\
+=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\nсредн.арифм. длина дуги=%.4g €русов яѕ‘\n%s%s\n\n",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
-  1.0*sdOps/nOps, 1.0*sdTiers/nTiers, 1.0*sdOps*sdTiers/(nOps*nTiers),
-  1.0*sDump/sEdges );
+  (REAL)sdOps / nOps, // Vo
+  (REAL)sdTiers / nTiers, // Vt
+  (REAL)sdOps*sdTiers / (nOps*nTiers), // Vot
+  (REAL)sDump / sEdges ,
+  w2,w3 ) ;
 //
  if( PutParamsTiersOnTextFrame ) // PutParamsTiersOnTextFrame устанавливаетс€ в INI-файле
   t_printf( str ); // вывод в текстовый фрейм
@@ -4897,3 +4958,61 @@ REAL __fastcall c_CalcStdDevOpsOnTiers()
  return sqrt( SumSqWidth / ( nTiers - 1.0 ) ) ; // стандартное отклонение ширин €русов (несмещЄнна€, состо€тельна€ оценка)
 //
 } // ----- конец c_CalcStdDevOpsOnTiers ----------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
+{ // --- мен€ет местами операторы Op1 и Op2, наход€щиес€ на –ј«Ќџ’ €русах
+// ----- если удалось благополучно перенести - возвращаетс€ TRUE и глобальна€ iMove
+//
+ if( !isTiers ) // если массива Tiers[][] ещЄ не существует - выходим с ошибкой
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ INT Tier1 = c_GetTierByOp( Op1 ), // €рус нахождени€ первого из обмениваемых операторов
+     Tier2 = c_GetTierByOp( Op2 ); // ...второго...
+//
+ if( Op1 == Op2 ||  // не желаем-с делать глупостев-с... Ќ» ј ќ√ќ ѕ≈–≈Ќќ—ј !!!
+     Tier1 == Tier2 )
+ {
+//  DisplayMessage( "E", __FUNC__, messParams2, FALSE ); // выдать сообщение
+  return TRUE ;
+ }
+//
+ if( Tier1 == ERR_COMMON || // проверка на корректность определени€ Tier1
+     Tier2 == ERR_COMMON ) // ...tier2
+ {
+  DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
+  return FALSE ;
+ }
+//
+ if( ( Tier1 < 1 && Tier1 > nTiers ) || // с нулевого и с €руса ниже последнего перенести нельз€...
+     ( Tier2 < 1 && Tier2 > nTiers ) )  // то же...
+ {
+  DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
+  return FALSE ;
+ }
+//
+ if( ( Tier1 < c_GetMinTierMaybeOp( Op1 ) ) || // проверка допуст»мости переноса оператора Op1
+     ( Tier1 > c_GetMaxTierMaybeOp( Op1 ) ) ||
+     ( Tier2 < c_GetMinTierMaybeOp( Op2 ) ) || // проверка допуст»мости переноса оператора Op2
+     ( Tier2 > c_GetMaxTierMaybeOp( Op2 ) ) )
+ {
+  DisplayMessage( "E", __FUNC__, messParams3, ERR_RANGE_IN ); // выдать сообщение
+  return ERR_RANGE_IN ;
+ }
+//
+ if( c_MoveOpTierToTier( Op1, Tier2 ) == TRUE ) // успешный перенос ќp1 на €рус нахождени€ Op2
+  if( c_MoveOpTierToTier( Op2, Tier1 ) == TRUE ) // успешен перенос ќp2 на €рус нахождени€ Op1
+   return TRUE ;
+//
+} // ----- конец c_SwapOpsTierToTier -------------------------------------------
+
+
+
+
+
+
