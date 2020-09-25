@@ -4740,7 +4740,7 @@ ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char str[_4096], w0[_256], w1[_256], w2[_256], w3[_256];
+ char str[_4096], w0[_256], w1[_256], w2[_512], w3[_256];
  REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
@@ -4807,8 +4807,8 @@ INT __fastcall c_PutParamsTiers()
 //
  strcpy( w0, "" ); // очистили...
 //
- INT n,n1,n2,m; // n1,n2 - номера промежутков между €русами яѕ‘
- INT maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
+ INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
+     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
  REAL averTld=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
 //
  c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
@@ -4853,9 +4853,15 @@ INT __fastcall c_PutParamsTiers()
 // t_printf( w0 );
 //
  if( n2n==n )
-  sprintf( w3,"min=%d(%d/%c), средн.арифм.=%.4g", minM,n1n,'$', 1.0*averTld/n );
+  sprintf( w3,"min=%d(%d/%c), ", minM,n1n,'$' );
  else
-  sprintf( w3,"min=%d(%d/%d), средн.арифм.=%.4g", minM,n1n,n2n, 1.0*averTld/n);
+  sprintf( w3,"min=%d(%d/%d), ", minM,n1n,n2n );
+//
+ strcat( w2,w3 ); // "слили" w3 в w2
+//
+ sprintf( w3,"средн.арифм.=%.4g", 1.0*averTld/n);
+//
+ strcat( w2,w3 ); // "слили" w3 в w2
 //
 // t_printf( "=== %s ===", w2 );
 //
@@ -4868,7 +4874,7 @@ INT __fastcall c_PutParamsTiers()
 \207\207 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
 \207\207 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
 \207\207 средн.арифм. длина дуги=%.4g €русов яѕ‘ \
-\207\207 %s%s",
+\207\207 %s",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
@@ -4877,8 +4883,7 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sdTiers / nOps, // Vt
   (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
   (REAL)sDump / sEdges ,
-  w2,w3 );
-//
+  w2 );
 //
  F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
@@ -4886,15 +4891,16 @@ INT __fastcall c_PutParamsTiers()
 // ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
  snprintf(str,sizeof(str),
  "\nќператоров=%d, дуг=%d, €русов=%d \nсредн. опер./€рус=%.4g %s\nоператоров на €русе/€рус (min:max)\
-=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\nсредн.арифм. длина дуги=%.4g €русов яѕ‘\n%s%s\n\n",
+=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\nсредн.арифм. длина дуги=%.4g €русов яѕ‘\n%s\n\n",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
+//
   (REAL)sdOps / nOps, // Vo
   (REAL)sdTiers / nTiers, // Vt
   (REAL)sdOps*sdTiers / (nOps*nTiers), // Vot
   (REAL)sDump / sEdges ,
-  w2,w3 ) ;
+  w2 ) ;
 //
  if( PutParamsTiersOnTextFrame ) // PutParamsTiersOnTextFrame устанавливаетс€ в INI-файле
   t_printf( str ); // вывод в текстовый фрейм
