@@ -138,7 +138,7 @@ __published:	// IDE-managed Components
         TIdHTTP *INC0;
         TMenuItem *N4;
         TMenuItem *CreateLowerSPF;
-        TMenuItem *CreateDataLifeDiagr;
+        TMenuItem *CreateTimeLiveData;
         TMenuItem *LoadAndPutIGA;
         TMenuItem *N6;
         TMenuItem *N8;
@@ -214,7 +214,7 @@ __published:	// IDE-managed Components
                                       const TIdStatus axStatus, const AnsiString asStatusText);
         void __fastcall EndedUploadFile(TObject *Sender);
         void __fastcall CreateBottomSPFClick(TObject *Sender);
-        void __fastcall CreateDataLiveDiagrByTiers(TObject *Sender);
+        void __fastcall PutTimeLiveDataToTextFrame_Menu(TObject *Sender);
         void __fastcall ReadEdgesFileAndPutToTextFrame(TObject *Sender);
         void __fastcall PutParamsByOp(TObject *Sender);
 //        void __fastcall SelectPrintAction(TObject *Sender);

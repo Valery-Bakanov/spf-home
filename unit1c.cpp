@@ -68,17 +68,17 @@ using namespace std; // стандартное пространство имён
   F1->SB_StartScript->Enabled = FALSE; } /* ДEактивировали кнопку StartScript */
 //
 #define do_HandRule_Enabled \
-{ F1->LoadAndPutIGA->Enabled  = TRUE; /* активировать варианты "ручного управления" в главном меню */ \
+{ F1->LoadAndPutIGA->Enabled  = TRUE;    /* активировать варианты "ручного управления" в главном меню */ \
   F1->CreateUpperSPF->Enabled = TRUE; \
   F1->CreateLowerSPF->Enabled = TRUE; \
-  F1->CreateDataLifeDiagr->Enabled = TRUE; \
+  F1->CreateTimeLiveData->Enabled = TRUE; \
   F1->CreateParamsByOp->Enabled = TRUE; }
 //
 #define do_HandRule_Disabled \
 { F1->LoadAndPutIGA->Enabled  = FALSE; /* деактивировать варианты "ручного управления" в главном меню */ \
   F1->CreateUpperSPF->Enabled = FALSE; \
   F1->CreateLowerSPF->Enabled = FALSE; \
-  F1->CreateDataLifeDiagr->Enabled = FALSE; \
+  F1->CreateTimeLiveData->Enabled = FALSE; \
   F1->CreateParamsByOp->Enabled = FALSE; }
 //
 #pragma hdrstop
@@ -1714,15 +1714,6 @@ void __fastcall TF1::CreateBottomSPFClick(TObject *Sender)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::CreateDataLiveDiagrByTiers(TObject *Sender)
-{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных ------------
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать диаграмму времени жизни данных по текущ.Tiers[][]
- c_CreateAndOutputDataLiveDiagrByTiers( 1, "DataLive" ); // создать диаграмму времени жизни данных по текущ.Tiers[][]
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ.Tiers[][]
-} //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
 { // выбирает ИГА-файл, читает его в Mem_Edges[] и выводит в текстовый фрейм ------
  OD_Edg->InitialDir = ExtractFilePath ( Application->ExeName ); // считываем из текущего каталога
@@ -2600,3 +2591,10 @@ void Set_FileNames_All_Protocols()
   snprintf( FileNameProtocol, sizeof(FileNameProtocol), "%s", tmp );
 //
 } // --- конец Set_FileNames_All_Protocols -------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall TF1::PutTimeLiveDataToTextFrame_Menu(TObject *Sender)
+{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных ------------
+ c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeму Tiers[][]
+} //----------------------------------------------------------------------------

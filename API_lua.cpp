@@ -915,28 +915,28 @@ static int GetOpByMaxTierLowerPreset(lua_State *L) // описываем функцию GetOpByM
 } // ===== конец GetOpByMaxTierLowerPreset =====================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int PutDataLiveDiagrToTextFrame(lua_State *L) // описываем функцию PutDataLiveDiagrToTextFrame на С
+static int PutTimeLiveDataToTextFrame(lua_State *L) // описываем функцию PutTimeLiveDataToTextFrame на С
 {
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call PutDataLiveDiagrToTextFrame()");
+ sp_printf(" Lua call PutTimeLiveDataToTextFrame()");
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushnumber(L, c_PutDataLiveDiagrToTextFrame()); // вызовем с_PutDataLiveDiagrToTextFrame и результат -> стек
+ lua_pushnumber(L, c_PutTimeLiveDataToTextFrame()); // вызовем с_PutTimeLiveDataToTextFrame и результат -> стек
  return 1 ; // фикция, но так необходимо для Lua
-} // ===== конец PutDataLiveDiagrToTextFrame ===================================
+} // ===== конец PutTimeLiveDatarToTextFrame ===================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int SaveDataLiveDiagr(lua_State *L) // описываем функцию SaveDataLiveDiagr на С
+static int SaveTimeLiveData(lua_State *L) // описываем функцию SaveTimeLiveData на С
 {
  char arg[_1024];
  strNcpy(arg, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_SaveDataLiveDiagr(\"%s\")", arg);
+ sp_printf(" Lua call c_SaveTimeLiveData(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_SaveDataLiveDiagr(arg)); // вызовем c_SaveDataLiveDiagr() и результат -> стек
+ lua_pushboolean(L, c_SaveTimeLiveData(arg)); // вызовем c_SaveTimeDataLive() и результат -> стек
  return 1 ; // число результатов выполнения функции
-} // ===== конец c_SaveDataLiveDiagr ===========================================
+} // ===== конец c_SaveTimeLiveData ============================================
 
 ////////////////////////////////////////////////////////////////////////////////
 static int lWinExec(lua_State *L) // описываем функцию lWinExec на С
@@ -1133,8 +1133,8 @@ void __fastcall RegisterFunctions(lua_State *L)
  lua_register(L, "GetOpByMaxTierLowerPreset", GetOpByMaxTierLowerPreset);
 //
 // создание и сохранение информации о "времени жизни данных" внутри ЯПФ --------
- lua_register(L, "PutDataLiveDiagrToTextFrame", PutDataLiveDiagrToTextFrame);
- lua_register(L, "SaveDataLiveDiagr",           SaveDataLiveDiagr);
+ lua_register(L, "PutTimeLiveDataToTextFrame",  PutTimeLiveDataToTextFrame);
+ lua_register(L, "SaveTimeLiveData",            SaveTimeLiveData);
 //
 // --- выполнение команд операционной системы ----------------------------------
 //

@@ -28,9 +28,9 @@ char Test_symb[]="=/: |";
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[]); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
-INT  __fastcall c_PutDataLiveDiagrToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
-INT  __fastcall c_SaveDataLiveDiagr( char *FileName ); // выдать диаграмму времени жизни данных в файл
+INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
+INT  __fastcall c_PutTimeLiveDataToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
+INT  __fastcall c_SaveTimeLiveData( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
 INT  __fastcall c_GetCountTiers(); // возвращает общее число €русов в яѕ‘ информационного графа алгоритма (»√ј)
 INT  __fastcall c_AddTier(INT Tier); // создаЄт (пустой) €рус ниже €руса Tier
@@ -4129,7 +4129,7 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
-{ // по массиву Tiers[][] строит и выводит в текстовый фрейм данные о распределении
+{ // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
 // числа сообщений между €русами (полезно дл€ определени€ числа необходимых
 // дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
 // полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
@@ -4152,7 +4152,7 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
  Tld->Add( IntToStr(nTiers+1) ); // всего строк в Tld
 //
  if( !Rule ) // вывод в текстовое окно
-  t_printf( "\n-=- »нтервалов €русов яѕ‘ = %d -=-", nTiers+1 ); // строка с числом €русов
+  t_printf( "\n-=- —троитс€ диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов €русов яѕ‘ = %d )", nTiers+1 ); // строка с числом €русов
 //
  for(INT iBottom=1; iBottom<=nTiers+1; iBottom++) // iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘
  {
@@ -4204,34 +4204,32 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
  } // конец цикла по iBottom (iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
 //
  if( Rule == 1 ) // вывод в файл
- {
-  if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
-  {
-   strNcpy( FileName, ChangeFileExt(FileName,extTld).c_str() ); // установим расширение - extTld
-   strcat( FileName, extTld );
-  }
-//
   Tld->SaveToFile( FileName );
-//
- } // конец  if( Rule == 1 )
 //
 } // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_PutDataLiveDiagrToTextFrame()
+INT __fastcall c_PutTimeLiveDatToTextFrame()
 { // выдать диаграмму времени жизни данных в текстовое окно
  c_CreateAndOutputDataLiveDiagrByTiers( 0, "");
 } // ----- конец c_PutDataLiveDiagrToTextFrame ---------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveDataLiveDiagr( char *FileName )
+INT __fastcall c_SaveTimeLiveData( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
- c_CreateAndOutputDataLiveDiagrByTiers( 1, "FileDataLive.txt" );
-} // ----- конец c_SaveDataLiveDiagr -------------------------------------------
+//
+ if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
+      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
+ {
+  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extEdges
+  strcat( FileName, extTld );
+ }
+//
+ c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName );
+} // ----- конец c_SaveTimeLiveData --------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -4863,7 +4861,7 @@ INT __fastcall c_PutParamsTiers()
 //
  strcat( w2,w3 ); // "слили" w3 в w2
 //
-// t_printf( "=== %s ===", w2 );
+ t_printf( "=== %s ===", w2 );
 //
 // === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
 //
@@ -5015,8 +5013,17 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
   if( c_MoveOpTierToTier( Op2, Tier1 ) == TRUE ) // успешен перенос ќp2 на €рус нахождени€ Op1
    return TRUE ;
 //
+ return FALSE ;
+
+//
 } // ----- конец c_SwapOpsTierToTier -------------------------------------------
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_PutTimeLiveDataToTextFrame()
+{ // построить и выдать в текстовое окно диаграмму жизни данных (аналог F6)
+ c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
+} //----------------------------------------------------------------------------
 
 
 

@@ -782,11 +782,11 @@ object F1: TF1
       object N6: TMenuItem
         Caption = '-'
       end
-      object CreateDataLifeDiagr: TMenuItem
+      object CreateTimeLiveData: TMenuItem
         Caption = #1055#1086#1089#1090#1088#1086#1080#1090#1100' '#1076#1080#1072#1075#1088#1072#1084#1084#1091' '#1078#1080#1079#1085#1080' '#1076#1072#1085#1085#1099#1093' '#1087#1086' '#1090#1077#1082#1091#1097#1077#1084#1091' '#1071#1055#1060
         Hint = #1057#1090#1088#1086#1080#1090' '#1076#1080#1072#1075#1088#1072#1084#1084#1091' '#1078#1080#1079#1085#1080' '#1076#1072#1085#1085#1099#1093' '#1076#1083#1103' '#1090#1077#1082#1091#1097#1077#1075#1086' '#1071#1055#1060
         ShortCut = 117
-        OnClick = CreateDataLiveDiagrByTiers
+        OnClick = PutTimeLiveDataToTextFrame_Menu
       end
       object N3: TMenuItem
         Caption = '-'
