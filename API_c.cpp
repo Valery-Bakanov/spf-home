@@ -173,8 +173,9 @@ char* __fastcall c_InputDialog( char *sCaption, char *sPrompt, char *sDefault );
 int   __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT Pictogram ); // стандартное окно вывода Windows
 ////////////////////////////////////////////////////////////////////////////////
 bool  __fastcall c_DrawDiagrTiers(); // строит графическое изображение (диаграмму) текущей ширины графа
-bool  __fastcall c_ClearDiagrTiers(); // затирает графическое изображение (диаграмму) текущей ширины графа
-INT   __fastcall c_PutParamsTiers();// --- вывод основных параметров ИГА и ЯПФ
+bool  __fastcall c_DrawDiagrTLD(); // строит графическое изображение (диаграмму) времён жизни внутренних данных
+bool  __fastcall c_ClearDiagrArea(); // затирает графическое изображение (диаграмму)
+INT   __fastcall c_PutParamsTiers();// вывод основных параметров ИГА и ЯПФ
 //
 bool  __fastcall c_IsOpContainOnTiers(INT Op); // если оператор Op присутствует в Tiers[][], возращается TRUE, иначе - FALSE
 INT   __fastcall c_GetOpByMaxTierLowerPreset(INT Op); // выдаёт оператор, информационно зависимый от заданного и находящийся на ярусе
@@ -3669,7 +3670,7 @@ int __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_DrawDiagrTiers()
-{ // строит графическое изображение (диаграмму) текущей ширины графа
+{ // строит графическое изображение (диаграмму) 
  INT MinOpsOnTier, // минимум операторов на ярусе
      MaxOpsOnTier, // максимум операторов на ярусе
      OpsOnTier,
@@ -3769,8 +3770,8 @@ bool __fastcall c_DrawDiagrTiers()
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-bool __fastcall c_ClearDiagrTiers()
-{ // стирАет графическое изображение (диаграмму) текущей ширины графа
+bool __fastcall c_ClearDiagrArea()
+{ // стирАет графическое изображение (диаграмму)
 //
  TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1
 //
@@ -3780,7 +3781,7 @@ bool __fastcall c_ClearDiagrTiers()
                                 TIM1->Left +  TIM1->Width, TIM1->Top + TIM1->Height ));
  return TRUE; // всё нормально
 //
-} // --- конец с_ClearDiagrTiers -----------------------------------------------
+} // --- конец с_ClearDiagrArea ------------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4147,9 +4148,9 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
 //
 //  setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
- Tld->Clear(); // очистим на всякий случай...
+ TLD->Clear(); // очистим на всякий случай...
 //
- Tld->Add( IntToStr(nTiers+1) ); // всего строк в Tld
+ TLD->Add( IntToStr(nTiers+1) ); // всего строк в Tld
 //
  if( !Rule ) // вывод в текстовое окно
   t_printf( "\n-=- Строится диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов ярусов ЯПФ = %d )", nTiers+1 ); // строка с числом ярусов
@@ -4196,15 +4197,15 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
 //
  if( iBottom == nTiers+1 ) // последний фиктивный ярус (рассчитанные данные)
   if( !Rule ) t_printf(      "%d/$|%d: %s", iBottom-1, l, sN ); // выводим строку параметров ИНТЕРВАЛА c нижним ярусом iBot
-  else      Tld->Add( Format("%d/$|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
+  else      TLD->Add( Format("%d/$|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
  else // не последний (фиктивный) ярус
   if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottom-1, iBottom,l, sN );
-  else      Tld->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
+  else      TLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
 //
  } // конец цикла по iBottom (iBottom - нижняя граница ИНТЕРВАЛА в ЯПФ)
 //
  if( Rule == 1 ) // вывод в файл
-  Tld->SaveToFile( FileName );
+  TLD->SaveToFile( FileName );
 //
 } // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
 
@@ -4811,16 +4812,16 @@ INT __fastcall c_PutParamsTiers()
 //
  c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
- sscanf( Tld->Strings[0].c_str(), "%d", &n );
+ sscanf( TLD->Strings[0].c_str(), "%d", &n );
 // t_printf("\nn=%d\n",n);
 //
  for( INT i=1; i<=n; i++) // по числу промежутков между ярусами ЯПФ
  {
   if( i < n ) // кроме последней строки с $
-   sscanf( Tld->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
+   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
   else // последняя строка формата "n/$|m"
   {
-   sscanf( Tld->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
+   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -5026,6 +5027,106 @@ INT __fastcall c_PutTimeLiveDataToTextFrame()
 } //----------------------------------------------------------------------------
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool __fastcall c_DrawDiagrTLD()
+{ // строит графическое изображение (диаграмму) времён жизни внутренних данных
+ INT MinOpsOnTier, // минимум операторов на ярусе
+     MaxOpsOnTier, // максимум операторов на ярусе
+     OpsOnTier,
+     H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
+     B_rect, // ширина горизонтальной полоски в пикселах
+     x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
+//
+ if( !isTiers ) // массива Tiers[][] ещё нет...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ MinOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMinOps(1, nTiers) ); // минимум ...
+ MaxOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMaxOps(1, nTiers) ); // максимум операторов на ярус
+//
+////////////////////////////////////////////////////////////////////////////////
+ TIM1->Picture->Bitmap->Height = TIM1->Height; // настроить размеры Сanvas по размерам Image
+ TIM1->Picture->Bitmap->Width  = TIM1->Width;  // !!! ОЧЕНЬ ВАЖНО ( инфо 08.02.2017 ) !!!!!!
+//
+ H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
+ B_pix = TIM1->Width;
+//
+ REAL dH_pix = 1.0 * H_pix / nTiers, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
+       dB_pix = 1.0 * B_pix / MaxOpsOnTier;
+//
+ dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
+//
+// --- настройка параметров кисти и карандаша (пера) ---------------------------
+ TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
+//
+ TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
+//
+ TIM1->Canvas->Pen->Style   = psSolid; // сплошной
+ TIM1->Canvas->Pen->Mode    = pmCopy;  // режим цвет = color
+ TIM1->Canvas->Pen->Width   = 1; // толщина = 1
+//
+ TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1
+//
+ for(INT iTier=1; iTier<=nTiers; iTier++) // цикл по всем ярусам ЯПФ для построения графика
+ {
+  F2->L_OM->Repaint(); // нужно для синхронизации... !!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+  OpsOnTier = c_GetCountOpsOnTier( iTier ); // взяли число операторов на ярусе
+  B_rect = dB_pix * OpsOnTier; // ширина горизонтальной полоски
+//
+// --- устанавливаем цвета графика ---------------------------------------------
+  if( OpsOnTier == MinOpsOnTier )
+   TIM1->Canvas->Brush->Color = brush_draw_color_alarm1; // цвет кисти ALARM_1
+  else
+  if( OpsOnTier == MaxOpsOnTier )
+   TIM1->Canvas->Brush->Color = brush_draw_color_alarm2; // цвет кисти ALARM_2
+  else
+   TIM1->Canvas->Brush->Color = brush_draw_color; // цвет кисти обычный
+////////////////////////////////////////////////////////////////////////////////
+  x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
+  y1 = dH_pix * ( iTier-1 );
+//
+  x2 = x1 + B_rect; // правая нижняя точка горизонтальной полоски ( Rectangle, Rect )
+  y2 = y1 + dH_pix;
+//
+// --- рисуем прямоугольники длиной, пропорциональной числу операторов на ярусе
+  TIM1->Canvas->FillRect( TRect( x1,y1, x2,y2 ) ); // прямоугольник заданной кистью
+//
+//  Delay( 1 ); // задержка 1 msec - без неё отрисовка иногда не получается..!
+//
+  Application->ProcessMessages(); // дать поработать Windows
+//
+ } // конец цикла по iTier
+
+////////////////////////////////////////////////////////////////////////////////
+// ----- рисуем вертикальную линию - средее значение ширин ярусов --------------
+  REAL b_average = 1.0 * c_GetCountOps() / c_GetCountTiers(); // средняя ширина ЯПФ
+//
+  TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по ярусам; // цвет пера
+  TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
+  TIM1->Canvas->Pen->Style = psDot; // точечная линия
+  TIM1->Canvas->Pen->Width = 1; // толщина пера 3 пикселя
+//
+  x1 = x2 = b_average * dB_pix ;
+  y1 = 0; y2 = TIM1->Height;
+//
+  TIM1->Canvas->MoveTo( x1,   y1 ); // перевести перо в x1,y1
+  TIM1->Canvas->LineTo( x1,   y2 ); // провести линию в x1,y2
+//
+  TIM1->Canvas->MoveTo( x1-1, y1 ); // перевести перо в x1-1,y1
+  TIM1->Canvas->LineTo( x1-1, y2 ); // провести линию в x1-1,y2
+//
+  TIM1->Canvas->MoveTo( x1+1, y1 ); // перевести перо в x1+1,y1
+  TIM1->Canvas->LineTo( x1+1, y2 ); // провести линию в x1+1,y2
+//
+//  TIM1->Repaint(); // принудительно перерисовали
+//
+  return TRUE; // всё успешно сделано
+//
+} // --- конец с_DrawDiagrTLD --------------------------------------------------
 
 
 

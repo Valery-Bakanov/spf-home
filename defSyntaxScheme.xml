@@ -87,7 +87,8 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\bClearTextFrame\b' />
 
         <Regex token0 = 'SPF_API_Keywords' regex = '\bDrawDiagrTiers\b' />
-        <Regex token0 = 'SPF_API_Keywords' regex = '\bClearDiagrTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bDrawDiagrTLD\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bClearDiagrArea\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bDelayMS\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bAddLineToTextFrame\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountTiers\b' />

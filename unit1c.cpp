@@ -106,7 +106,8 @@ using namespace std; // стандартное пространство имЄн
 //
 TF1 *F1;
 //
-TStringList *Tld; // список строк дл€ информации о времени жизни данных
+TStringList *TLD; // список строк дл€ обмена информацией о времени жизни данных внутри яѕ‘
+// TLD - глобал; создаЄтс€ в TF1::TF1(), заполн€етс€ данными в c_CreateAndOutputDataLiveDiagrByTiers()
 //
 //#include "pcre.h" // библиотека регул€рных выражений от Borland C++ RTL
 //
@@ -440,7 +441,7 @@ __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner)
 //
 // Copy_Stdout_To_Memo(); // копировать stdout на Memo
 //
- Tld = new TStringList; // набор строк дл€ сохранени€ информации по времени жизни данных
+ TLD = new TStringList; // набор строк дл€ сохранени€ информации по времени жизни данных
 //
 } // --- конец TF1 -------------------------------------------------------------
 
@@ -1392,7 +1393,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
   TED0->Lines->Add( str ); // добавить строку
  }
 //
- c_ClearDiagrTiers(); // очистить поле отрисовки графика
+ c_ClearDiagrArea(); // очистить поле отрисовки графика
 //
  IndicateColRowNumberOfEV0(); // выводим номер строки и столбца под курсором
 ////////////////////////////////////////////////////////////////////////////////
@@ -1657,7 +1658,7 @@ void __fastcall TF1::CreateUpperSpfBySelectedIgaFile(TObject *Sender)
 // ---- ур-р€... всЄ OK.........................................................
 //
   c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" канонической форме в окно текстовых данных
-  c_ClearDiagrTiers(); // очистить графическое представление яѕ‘
+  c_ClearDiagrArea(); // очистить графическое представление я
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "верхней" канонической форме в окно текстовых данных
@@ -1695,14 +1696,14 @@ void __fastcall TF1::CreateBottomSPFClick(TObject *Sender)
 // ---- ур-р€... со считыванием данных всЄ OK...................................
 //
   c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" канонической форме в окно текстовых данных
-  c_ClearDiagrTiers(); // очистить графическое представление яѕ‘
+  c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
 //==============================================================================
 //
   c_CreateTiersByEdges_Bottom( FileNameEdges ); // вычисление яѕ‘ в "нижней" канонической форме в окно текстовых данных
 //
-  c_ClearDiagrTiers(); // очистить графическое представление яѕ‘
+  c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "нижней" канонической форме в окно текстовых данных
@@ -2099,7 +2100,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
  luaExecute = TRUE; // теперь Lua выполн€етс€ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
  c_ClearTextFrame(); // очистить текстовый фрейм
- c_ClearDiagrTiers(); // очистить графику
+ c_ClearDiagrArea(); // очистить графику
 //
  F2->L_GP->Caption = ""; // очистить строки параметров графа
  SetActiveWindow( F2->Handle ); // дочернее окно F2 выдвинуть на передний план

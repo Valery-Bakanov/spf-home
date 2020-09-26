@@ -125,6 +125,18 @@ static int DrawDiagrTiers(lua_State *L) // описываем функцию DrawDiagrTiers на С
 } // ===== конец c_DrawDiagrTiers ==============================================
 
 ////////////////////////////////////////////////////////////////////////////////
+static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
+{
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ APM //-------------------------------------------------------------------------
+ sp_printf(" Lua call c_DrawDiagrTLD()");
+ APM //-------------------------------------------------------------------------
+ lua_settop(L, 0); // сброcим стек Lua
+ lua_pushinteger(L, c_DrawDiagrTLD()); // вызовем c_DrawDiagrTLD() и результат -> стек
+ return 1 ; // число результатов выполнения функции
+} // ===== конец c_DrawDiagrTLD ================================================
+
+////////////////////////////////////////////////////////////////////////////////
 static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 {
 // INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
@@ -137,16 +149,16 @@ static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 } // ===== конец PutParamsTiers ================================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int ClearDiagrTiers(lua_State *L) // описываем функцию ClearDiagrTiers на С
+static int ClearDiagrArea(lua_State *L) // описываем функцию ClearDiagrArea на С
 {
 // INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_ClearDiagrRiers()");
+ sp_printf(" Lua call c_ClearDiagrArea()");
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_ClearDiagrTiers()); // вызовем c_ClearDiagrTiers() и результат -> стек
+ lua_pushboolean(L, c_ClearDiagrArea()); // вызовем c_ClearDiagrArea() и результат -> стек
  return 1 ; // число результатов выполнения функции
-} // ===== конец c_ClearDiagrTiers =============================================
+} // ===== конец c_ClearDiagrArea =============================================
 
 ////////////////////////////////////////////////////////////////////////////////
 static int DelayMS(lua_State *L) // описываем функцию DelayMS на С
@@ -1041,7 +1053,8 @@ void __fastcall RegisterFunctions(lua_State *L)
  lua_register(L, "PutEdgesToTextFrame", PutEdgesToTextFrame);
  lua_register(L, "ClearTextFrame", ClearTextFrame);
  lua_register(L, "DrawDiagrTiers", DrawDiagrTiers);
- lua_register(L, "ClearDiagrTiers", ClearDiagrTiers);
+ lua_register(L, "DrawDiagrTLD",   DrawDiagrTLD);
+ lua_register(L, "ClearDiagrArea", ClearDiagrArea);
  lua_register(L, "DelayMS", DelayMS);
  lua_register(L, "AddLineToTextFrame", AddLineToTextFrame);
  lua_register(L, "GetCountTiers", GetCountTiers);
