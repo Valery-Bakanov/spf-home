@@ -157,7 +157,7 @@ object F2: TF2
     Transparent = True
   end
   object L_OM: TLabel
-    Left = 740
+    Left = 748
     Top = 4
     Width = 3
     Height = 16

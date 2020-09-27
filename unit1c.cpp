@@ -182,7 +182,8 @@ REAL AveIn, AveOut; // среднее число входов и выходов
 long color_BackGround = clWhite; // цвет фона окна редактировани€
 //
 // ----- цвета дл€ отрисовки диаграммы распр. операторов по €русам яѕ‘ ( DrawDiagrSPF )
-long brush_draw_color = clBlack, // цвет кисти обычный
+long brush_draw_color_TIERS  = clBlack, // цвет кисти обычный дл€ графика яѕ‘
+     brush_draw_color_TLD    = RGB(0,64,0), // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
      brush_draw_color_alarm1 = clRed, // цвет кисти внимани€_1 ( ALARM_1 )
      brush_draw_color_alarm2 = clFuchsia, // цвет кисти внимани€_2 ( ALARM_2 )
      pen_draw_b_average = clWhite, // цвет линии среднего числа операторов по €русам

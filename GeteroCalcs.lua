@@ -347,3 +347,4 @@ AddLineToTextFrame( string.format("\n-=- ¬сего €русов= %d; подъ€русов= %d; вычис
 SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
 --
 
+

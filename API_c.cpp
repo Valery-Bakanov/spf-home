@@ -3724,7 +3724,7 @@ bool __fastcall c_DrawDiagrTiers()
   if( OpsOnTier == MaxOpsOnTier )
    TIM1->Canvas->Brush->Color = brush_draw_color_alarm2; // цвет кисти ALARM_2
   else
-   TIM1->Canvas->Brush->Color = brush_draw_color; // цвет кисти обычный
+   TIM1->Canvas->Brush->Color = brush_draw_color_TIERS; // цвет кисти обычный
 ////////////////////////////////////////////////////////////////////////////////
   x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
   y1 = dH_pix * ( iTier-1 );
@@ -3740,7 +3740,7 @@ bool __fastcall c_DrawDiagrTiers()
   Application->ProcessMessages(); // дать поработать Windows
 //
  } // конец цикла по iTier
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 // ----- рисуем вертикальную линию - средее значение ширин ярусов --------------
   REAL b_average = 1.0 * c_GetCountOps() / c_GetCountTiers(); // средняя ширина ЯПФ
@@ -3777,7 +3777,7 @@ bool __fastcall c_ClearDiagrArea()
 //
  TIM1->Canvas->Brush->Color = clear_brush_draw_color; // цвет кисти
  TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
- TIM1->Canvas->FillRect( TRect( TIM1->Left-2, TIM1->Top, // прямоугольник кистью Brush
+ TIM1->Canvas->FillRect( TRect( TIM1->Left-2, TIM1->Top-1, // прямоугольник кистью Brush
                                 TIM1->Left +  TIM1->Width, TIM1->Top + TIM1->Height ));
  return TRUE; // всё нормально
 //
@@ -4808,11 +4808,11 @@ INT __fastcall c_PutParamsTiers()
 //
  INT n,n1,n2,m, // n1,n2 - номера промежутков между ярусами ЯПФ
      maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны ярусов выше и ниже
- REAL averTld=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
+ REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
 //
  c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
- sscanf( TLD->Strings[0].c_str(), "%d", &n );
+ sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков ярусов в ЯПФ
 // t_printf("\nn=%d\n",n);
 //
  for( INT i=1; i<=n; i++) // по числу промежутков между ярусами ЯПФ
@@ -4841,7 +4841,7 @@ INT __fastcall c_PutParamsTiers()
    n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
   }
 //
-  averTld += 1.0*m; // средне-арифметическое времени жизни данных
+  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
  } // конец цикла по промежуткам между ярусами ЯПФ
 //
 // дополнение строки информацией о времени жизни данных
@@ -4858,7 +4858,7 @@ INT __fastcall c_PutParamsTiers()
 //
  strcat( w2,w3 ); // "слили" w3 в w2
 //
- sprintf( w3,"средн.арифм.=%.4g", 1.0*averTld/n);
+ sprintf( w3,"средн.арифм.=%.4g", 1.0*averTLD/n );
 //
  strcat( w2,w3 ); // "слили" w3 в w2
 //
@@ -5031,12 +5031,11 @@ INT __fastcall c_PutTimeLiveDataToTextFrame()
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_DrawDiagrTLD()
 { // строит графическое изображение (диаграмму) времён жизни внутренних данных
- INT MinOpsOnTier, // минимум операторов на ярусе
-     MaxOpsOnTier, // максимум операторов на ярусе
-     OpsOnTier,
+ INT OpsOnTier,
      H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
      B_rect, // ширина горизонтальной полоски в пикселах
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
+ char str[_256];
 //
  if( !isTiers ) // массива Tiers[][] ещё нет...
  {
@@ -5044,20 +5043,12 @@ bool __fastcall c_DrawDiagrTLD()
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- MinOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMinOps(1, nTiers) ); // минимум ...
- MaxOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMaxOps(1, nTiers) ); // максимум операторов на ярус
-//
 ////////////////////////////////////////////////////////////////////////////////
  TIM1->Picture->Bitmap->Height = TIM1->Height; // настроить размеры Сanvas по размерам Image
  TIM1->Picture->Bitmap->Width  = TIM1->Width;  // !!! ОЧЕНЬ ВАЖНО ( инфо 08.02.2017 ) !!!!!!
 //
  H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
  B_pix = TIM1->Width;
-//
- REAL dH_pix = 1.0 * H_pix / nTiers, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
-       dB_pix = 1.0 * B_pix / MaxOpsOnTier;
-//
- dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
 //
 // --- настройка параметров кисти и карандаша (пера) ---------------------------
  TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
@@ -5070,24 +5061,81 @@ bool __fastcall c_DrawDiagrTLD()
 //
  TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1
 //
- for(INT iTier=1; iTier<=nTiers; iTier++) // цикл по всем ярусам ЯПФ для построения графика
- {
-  F2->L_OM->Repaint(); // нужно для синхронизации... !!!!!!!!!!!!!!!!!!!!!!!!!!!
+// для экономии кода каркас взят и зc_DrawDiagrTLD(), а функциональная ---------
+// часть аналогична (с частичной избыточностью) блоку в c_PutParamsTiers() -----
 //
-  OpsOnTier = c_GetCountOpsOnTier( iTier ); // взяли число операторов на ярусе
-  B_rect = dB_pix * OpsOnTier; // ширина горизонтальной полоски
+ INT n,n1,n2,m, // n1,n2 - номера промежутков между ярусами ЯПФ, m - число данных в этом промежутке
+     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны ярусов выше и ниже
+ REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
+//
+ c_CreateAndOutputDataLiveDiagrByTiers(2,""); // рассчитали информацию для времени жизни данных по текущ. Tiers[][]
+//
+ sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число меж-ярусов в ЯПФ
+//
+// ищем экстремумы числа данных ------------------------------------------------
+ for(INT i=1; i<=n; i++) // цикл по всем промежуткам ярусов ЯПФ для поисков max/min
+ {
+  if( i < n ) // кроме последней строки с $
+   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
+  else // последняя строка формата "n/$|m"
+  {
+   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  if( m >= maxM ) // ищем мах число живых данных
+  {
+   maxM = max(maxM,m);
+   n1x=n1; // запомнили ярус выше
+   n2x=n2; // запомнили ярус ниже (избыточно вообще-то...)
+  }
+//
+  if( m < minM ) // ищем мin число живых данных
+  {
+   minM = min(minM,m);
+   n1n=n1; // запомнили ярус выше
+   n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
+  }
+//
+ averTLD += 1.0*m; // суммируем для получения средн.арифметического времени жизни данных между ярусам
+//
+ } // конец  for(INT i=1; i<=n; i++)
+//
+ averTLD /= 1.0*n; // средн.арифметическое времени жизни данных между ярусам
+//
+ REAL dH_pix = 1.0 * H_pix / n, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
+      dB_pix = 1.0 * B_pix / maxM;
+//
+ dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
+//
+ snprintf(str,sizeof(str), "H/N/W=%d/%d/%d-%d", n,maxM,n1x,n2x ); // число лент / мах данных / ярус сверху - ярус снизу
+ F2->L_OM->Caption = str; 
+ F2->L_OM->Repaint(); // принудительно перерисовываем
+//
+ for(INT i=1; i<=n; i++) // цикл по всем промежуткам ярусов ЯПФ для построения графика
+ {
+//
+  if( i < n ) // кроме последней строки с $
+   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
+  else // последняя строка формата "n/$|m"
+  {
+   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  B_rect = dB_pix * m; // ширина горизонтальной полоски
 //
 // --- устанавливаем цвета графика ---------------------------------------------
-  if( OpsOnTier == MinOpsOnTier )
+  if( m == minM )
    TIM1->Canvas->Brush->Color = brush_draw_color_alarm1; // цвет кисти ALARM_1
   else
-  if( OpsOnTier == MaxOpsOnTier )
+  if( m == maxM )
    TIM1->Canvas->Brush->Color = brush_draw_color_alarm2; // цвет кисти ALARM_2
   else
-   TIM1->Canvas->Brush->Color = brush_draw_color; // цвет кисти обычный
+   TIM1->Canvas->Brush->Color = brush_draw_color_TLD; // цвет кисти обычный
 ////////////////////////////////////////////////////////////////////////////////
   x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
-  y1 = dH_pix * ( iTier-1 );
+  y1 = dH_pix * ( i-1 );
 //
   x2 = x1 + B_rect; // правая нижняя точка горизонтальной полоски ( Rectangle, Rect )
   y2 = y1 + dH_pix;
@@ -5099,18 +5147,17 @@ bool __fastcall c_DrawDiagrTLD()
 //
   Application->ProcessMessages(); // дать поработать Windows
 //
- } // конец цикла по iTier
-
+ } // конец цикла  for(INT i=1; i<=n; i++)
+//
 ////////////////////////////////////////////////////////////////////////////////
-// ----- рисуем вертикальную линию - средее значение ширин ярусов --------------
-  REAL b_average = 1.0 * c_GetCountOps() / c_GetCountTiers(); // средняя ширина ЯПФ
+// ----- рисуем вертикальную линию - средн.арифметическое значение -------------
 //
   TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по ярусам; // цвет пера
   TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
   TIM1->Canvas->Pen->Style = psDot; // точечная линия
   TIM1->Canvas->Pen->Width = 1; // толщина пера 3 пикселя
 //
-  x1 = x2 = b_average * dB_pix ;
+  x1 = x2 = averTLD * dB_pix ;
   y1 = 0; y2 = TIM1->Height;
 //
   TIM1->Canvas->MoveTo( x1,   y1 ); // перевести перо в x1,y1
