@@ -382,7 +382,8 @@ WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" дл€ компон
            ActiveSyntaxScheme = "defSyntaxScheme";
 char extSchemes[] = "xml"; // расширение файлов схем цветов и синтаксиса ( Ѕ≈« “ќ„ » )
 ////////////////////////////////////////////////////////////////////////////////
-bool PutParamsTiersOnTextFrame = FALSE; // надо ли выводить параметры яѕ‘ в текстовый фрейм
+bool PutParamsTiersOnTextFrame = FALSE; // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
+// при TRUE выводитс€ в текстовое окно то же самое, что в нижней части текстового окна вывода
 ////////////////////////////////////////////////////////////////////////////////
 bool luaExecute = FALSE; // флаг времени выполнени€ Lua (при выполне≈нии TRUE, иначе FALSE)
 //
@@ -1662,6 +1663,7 @@ void __fastcall TF1::CreateUpperSpfBySelectedIgaFile(TObject *Sender)
   c_ClearDiagrArea(); // очистить графическое представление я
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
+  t_printf("\n\n-!-1-!-\n");
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "верхней" канонической форме в окно текстовых данных
 //
   isEdges = TRUE;
@@ -1707,6 +1709,7 @@ void __fastcall TF1::CreateBottomSPFClick(TObject *Sender)
   c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
+  t_printf("\n\n-!-2-!-\n");
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "нижней" канонической форме в окно текстовых данных
 //
   isEdges = TRUE;

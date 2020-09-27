@@ -175,7 +175,7 @@ int   __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, IN
 bool  __fastcall c_DrawDiagrTiers(); // строит графическое изображение (диаграмму) текущей ширины графа
 bool  __fastcall c_DrawDiagrTLD(); // строит графическое изображение (диаграмму) времЄн жизни внутренних данных
 bool  __fastcall c_ClearDiagrArea(); // затирает графическое изображение (диаграмму)
-INT   __fastcall c_PutParamsTiers();// вывод основных параметров »√ј и яѕ‘
+INT   __fastcall c_PutParamsTiers(); // вывод основных параметров »√ј и яѕ‘
 //
 bool  __fastcall c_IsOpContainOnTiers(INT Op); // если оператор Op присутствует в Tiers[][], возращаетс€ TRUE, иначе - FALSE
 INT   __fastcall c_GetOpByMaxTierLowerPreset(INT Op); // выдаЄт оператор, информационно зависимый от заданного и наход€щийс€ на €русе
@@ -1522,7 +1522,7 @@ INT __fastcall c_PutTiersToTextFrame()
 //
  } // конец цикла по iTier (€русам яѕ‘)
 //
- c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
+// c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
 //
  return TRUE ; // всЄ успешно сделано
 //
@@ -4813,7 +4813,6 @@ INT __fastcall c_PutParamsTiers()
  c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
  sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
-// t_printf("\nn=%d\n",n);
 //
  for( INT i=1; i<=n; i++) // по числу промежутков между €русами яѕ‘
  {
@@ -4824,8 +4823,6 @@ INT __fastcall c_PutParamsTiers()
    sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
-//
-//  t_printf("\ni=%i n1/n2|m=%d/%d|%d:\n",i,n1,n2,m);
 //
   if( m >= maxM ) // ищем мах число живых данных
   {
@@ -4862,7 +4859,7 @@ INT __fastcall c_PutParamsTiers()
 //
  strcat( w2,w3 ); // "слили" w3 в w2
 //
-// t_printf( "=== %s ===", w2 ); ///////////////////////////////////////////////
+// t_printf( "=-= w2= %s =-= %s %s", w2, __FUNC__, __FILE__ ); /////////////////
 //
 // === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
 //
@@ -4901,8 +4898,8 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sDump / sEdges ,
   w2 ) ;
 //
- if( PutParamsTiersOnTextFrame ) // PutParamsTiersOnTextFrame устанавливаетс€ в INI-файле
-  t_printf( str ); // вывод в текстовый фрейм
+ if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
+  t_printf( str ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода
 //
  p_printf( str ); // допќлнили файл протокола
 //
@@ -4913,7 +4910,6 @@ INT __fastcall c_PutParamsTiers()
  return TRUE ;
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
