@@ -4862,7 +4862,7 @@ INT __fastcall c_PutParamsTiers()
 //
  strcat( w2,w3 ); // "слили" w3 в w2
 //
- t_printf( "=== %s ===", w2 );
+// t_printf( "=== %s ===", w2 ); ///////////////////////////////////////////////
 //
 // === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
 //
@@ -4906,7 +4906,7 @@ INT __fastcall c_PutParamsTiers()
 //
  p_printf( str ); // допќлнили файл протокола
 //
- snprintf(str,sizeof(str), "H/W=%d/%d", nTiers, Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ) );
+ snprintf(str,sizeof(str), "H|N/W=%d|%d/%d", nTiers,c_GetTierFirstMaxOps(1,nTiers),Tiers(c_GetTierFirstMaxOps(1,nTiers),0) );
  F2->L_OM->Caption = str; // вывод максимума операторов на €русе по всему яѕ‘
  F2->L_OM->Repaint(); // принудительно перерисовываем
 //
@@ -5108,8 +5108,8 @@ bool __fastcall c_DrawDiagrTLD()
 //
  dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
 //
- snprintf(str,sizeof(str), "H/N/W=%d/%d/%d-%d", n,maxM,n1x,n2x ); // число лент / мах данных / €рус сверху - €рус снизу
- F2->L_OM->Caption = str; 
+ snprintf(str,sizeof(str), "H|N/W=%d|/%d/%d-%d", n,maxM,n1x,n2x ); // число лент / мах данных / €рус сверху - €рус снизу
+ F2->L_OM->Caption = str;
  F2->L_OM->Repaint(); // принудительно перерисовываем
 //
  for(INT i=1; i<=n; i++) // цикл по всем промежуткам €русов яѕ‘ дл€ построени€ графика
