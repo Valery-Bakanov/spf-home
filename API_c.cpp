@@ -29,8 +29,8 @@ char Test_symb[]="=/: |";
 ////////////////////////////////////////////////////////////////////////////////
 //
 INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
-INT  __fastcall c_PutTimeLiveDataToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
-INT  __fastcall c_SaveTimeLiveData( char FileName[] ); // выдать диаграмму времени жизни данных в файл
+INT  __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
+INT  __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
 INT  __fastcall c_GetCountTiers(); // возвращает общее число €русов в яѕ‘ информационного графа алгоритма (»√ј)
 INT  __fastcall c_AddTier(INT Tier); // создаЄт (пустой) €рус ниже €руса Tier
@@ -197,6 +197,8 @@ void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во внов
 //
 REAL __fastcall c_CalcAverMeanOpsOnTiers(); // вычисление средне-арифметического числа операторов по €русам (кроме 0-вого)
 REAL __fastcall c_CalcStdDevOpsOnTiers(); // вычисление стандартного отклонени€ числа операторов по €русам (кроме 0-вого)
+//
+char* __fastcall ReformFineName( char Filename[], char Ext[] ); // нужным образом преобразовать им€ файла
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -439,7 +441,13 @@ bool __fastcall c_SaveTiers(char FileName[])
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- strNcpy( FileName, ChangeFileExt( FileName, extTiers ).c_str() ); //расширение -  файла extTiers
+ if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
+      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
+ {
+  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extTiers
+  strcat( FileName, extTiers );
+ }
+// strNcpy( FileName, ChangeFileExt( FileName, extTiers ).c_str() ); // расширение -  файла extTiers
 //
  if(!(fptr = fopen(FileName, "w"))) // открыли дл€ записи
  {
@@ -4196,8 +4204,8 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
   } // конец цикла по i (по всем €русам яѕ‘)
 //
  if( iBottom == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
-  if( !Rule ) t_printf(      "%d/$|%d: %s", iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
-  else      TLD->Add( Format("%d/$|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
+  if( !Rule ) t_printf(      "%d/$|%d: %s",  iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
+  else      TLD->Add( Format("%d/$|%d: %s",  OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
  else // не последний (фиктивный) €рус
   if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottom-1, iBottom,l, sN );
   else      TLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
@@ -4212,25 +4220,25 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_PutTimeLiveDatToTextFrame()
+INT __fastcall c_PutTLDToTextFrame()
 { // выдать диаграмму времени жизни данных в текстовое окно
  c_CreateAndOutputDataLiveDiagrByTiers( 0, "");
-} // ----- конец c_PutDataLiveDiagrToTextFrame ---------------------------------
+} // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveTimeLiveData( char FileName[] )
+INT __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
 //
  if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширени€ файла...
       FileName[strlen(FileName)-1] == '.' ) // расширение '.'
  {
-  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extEdges
+  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extTld
   strcat( FileName, extTld );
  }
 //
  c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName );
-} // ----- конец c_SaveTimeLiveData --------------------------------------------
+} // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -5172,4 +5180,24 @@ bool __fastcall c_DrawDiagrTLD()
 } // --- конец с_DrawDiagrTLD --------------------------------------------------
 
 
-
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall ReformFineName( char FileName[], char Ext[] )
+{ // преобразует FileName в нужную форму с учЄтом необходимого расширени€ (".ext")
+//
+ char extFileName[_512];
+//
+ strcpy( extFileName, ExtractFileExt(AnsiString(FileName)).c_str() ); // запомнили расширение (вместе с '.')
+//
+// ExtractFileName()
+//
+ if( !strlen(extFileName) ) // расширение совсем пусто (включа€ '.')
+  return strcat( FileName, Ext ); // добавили расширение полностью
+ else
+ if( extFileName[0] == '.' && strlen(extFileName)>=2 ) // расширении начинаетс€ с '.' и ещЄ минимум что-то..
+  return FileName ; // ничего не мен€ем..!
+// else
+// if(  )
+ strcat( FileName, &Ext[1] ); // добавили расширение кроме '.'
+//
+} // --- конец ReformFineName --------------------------------------------------

@@ -927,28 +927,28 @@ static int GetOpByMaxTierLowerPreset(lua_State *L) // описываем функцию GetOpByM
 } // ===== конец GetOpByMaxTierLowerPreset =====================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int PutTimeLiveDataToTextFrame(lua_State *L) // описываем функцию PutTimeLiveDataToTextFrame на С
+static int PutTLDToTextFrame(lua_State *L) // описываем функцию PutTLDToTextFrame на С
 {
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call PutTimeLiveDataToTextFrame()");
+ sp_printf(" Lua call PutTLDToTextFrame()");
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushnumber(L, c_PutTimeLiveDataToTextFrame()); // вызовем с_PutTimeLiveDataToTextFrame и результат -> стек
+ lua_pushnumber(L, c_PutTLDToTextFrame()); // вызовем с_PutTLDToTextFrame и результат -> стек
  return 1 ; // фикция, но так необходимо для Lua
-} // ===== конец PutTimeLiveDatarToTextFrame ===================================
+} // ===== конец PutTLDToTextFrame =============================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int SaveTimeLiveData(lua_State *L) // описываем функцию SaveTimeLiveData на С
+static int SaveTLD(lua_State *L) // описываем функцию SaveTLD на С
 {
  char arg[_1024];
  strNcpy(arg, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_SaveTimeLiveData(\"%s\")", arg);
+ sp_printf(" Lua call c_SaveTLD(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_SaveTimeLiveData(arg)); // вызовем c_SaveTimeDataLive() и результат -> стек
+ lua_pushboolean(L, c_SaveTLD(arg)); // вызовем c_SaveTLD() и результат -> стек
  return 1 ; // число результатов выполнения функции
-} // ===== конец c_SaveTimeLiveData ============================================
+} // ===== конец c_SaveTLD =====================================================
 
 ////////////////////////////////////////////////////////////////////////////////
 static int lWinExec(lua_State *L) // описываем функцию lWinExec на С
@@ -1146,8 +1146,8 @@ void __fastcall RegisterFunctions(lua_State *L)
  lua_register(L, "GetOpByMaxTierLowerPreset", GetOpByMaxTierLowerPreset);
 //
 // создание и сохранение информации о "времени жизни данных" внутри ЯПФ --------
- lua_register(L, "PutTimeLiveDataToTextFrame",  PutTimeLiveDataToTextFrame);
- lua_register(L, "SaveTimeLiveData",            SaveTimeLiveData);
+ lua_register(L, "PutTLDToTextFrame",  PutTLDToTextFrame);
+ lua_register(L, "SaveTLD",            SaveTLD);
 //
 // --- выполнение команд операционной системы ----------------------------------
 //

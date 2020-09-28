@@ -115,12 +115,14 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveEdges\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveTiers\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bReadTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveTLD\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveTiersVizu\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveEdgesVizu\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveInOutOpVizu\b' />
 
         <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveParamsVizu\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bPutParamsTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bPutTLDToTextFrame\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetParamsByCalc\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetCountParamsByCalc\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetNumbParamByCalc\b' />
