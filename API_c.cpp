@@ -198,7 +198,7 @@ void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во внов
 REAL __fastcall c_CalcAverMeanOpsOnTiers(); // вычисление средне-арифметического числа операторов по ярусам (кроме 0-вого)
 REAL __fastcall c_CalcStdDevOpsOnTiers(); // вычисление стандартного отклонения числа операторов по ярусам (кроме 0-вого)
 //
-char* __fastcall ReformFineName( char Filename[], char Ext[] ); // нужным образом преобразовать имя файла
+char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать имя файла
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -237,17 +237,13 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extTiers).c_str() ); // установим расширение - extTiers
-  strcat( FileName, extVisu );
- }
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
 //
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -281,6 +277,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveEdgesVizu(char FileName[])
 { // вывод связей между операторами
+ FILE *fptr = NULL; // рабочий указатель на файл
 //
  if( !isEdges ) // массива Mem_Edges[] не существует...
  {
@@ -288,19 +285,13 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
   return ERR_NOT_MASSIVE_EDGES ;
  }
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extEdges
-  strcat( FileName, extVisu );
- }
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
 //
- FILE *fptr = NULL; // рабочий указатель на файл
-//
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ИГА -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -335,17 +326,13 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extInOut).c_str() ); // установим расширение - extInOut
-  strcat( FileName, extVisu );
- }
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
 //
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s входящих и исходящих дуг по операторам -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -403,17 +390,13 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
   return ERR_NOT_MASSIVE_EDGES ;
  }
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extParam).c_str() ); // установим расширение - extParam
-  strcat( FileName, extVisu );
- }
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
 //
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно сохранить файл %s числа входящих и выходящих дуг по операторам -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -441,18 +424,20 @@ bool __fastcall c_SaveTiers(char FileName[])
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extTiers
-  strcat( FileName, extTiers );
- }
-// strNcpy( FileName, ChangeFileExt( FileName, extTiers ).c_str() ); // расширение -  файла extTiers
 //
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ char NewFileName[_512];
+ strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя яфайла
+//
+ if(!(fptr = fopen( NewFileName, "w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s полного описания ИГА в ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -4137,12 +4122,12 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
+INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] )
 { // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
 // числа сообщений между ярусами (полезно для определения числа необходимых
 // для хранения/передачи данных между оператораи на ярусах ЯПФ
 // полагаем, что файл регистров ОБЩИЙ для всех параллельных вычислителей
-// при Rule = 0 вывод в текстовое окно, при Rule == 1 вывод в файл FileName (без расширения)
+// при Rule = 0 вывод в текстовое окно, при Rule == 1 вывод в файл FileName
 // при Rule == 2 вывод в строку специального формата
  char sN[_8192], sS[_8192], sW[_128];
  INT i,j,k,l, from_Op,to_Op, to_Tier, max_to_Tier;
@@ -4213,7 +4198,7 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
  } // конец цикла по iBottom (iBottom - нижняя граница ИНТЕРВАЛА в ЯПФ)
 //
  if( Rule == 1 ) // вывод в файл
-  TLD->SaveToFile( FileName );
+  TLD->SaveToFile( ReformFileName(FileName,extTld) );
 //
 } // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
 
@@ -4222,22 +4207,14 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutTLDToTextFrame()
 { // выдать диаграмму времени жизни данных в текстовое окно
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "");
+ c_CreateAndOutputDataLiveDiagrByTiers( 0, "" );
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
-//
- if( !strlen( ExtractFileExt(AnsiString(FileName)).c_str() ) || // нет расширения файла...
-      FileName[strlen(FileName)-1] == '.' ) // расширение '.'
- {
-  strNcpy( FileName, ChangeFileExt(FileName,extEdges).c_str() ); // установим расширение - extTld
-  strcat( FileName, extTld );
- }
-//
- c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName );
+ c_CreateAndOutputDataLiveDiagrByTiers( 1,  FileName ); // преобразование Filename - при непосредственном вызове
 } // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4818,7 +4795,7 @@ INT __fastcall c_PutParamsTiers()
      maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны ярусов выше и ниже
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
 //
- c_CreateAndOutputDataLiveDiagrByTiers(2,""); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+ c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
  sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков ярусов в ЯПФ
 //
@@ -5030,7 +5007,6 @@ INT __fastcall c_PutTimeLiveDataToTextFrame()
  c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
 } //----------------------------------------------------------------------------
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_DrawDiagrTLD()
@@ -5072,7 +5048,7 @@ bool __fastcall c_DrawDiagrTLD()
      maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны ярусов выше и ниже
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
 //
- c_CreateAndOutputDataLiveDiagrByTiers(2,""); // рассчитали информацию для времени жизни данных по текущ. Tiers[][]
+ c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // рассчитали информацию для времени жизни данных по текущ. Tiers[][]
 //
  sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число меж-ярусов в ЯПФ
 //
@@ -5182,22 +5158,81 @@ bool __fastcall c_DrawDiagrTLD()
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char* __fastcall ReformFineName( char FileName[], char Ext[] )
+char* __fastcall ReformFileName( char FileName[], char Ext[] )
 { // преобразует FileName в нужную форму с учётом необходимого расширения (".ext")
 //
- char extFileName[_512];
+ char wF[_512],wE[_256],*p,
+      NewFileName[_512],extFile[_128], // новое имя файла, расширение без '>'
+      Comma[]=".\0",Space[]=" \0",Unknown_Name[]="Unknown_Name\0", // точка, пробел, неопределенность
+      UnacceptableSymbols[]="\/\\:*?\"<>|\0"; // недопустимые символы '/\:*?"<>|'
+/*
+ FileName         = C:\Program Files\Borland\Delphi7\Projects\Unit1.cpp
 //
- strcpy( extFileName, ExtractFileExt(AnsiString(FileName)).c_str() ); // запомнили расширение (вместе с '.')
+ ExtractFileDrive = C:
+ ExtractFileDir   = C:\Program Files\Borland\Delphi7\Projects
+ ExtractFilePath  = C:\Program Files\Borland\Delphi7\Projects\
+ ExtractFileName  = Unit1.cpp
+ ExtractFileExt   = .cpp
+*/
+ if( strpbrk( ExtractFileName(FileName).c_str(),UnacceptableSymbols ) ) // проверка на недопустимые символы UnacceptableSymbols в имени файла
+ {
+//  sprintf( NewFileName, "Недопустимое имя файла: %s , файл переименован в: %s%s", // временное использование строки NewFileName...
+//                         FileName,Unknown_Name,ExtractFileExt(FileName).c_str() );
+//  DisplayMessage( "W", __FUNC__, NewFileName, ERR_UNCERTAIN ); // выдать сообщение
+  TVarRec Vr[]={ FileName,Unknown_Name,ExtractFileExt(FileName).c_str() }; // открытый массив для последующей печати
+//  t_printf( "\n---%s---%d---\n", ExtractFileExt(FileName).c_str(), strlen(ExtractFileExt(FileName).c_str()) );
+//  t_printf( TrimRight(Format("Недопустимое имя файла: %s , файл переименован в: %s%s",Vr,2)).c_str() ); // .txt'верт.прямоугольник' = TrimRight + c_str()
+  DisplayMessage( "W", __FUNC__, TrimRight(Format("Недопустимое имя файла: %s , файл переименован в: %s%s",Vr,2)).c_str(),
+                  ERR_UNCERTAIN );
 //
-// ExtractFileName()
+  strcpy( FileName,Unknown_Name ) ;
+  strcat( FileName,ExtractFileExt(FileName).c_str() );
+ }
 //
- if( !strlen(extFileName) ) // расширение совсем пусто (включая '.')
-  return strcat( FileName, Ext ); // добавили расширение полностью
+ DelSpacesTabsAround( FileName ); // удаляем пробелы и Tabs с начала и с конца строки
+ DelSpacesTabsAround( Ext );
+//
+ if( FileName[0] == Comma[0] ) // имя начинается с '.'
+ {
+  strcpy( NewFileName, Unknown_Name ) ; // в начале внесли 'Unknown_Name'
+  strcat( NewFileName, ExtractFileExt(FileName).c_str() ); // прибавили расширение
+  goto cont ;
+ }
+//
+ strcpy( wF, ExtractFileName(FileName).c_str() ); // получили строку вида "xxx.zzz"
+ if( !strchr(wF,Comma[0]) ) // если '.' в имени файла не найдено...
+  strcat(wF,Comma); // добавили в конец имени
+//
+ p = strtok(wF,Comma); // ищем первое вхождение '.' (в p будет всё, что левее '.')
+ if( !p ) // если p пусто...
+  strcpy( NewFileName,Unknown_Name ); // имя собственно файда не определено
  else
- if( extFileName[0] == '.' && strlen(extFileName)>=2 ) // расширении начинается с '.' и ещё минимум что-то..
-  return FileName ; // ничего не меняем..!
-// else
-// if(  )
- strcat( FileName, &Ext[1] ); // добавили расширение кроме '.'
+  {
+   strcpy( NewFileName,p ); // имя собственно файла определено и дбавлена '.'
+   strcat( NewFileName,Comma );
+  }
 //
-} // --- конец ReformFineName --------------------------------------------------
+ strcpy( wE, ExtractFileExt( FileName).c_str() ); // получили строку вида ".zzz"
+//
+ if( wE[0] == Comma[0] ) // начальный символ wE=='.'
+ {
+  wE[0] = Space[0]; // начальный символ wE заменяем на пробел
+  DelSpacesTabsAround( wE); // чистим от пробелов
+ }
+//
+ if( !strlen( wE ) ) // если пусто...
+  strcat( NewFileName,Ext ); // добавим заданное расширение...
+ else
+  strcat( NewFileName,wE ); // расширение как было...
+//
+cont:
+//
+// t_printf( "\nПреобразованное имя файла: |%s|\n", NewFileName );
+ return NewFileName ;
+//
+} // --- конец ReformFileName --------------------------------------------------
+
+
+
+
+
