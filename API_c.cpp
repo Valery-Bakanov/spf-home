@@ -5176,14 +5176,9 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
 */
  if( strpbrk( ExtractFileName(FileName).c_str(),UnacceptableSymbols ) ) // проверка на недопустимые символы UnacceptableSymbols в имени файла
  {
-//  sprintf( NewFileName, "Недопустимое имя файла: %s , файл переименован в: %s%s", // временное использование строки NewFileName...
-//                         FileName,Unknown_Name,ExtractFileExt(FileName).c_str() );
-//  DisplayMessage( "W", __FUNC__, NewFileName, ERR_UNCERTAIN ); // выдать сообщение
-  TVarRec Vr[]={ FileName,Unknown_Name,ExtractFileExt(FileName).c_str() }; // открытый массив для последующей печати
-//  t_printf( "\n---%s---%d---\n", ExtractFileExt(FileName).c_str(), strlen(ExtractFileExt(FileName).c_str()) );
-//  t_printf( TrimRight(Format("Недопустимое имя файла: %s , файл переименован в: %s%s",Vr,2)).c_str() ); // .txt'верт.прямоугольник' = TrimRight + c_str()
+  TVarRec Vr[]={ FileName,Unknown_Name,ExtractFileExt(FileName).c_str() }; // открытый массив для последующей форматной печати
   DisplayMessage( "W", __FUNC__, TrimRight(Format("Недопустимое имя файла: %s , файл переименован в: %s%s",Vr,2)).c_str(),
-                  ERR_UNCERTAIN );
+                   ERR_UNCERTAIN );
 //
   strcpy( FileName,Unknown_Name ) ;
   strcat( FileName,ExtractFileExt(FileName).c_str() );
