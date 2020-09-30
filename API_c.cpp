@@ -238,7 +238,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -286,7 +286,7 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -327,7 +327,7 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -391,7 +391,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя яфайла
+ strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -3712,10 +3712,10 @@ bool __fastcall c_DrawDiagrTiers()
 //
 // --- устанавливаем цвета графика ---------------------------------------------
   if( OpsOnTier == MinOpsOnTier )
-   TIM1->Canvas->Brush->Color = brush_draw_color_alarm1; // цвет кисти ALARM_1
+   TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
   else
   if( OpsOnTier == MaxOpsOnTier )
-   TIM1->Canvas->Brush->Color = brush_draw_color_alarm2; // цвет кисти ALARM_2
+   TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
   else
    TIM1->Canvas->Brush->Color = brush_draw_color_TIERS; // цвет кисти обычный
 ////////////////////////////////////////////////////////////////////////////////
@@ -4333,12 +4333,13 @@ bool __fastcall c_SaveEdges(char FileName[])
 {  // вывод дуг для полного описания графа
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- strNcpy( FileName, ChangeFileExt( FileName, extEdges ).c_str() ); //расширение - extEdges
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName( FileName,extEdges ) ); // преобразованное имя файла
 //
- if(!(fptr = fopen(FileName, "w"))) // открыли для записи
+ if(!(fptr = fopen(NewFileName, "w"))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно сохранить файл %s списка дуг (комплементарных вершин) ИГА -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   FileName );
+                   NewFileName );
   return FALSE ;
  }
 //
@@ -4366,18 +4367,19 @@ bool __fastcall c_ReadEdges(char FileName[])
  bool flagEdges = FALSE, // флаг начала описания дуг в ИГA
       flagMLC   = FALSE; // флаг многострочного комментария (Many Lines Comment)
 //
- strNcpy( FileName, ChangeFileExt( FileName, extEdges ).c_str() ); // расширение - extEdges
+ char NewFileName[_512];
+ strcpy( NewFileName,ReformFileName(FileName,extEdges) ); // преобразованное имя файла
 //
- if( !(fptr = fopen(FileName, "r")) ) // файл описания графа открыли для чтения
+ if( !(fptr = fopen(NewFileName, "r")) ) // файл описания графа открыли для чтения
  {
   t_printf( "\n-E- Невозможно прочитать файл %s описания ИГА -E-\n-W- вероятна некорректность при дальнейшей работе -W-",
-                   FileName );
+                   NewFileName );
   isEdges = FALSE ; // массив Mem_Edges[] не создан...
   isTiers = FALSE;
   return FALSE ;
  }
 //
- strNcpy( FileNameEdges, FileName ); // запомнили текущее имя файла описания ИГА
+ strNcpy( FileNameEdges, NewFileName ); // запомнили текущее имя файла описания ИГА
 //
  Max_Edges = _128; // первоначальное максимальное количество дуг в ИГА
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -5107,10 +5109,10 @@ bool __fastcall c_DrawDiagrTLD()
 //
 // --- устанавливаем цвета графика ---------------------------------------------
   if( m == minM )
-   TIM1->Canvas->Brush->Color = brush_draw_color_alarm1; // цвет кисти ALARM_1
+   TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
   else
   if( m == maxM )
-   TIM1->Canvas->Brush->Color = brush_draw_color_alarm2; // цвет кисти ALARM_2
+   TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
   else
    TIM1->Canvas->Brush->Color = brush_draw_color_TLD; // цвет кисти обычный
 ////////////////////////////////////////////////////////////////////////////////
@@ -5198,14 +5200,12 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
  if( !strchr(wF,Comma[0]) ) // если '.' в имени файла не найдено...
   strcat(wF,Comma); // добавили в конец имени
 //
- p = strtok(wF,Comma); // ищем первое вхождение '.' (в p будет всё, что левее '.')
- if( !p ) // если p пусто...
-  strcpy( NewFileName,Unknown_Name ); // имя собственно файда не определено
- else
-  {
-   strcpy( NewFileName,p ); // имя собственно файла определено и дбавлена '.'
-   strcat( NewFileName,Comma );
-  }
+ p = strrchr( wF,Comma[0] ); // ищем ПОСЛЕДНЕЕ вхождение '.' в wF
+ if( p ) // нашли ПОСЛЕДНЕЕ вхождение '.' в wF
+ {
+  strcpy( NewFileName, wF ); // скопировали
+  NewFileName[p-wF+1] = '\0'; // ограничили следующим за '.' символом (сам '.' оставили)
+ }
 //
  strcpy( wE, ExtractFileExt( FileName).c_str() ); // получили строку вида ".zzz"
 //
@@ -5221,11 +5221,12 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
   strcat( NewFileName,wE ); // расширение как было...
 //
 cont:
-//
-// t_printf( "\nПреобразованное имя файла: |%s|\n", NewFileName );
+// t_printf( "\nПреобразованное имя файла/расширения: |%s|%s|\n", NewFileName,Ext );
  return NewFileName ;
 //
 } // --- конец ReformFileName --------------------------------------------------
+
+
 
 
 
