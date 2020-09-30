@@ -4214,7 +4214,7 @@ INT __fastcall c_PutTLDToTextFrame()
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
- c_CreateAndOutputDataLiveDiagrByTiers( 1,  FileName ); // преобразование Filename - при непосредственном вызове
+ c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName ); // преобразование Filename - при непосредственном вызове
 } // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4345,12 +4345,18 @@ bool __fastcall c_SaveEdges(char FileName[])
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
- fprintf( fptr, "%-10d\n", nEdges ); // обшее число дуг
+ fprintf( fptr, "#\n// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm\n");
+ fprintf( fptr, "#  Total edges in this directed graph: %d\n", nEdges ); // число дуг
+ fprintf( fptr, "/* This file was automatically created thru program SPF@home.EXE\n" ); // какой программо создан файл
+ fprintf( fptr, "   file name: %s , datа creation: %s */\n#\n", AnsiUpperCase(NewFileName) , uniqueStr );  // дата создани€
+ fprintf( fptr, "digraph %s {\n", AnsiUpperCase(ChangeFileExt(ExtractFileName(NewFileName),"") )); // им€ файла без расширени€
 //
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по дугам графа
   fprintf(fptr, "%d -> %d ;\n", Edges(0,iEdge), Edges(1,iEdge)); // оператор "откуда" -> оператор "куда"
 //
- fclose(fptr); // закрыли файл
+ fprintf( fptr, "}\n" ); // последн€€ строка файла
+//
+ fclose( fptr); // закрыли файл
 //
  return TRUE ;
 //
@@ -4368,7 +4374,7 @@ bool __fastcall c_ReadEdges(char FileName[])
       flagMLC   = FALSE; // флаг многострочного комментари€ (Many Lines Comment)
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extEdges) ); // преобразованное им€ файла
+ strcpy( NewFileName,ReformFileName(FileName,extGv) ); // преобразованное им€ файла
 //
  if( !(fptr = fopen(NewFileName, "r")) ) // файл описани€ графа открыли дл€ чтени€
  {
@@ -4998,7 +5004,6 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
    return TRUE ;
 //
  return FALSE ;
-
 //
 } // ----- конец c_SwapOpsTierToTier -------------------------------------------
 
