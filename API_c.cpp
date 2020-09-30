@@ -4347,7 +4347,7 @@ bool __fastcall c_SaveEdges(char FileName[])
 //
  fprintf( fptr, "#\n// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm\n");
  fprintf( fptr, "#  Total edges in this directed graph: %d\n", nEdges ); // число дуг
- fprintf( fptr, "/* This file was automatically created thru program SPF@home.EXE\n" ); // какой программо создан файл
+ fprintf( fptr, "/* This file was automatically created thru program SPF_CLIENT.EXE\n" ); // какой программо создан файл
  fprintf( fptr, "   file name: %s , datа creation: %s */\n#\n", AnsiUpperCase(NewFileName) , uniqueStr );  // дата создания
  fprintf( fptr, "digraph %s {\n", AnsiUpperCase(ChangeFileExt(ExtractFileName(NewFileName),"") )); // имя файла без расширения
 //
