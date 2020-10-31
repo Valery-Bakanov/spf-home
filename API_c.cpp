@@ -4857,13 +4857,13 @@ INT __fastcall c_PutParamsTiers()
 // === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
 //
 // --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
- snprintf(str,sizeof(str),
-"ќператоров=%d, дуг=%d, €русов=%d \207\207 средн. опер./€рус=%.4g, %s \
-\207\207 операторов на €русе/€рус (min:max)=%d/%d:%d/%d \
-\207\207 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
-\207\207 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
-\207\207 средн.арифм. длина дуги=%.4g €русов яѕ‘ \
-\207\207 %s",
+ snprintf(str,sizeof(str), // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
+"ќператоров=%d, дуг=%d, €русов=%d \246 средн. опер./€рус=%.4g, %s \
+\246 операторов на €русе/€рус (min:max)=%d/%d:%d/%d \
+\246 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
+\246 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
+\246 средн.арифм. длина дуги=%.4g €русов яѕ‘ \
+\246 %s",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
@@ -4873,7 +4873,6 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
   (REAL)sDump / sEdges ,
   w2 );
-//
  F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
 //
