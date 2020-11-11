@@ -1663,8 +1663,8 @@ void __fastcall TF1::CreateUpperSpfBySelectedIgaFile(TObject *Sender)
   c_ClearDiagrArea(); // очистить графическое представление я
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
-  t_printf("\n\n-!-1-!-\n");
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "верхней" канонической форме в окно текстовых данных
+  c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
 //
   isEdges = TRUE;
   isTiers = TRUE;
@@ -1709,8 +1709,8 @@ void __fastcall TF1::CreateBottomSPFClick(TObject *Sender)
   c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
-  t_printf("\n\n-!-2-!-\n");
   c_PutTiersToTextFrame(); // вывод яѕ‘ в "нижней" канонической форме в окно текстовых данных
+  c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
 //
   isEdges = TRUE;
   isTiers = TRUE;
