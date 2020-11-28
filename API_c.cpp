@@ -1,5 +1,5 @@
 //
-//#define TEST_PRINT
+//#define TEST_PRINT   
 //
 char Test_eq,Test_sl,Test_sll,Test_cl,Test_sp,Test_vr; // "=//: |"
 char Test_symb[]="=/: |";
