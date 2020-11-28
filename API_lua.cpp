@@ -1,4 +1,4 @@
-#define APM Application->ProcessMessages(); // дать поработать Windows 
+#define APM Application->ProcessMessages(); // дать поработать Windows
 //
 #define strNcpy(d,s) strncpy(d,s,sizeof(d)) // ?????????? ???????????
 //
