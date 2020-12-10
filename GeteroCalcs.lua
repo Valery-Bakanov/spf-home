@@ -2,7 +2,9 @@
 --оптимизированный вариант 03 (апрель 2017)
 --============================================================
 --
---projectName = "squa_equ_2"  -- имя проекта 
+projectName = "abc_r" -- имя проекта 
+--
+--projectName = "squa_equ_2"
 --projectName = "squa_equ_2.pred"
 --
 --projectName = "max-1_mass-8.pred"
