@@ -1,3 +1,4 @@
+//
 #define APM Application->ProcessMessages(); // дать поработать Windows
 //
 #define strNcpy(d,s) strncpy(d,s,sizeof(d)) // ?????????? ???????????
@@ -5,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 static int AddTier(lua_State *L) // вызов С-функции AddTier из Lua
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_AddTier(%ld)", (INT)arg);
  APM //-------------------------------------------------------------------------
@@ -17,7 +18,7 @@ static int AddTier(lua_State *L) // вызов С-функции AddTier из Lua
 ////////////////////////////////////////////////////////////////////////////////
 static int DelTier(lua_State *L) // вызов С-функции DelTier из Lua
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DelTier(%ld)", (INT)arg);
  APM //-------------------------------------------------------------------------
@@ -29,7 +30,7 @@ static int DelTier(lua_State *L) // вызов С-функции DelTier из Lua
 ////////////////////////////////////////////////////////////////////////////////
 static int GetMaxTierMaybeOp(lua_State *L) // вызов С-функции GetMaxTiermayBeOp из Lua
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetMaxTierMaybeOp(%ld)", (INT)arg);
  APM //-------------------------------------------------------------------------
@@ -41,7 +42,7 @@ static int GetMaxTierMaybeOp(lua_State *L) // вызов С-функции GetMaxTiermayBeOp 
 ////////////////////////////////////////////////////////////////////////////////
 static int GetMinTierMaybeOp(lua_State *L) // вызов С-функции GetMinTiermayBeOp из Lua
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetMinTierMaybeOp(%ld)", (INT)arg);
  APM //-------------------------------------------------------------------------
@@ -53,8 +54,8 @@ static int GetMinTierMaybeOp(lua_State *L) // вызов С-функции GetMinTiermayBeOp 
 ////////////////////////////////////////////////////////////////////////////////
 static int MoveOpTierToTier(lua_State *L) // вызов С-функции MoveOpTierToTier из Lua
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_MoveOpTierToTier(%ld,%ld)", (INT)arg1, (INT)arg2);
  APM //-------------------------------------------------------------------------
@@ -64,10 +65,10 @@ static int MoveOpTierToTier(lua_State *L) // вызов С-функции MoveOpTierToTier из
 } // ===== конец MoveOpTierToTier ==============================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int SwapOpsTierToTier(lua_State *L) // вызов С-функции SwapOpsTierToTier из Lua 
+static int SwapOpsTierToTier(lua_State *L) // вызов С-функции SwapOpsTierToTier из Lua
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим 1-й аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим 2-й аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_SwapOpsTierToTier(%ld,%ld)", (INT)arg1, (INT)arg2);
  APM //-------------------------------------------------------------------------
@@ -79,7 +80,7 @@ static int SwapOpsTierToTier(lua_State *L) // вызов С-функции SwapOpsTierToTier 
 ////////////////////////////////////////////////////////////////////////////////
 static int PutTiersToTextFrame(lua_State *L) // описываем функцию PutTiersToTextFrame на С
 {
-//  INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+//  INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_PutTiersToTextFrame()");
  APM //-------------------------------------------------------------------------
@@ -91,7 +92,7 @@ static int PutTiersToTextFrame(lua_State *L) // описываем функцию PutTiersToText
 ////////////////////////////////////////////////////////////////////////////////
 static int PutEdgesToTextFrame(lua_State *L) // описываем функцию PutEdgesToTextFrame на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_PutEdgesToTextFrame()");
  APM //-------------------------------------------------------------------------
@@ -103,7 +104,7 @@ static int PutEdgesToTextFrame(lua_State *L) // описываем функцию PutEdgesToText
 ////////////////////////////////////////////////////////////////////////////////
 static int ClearTextFrame(lua_State *L) // описываем функцию ClearTextFrame на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_ClearTextFrame()");
  APM //-------------------------------------------------------------------------
@@ -115,7 +116,7 @@ static int ClearTextFrame(lua_State *L) // описываем функцию ClearTextFrame на С
 ////////////////////////////////////////////////////////////////////////////////
 static int DrawDiagrTiers(lua_State *L) // описываем функцию DrawDiagrTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DrawDiagrTiers()");
  APM //-------------------------------------------------------------------------
@@ -127,7 +128,7 @@ static int DrawDiagrTiers(lua_State *L) // описываем функцию DrawDiagrTiers на С
 ////////////////////////////////////////////////////////////////////////////////
 static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DrawDiagrTLD()");
  APM //-------------------------------------------------------------------------
@@ -139,7 +140,7 @@ static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
 ////////////////////////////////////////////////////////////////////////////////
 static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call PutParamsTiers()");
  APM //-------------------------------------------------------------------------
@@ -151,7 +152,7 @@ static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 ////////////////////////////////////////////////////////////////////////////////
 static int ClearDiagrArea(lua_State *L) // описываем функцию ClearDiagrArea на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_ClearDiagrArea()");
  APM //-------------------------------------------------------------------------
@@ -163,7 +164,7 @@ static int ClearDiagrArea(lua_State *L) // описываем функцию ClearDiagrArea на С
 ////////////////////////////////////////////////////////////////////////////////
 static int DelayMS(lua_State *L) // описываем функцию DelayMS на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DelayMS(%ld)", (INT)arg);
  APM //-------------------------------------------------------------------------
@@ -201,7 +202,7 @@ static int OutLine(lua_State *L) // описываем функцию OutLine на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountTiers(lua_State *L) // описываем функцию GetCountTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountTiers()");
  APM //-------------------------------------------------------------------------
@@ -213,7 +214,7 @@ static int GetCountTiers(lua_State *L) // описываем функцию GetCountTiers на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOpsOnTier(lua_State *L) // описываем функцию GetCountOpsOnTier на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOpsOnTier(%ld)",(INT)arg);
  APM //-------------------------------------------------------------------------
@@ -225,8 +226,8 @@ static int GetCountOpsOnTier(lua_State *L) // описываем функцию GetCountOpsOnTie
 ////////////////////////////////////////////////////////////////////////////////
 static int GetOpByNumbOnTier(lua_State *L) // описываем функцию GetOpByNumbOnTier на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetOpByNumbOnTier(%ld,%ld)", (INT)arg1, (INT)arg2);
  APM //-------------------------------------------------------------------------
@@ -275,7 +276,7 @@ static int CreateTiersByEdges_Bottom(lua_State *L) // описываем функцию CreateTi
 ////////////////////////////////////////////////////////////////////////////////
 static int GetOpsMoves(lua_State *L) // описываем функцию GetOpsMoves на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetOpsMoves()");
  APM //-------------------------------------------------------------------------
@@ -287,7 +288,7 @@ static int GetOpsMoves(lua_State *L) // описываем функцию GetOpsMoves на С
 ////////////////////////////////////////////////////////////////////////////////
 static int CountMovesZeroing(lua_State *L) // описываем функцию CountMovesZeroing на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_CountMovesZeroing()");
  APM //-------------------------------------------------------------------------
@@ -299,8 +300,8 @@ static int CountMovesZeroing(lua_State *L) // описываем функцию CountMovesZeroin
 ////////////////////////////////////////////////////////////////////////////////
 static int GetTierFirstMinOps(lua_State *L) // описываем функцию GetTierFirstMinOps на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetTierFirstMinOps(%ld,%ld)", arg1, arg2);
  APM //-------------------------------------------------------------------------
@@ -312,8 +313,8 @@ static int GetTierFirstMinOps(lua_State *L) // описываем функцию GetTierFirstMin
 ////////////////////////////////////////////////////////////////////////////////
 static int GetTierLastMinOps(lua_State *L) // описываем функцию GetTierLastMinOps на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetTierLastMinOps(%ld,%ld)", arg1, arg2);
  APM //-------------------------------------------------------------------------
@@ -325,8 +326,8 @@ static int GetTierLastMinOps(lua_State *L) // описываем функцию GetTierLastMinOp
 ////////////////////////////////////////////////////////////////////////////////
 static int GetTierFirstMaxOps(lua_State *L) // описываем функцию GetTierFirstMaxOps на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на число
+ INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetTierFirstMaxOps(%ld,%ld)", arg1, arg2);
  APM //-------------------------------------------------------------------------
@@ -338,8 +339,8 @@ static int GetTierFirstMaxOps(lua_State *L) // описываем функцию GetTierFirstMax
 ////////////////////////////////////////////////////////////////////////////////
 static int GetTierLastMaxOps(lua_State *L) // описываем функцию GetTierLastMaxOps на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на число")
-     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на число
+ INT arg1 = luaL_checkinteger(L, 1), // получим один аргумент (с проверкой "на целое")
+     arg2 = luaL_checkinteger(L, 2); // получим второй аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetTierLastMaxOps(%ld,%ld)", arg1, arg2);
  APM //-------------------------------------------------------------------------
@@ -351,7 +352,7 @@ static int GetTierLastMaxOps(lua_State *L) // описываем функцию GetTierLastMaxOp
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOpsInput(lua_State *L) // описываем функцию GetCountOpsInput на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOpsInput()");
  APM //-------------------------------------------------------------------------
@@ -363,7 +364,7 @@ static int GetCountOpsInput(lua_State *L) // описываем функцию GetCountOpsInput 
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOpsOutput(lua_State *L) // описываем функцию GetCountOpsOutput на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOpsOutput()");
  APM //-------------------------------------------------------------------------
@@ -375,7 +376,7 @@ static int GetCountOpsOutput(lua_State *L) // описываем функцию GetCountOpsOutpu
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOps(lua_State *L) // описываем функцию GetCountOps на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOps()");
  APM //-------------------------------------------------------------------------
@@ -387,7 +388,7 @@ static int GetCountOps(lua_State *L) // описываем функцию GetCountOps на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountEdges(lua_State *L) // описываем функцию GetCountEdges на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountEdges()");
  APM //-------------------------------------------------------------------------
@@ -399,7 +400,7 @@ static int GetCountEdges(lua_State *L) // описываем функцию GetCountEdges на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetTierByOp(lua_State *L) // описываем функцию IsOpExistEdge на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetTierByOp(%ld)", arg );
  APM //-------------------------------------------------------------------------
@@ -515,7 +516,7 @@ static int SaveParamsVizu(lua_State *L) // вызов С-функции c_SaveParamsVizu из L
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountInEdgesByOp(lua_State *L) // описываем функцию GetCountInEdgesByOp на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountInEdgesByOp(%ld)", arg);
  APM //-------------------------------------------------------------------------
@@ -527,7 +528,7 @@ static int GetCountInEdgesByOp(lua_State *L) // описываем функцию GetCountInEdge
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOutEdgesByOp(lua_State *L) // описываем функцию GetCountOutEdgesByOp на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOutEdgesByOp(%ld)", arg);
  APM //-------------------------------------------------------------------------
@@ -539,7 +540,7 @@ static int GetCountOutEdgesByOp(lua_State *L) // описываем функцию GetCountOutEd
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbInEdgeByOp(lua_State *L) // описываем функцию GetNumbInEdgeByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргументы (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргументы (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbInEdgeByOp(%ld,%ld)", arg1, arg2);
@@ -552,7 +553,7 @@ static int GetNumbInEdgeByOp(lua_State *L) // описываем функцию GetNumbInEdgeByO
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbOutEdgeByOp(lua_State *L) // описываем функцию GetNumbOutEdgeByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргументы (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргументы (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbOutEdgeByOp(%ld,%ld)", arg1, arg2);
@@ -569,10 +570,9 @@ static int GetNumbOutEdgeByOp(lua_State *L) // описываем функцию GetNumbOutEdgeB
 ////////////////////////////////////////////////////////////////////////////////
 static int GetParamsByCalc(lua_State *L) // описываем функцию GetParamsByCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetParamsByCalc( %ld )", arg1 );
-
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
  lua_pushstring(L, c_GetParamsByCalc( arg1 )); // вызовем c_GettParamsByCalc и результат -> стек
@@ -582,7 +582,7 @@ static int GetParamsByCalc(lua_State *L) // описываем функцию GetParamsByCalc на
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountParamsByCalc(lua_State *L) // описываем функцию GetCountParamsByCalcна С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountParamsByCalc( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -594,7 +594,7 @@ static int GetCountParamsByCalc(lua_State *L) // описываем функцию GetCountParam
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbParamByCalc(lua_State *L) // описываем функцию GetNumbParamByCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbParamByCalc( %ld, %ld )", arg1, arg2 );
@@ -607,7 +607,7 @@ static int GetNumbParamByCalc(lua_State *L) // описываем функцию GetNumbParamByC
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNameNumbParamByCalc(lua_State *L) // описываем функцию GetNumbParamByCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNameNumbParamByCalc( %ld, %ld )", arg1, arg2 );
@@ -620,7 +620,7 @@ static int GetNameNumbParamByCalc(lua_State *L) // описываем функцию GetNumbPara
 ////////////////////////////////////////////////////////////////////////////////
 static int GetMinValNumbParamByCalc(lua_State *L) // описываем функцию c_GetMinValNumbParamByCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetMinValNumbParamByCalc( %ld, %ld )", arg1, arg2 );
@@ -633,7 +633,7 @@ static int GetMinValNumbParamByCalc(lua_State *L) // описываем функцию c_GetMinV
 ////////////////////////////////////////////////////////////////////////////////
 static int GetMaxValNumbParamByCalc(lua_State *L) // описываем функцию c_GetMaxValNumbParamByCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetMaxValNumbParamByCalc( %ld, %ld )", arg1, arg2 );
@@ -648,7 +648,7 @@ static int GetMaxValNumbParamByCalc(lua_State *L) // описываем функцию c_GetMaxV
 ////////////////////////////////////////////////////////////////////////////////
 static int GetParamsByOp(lua_State *L) // описываем функцию GetParamsByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetParamsByOp( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -660,7 +660,7 @@ static int GetParamsByOp(lua_State *L) // описываем функцию GetParamsByOp на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountParamsByOp(lua_State *L) // описываем функцию GetCountParamsByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountParamsByOp( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -672,7 +672,7 @@ static int GetCountParamsByOp(lua_State *L) // описываем функцию GetCountParamsB
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbParamByOp(lua_State *L) // описываем функцию GetNumbParamByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbParamByOp( %ld, %ld )", arg1, arg2 );
@@ -685,7 +685,7 @@ static int GetNumbParamByOp(lua_State *L) // описываем функцию GetNumbParamByOp 
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNameNumbParamByOp(lua_State *L) // описываем функцию GetNameNumbParamByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNameNumbParamByOp( %ld, %ld )", arg1, arg2 );
@@ -698,7 +698,7 @@ static int GetNameNumbParamByOp(lua_State *L) // описываем функцию GetNameNumbPa
 ////////////////////////////////////////////////////////////////////////////////
 static int GetValNumbParamByOp(lua_State *L) // описываем функцию c_GetValNumbParamByOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetValNumbParamByOp( %ld, %ld )", arg1, arg2 );
@@ -713,7 +713,7 @@ static int GetValNumbParamByOp(lua_State *L) // описываем функцию c_GetValNumbPa
 ////////////////////////////////////////////////////////////////////////////////
 static int CanExecOpCalc(lua_State *L) // описываем функцию CanExecOpCalc на С
 {
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_CanExecOpCalc( %ld, %ld )", arg1, arg2 );
@@ -782,7 +782,7 @@ static int LoadFileNameParamsVertices(lua_State *L) // описываем функцию LoadFil
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountCalcs(lua_State *L) // описываем функцию GetCountCalcs на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountCalcs()" );
  APM //-------------------------------------------------------------------------
@@ -794,7 +794,7 @@ static int GetCountCalcs(lua_State *L) // описываем функцию GetCountCalcs на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbOpInput(lua_State *L) // описываем функцию GetNumbOpInput на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbOpInput( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -806,7 +806,7 @@ static int GetNumbOpInput(lua_State *L) // описываем функцию GetNumbOpInput на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbOpOutput(lua_State *L) // описываем функцию GetNumbOpOutput на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbOpOutput( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -818,7 +818,7 @@ static int GetNumbOpOutput(lua_State *L) // описываем функцию GetNumbOpOutput на
 ////////////////////////////////////////////////////////////////////////////////
 static int GetNumbOp(lua_State *L) // описываем функцию GetNumbOp на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetNumbOp(%ld)", arg1 );
  APM //-------------------------------------------------------------------------
@@ -832,7 +832,7 @@ static int GetNumbOp(lua_State *L) // описываем функцию GetNumbOp на С
 ////////////////////////////////////////////////////////////////////////////////
 static int TestCanExecAllOpsCalcs(lua_State *L) // описываем функцию TestCanExecAllOpsCalcs на С
 {
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_TestCanExecAllOpsCalcs( %ld )", arg1 );
  APM //-------------------------------------------------------------------------
@@ -889,7 +889,7 @@ static int MessageDialog(lua_State *L) // описываем функцию MessageDialog на С
 static int GetMetricOpByName(lua_State *L) // описываем функцию GetMetricOpByName на С
 {
  char arg2[_512];
- INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  strNcpy(arg2, luaL_checkstring(L, 2)); // получим один аргумент (с проверкой "на строку")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetMetricOpByName(%d,\"%s\")", arg1, arg2);
@@ -903,7 +903,7 @@ static int GetMetricOpByName(lua_State *L) // описываем функцию GetMetricOpByNam
 static int GetMetricEdgeByName(lua_State *L) // описываем функцию GetMetricEdgeByName на С
 {
  char arg3[_512];
- INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+ INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2);
  strNcpy(arg3, luaL_checkstring(L, 3)); // получим один аргумент (с проверкой "на строку")
  APM //-------------------------------------------------------------------------
@@ -917,7 +917,7 @@ static int GetMetricEdgeByName(lua_State *L) // описываем функцию GetMetricEdgeB
 ////////////////////////////////////////////////////////////////////////////////
 static int GetOpByMaxTierLowerPreset(lua_State *L) // описываем функцию GetOpByMaxTierLowerPreset на С
 {
- INT arg = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на число")
+ INT arg = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetOpByMaxTierLowerPreset(%d)", arg );
  APM //-------------------------------------------------------------------------
@@ -986,7 +986,7 @@ static int lCreateProcess(lua_State *L) // описываем функцию lCreateProcess на С
 {
  char arg1[_512];
  strNcpy(arg1, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
- INT arg2 = luaL_checkinteger(L, 2); // получим аргумент (с проверкой "на число")
+ INT arg2 = luaL_checkinteger(L, 2); // получим аргумент (с проверкой "на целое")
  INT arg3 = luaL_checkinteger(L, 3);
  INT arg4 = luaL_checkinteger(L, 4);
  APM //-------------------------------------------------------------------------
@@ -1002,7 +1002,7 @@ static int LuaCallByTimer(lua_State *L) // описываем функцию LuaCallByTimer на С
 {
  char arg1[_1024];
  strNcpy(arg1, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
- INT arg2 = luaL_checkinteger(L, 2); // получим аргумент (с проверкой "на число")
+ INT arg2 = luaL_checkinteger(L, 2); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_LuaCallByTimer(\"%s\",%d,)", arg1, arg2 );
  APM //-------------------------------------------------------------------------
@@ -1014,7 +1014,7 @@ static int LuaCallByTimer(lua_State *L) // описываем функцию LuaCallByTimer на С
 ////////////////////////////////////////////////////////////////////////////////
 static int CalcAverMeanOpsOnTiers(lua_State *L) // описываем функцию c_CalcAverMeanOpsOnTiers на С
 {
-// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
 //     arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_CalcAverMeanOpsOnTiers()" );
@@ -1027,7 +1027,7 @@ static int CalcAverMeanOpsOnTiers(lua_State *L) // описываем функцию c_CalcAverM
 ////////////////////////////////////////////////////////////////////////////////
 static int CalcStdDevOpsOnTiers(lua_State *L) // описываем функцию c_CalcStdDevOpsOnTiers на С
 {
-// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на число")
+// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
 //     arg2 = luaL_checkinteger(L, 2);
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_CalcStdDevOpsOnTiers()" );

@@ -47,10 +47,10 @@ short i_env_StopSessionLua = -1; // что возвращает setjmp (вызов longjmp коррект
 //
 #include <clocale> // для setlocale()
 //
-#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // безапасный вариант 
+#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // безопасный вариант 
 //
 //#include "./lua/src/lua.hpp"
-extern "C" // Lua - исходные тексты на ANSI С
+extern "C" // Lua - исходные тексты на "чистом С"
 {
 #include "./lua/src/lua.h"
 #include "./lua/src/lauxlib.h"
