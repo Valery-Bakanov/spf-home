@@ -387,7 +387,7 @@ extern "C" // Lua - исходные тексты на "чистом С"
 #include "./lua/src/lauxlib.h"
 #include "./lua/src/lualib.h"
 }
-#include "./lua/src/lua_src.c"
+#include "./lua/src/lua_src.c" // все С-исходники Lua...
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
 void  __fastcall stackDump (lua_State *L, char *s); // выдаёт содержимое стека Lua
