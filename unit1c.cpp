@@ -47,15 +47,7 @@ short i_env_StopSessionLua = -1; // что возвращает setjmp (вызов longjmp коррект
 //
 #include <clocale> // для setlocale()
 //
-#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // безопасный вариант 
-//
-//#include "./lua/src/lua.hpp"
-extern "C" // Lua - исходные тексты на "чистом С"
-{
-#include "./lua/src/lua.h"
-#include "./lua/src/lauxlib.h"
-#include "./lua/src/lualib.h"
-}
+#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // безопасный вариант
 //
 using namespace std; // стандартное пространство имён
 //
@@ -341,7 +333,6 @@ bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное имя файла п
 void  __fastcall PutScriptFileName(); // выдаёт имя файла скрипта на форму
 void  __fastcall DisplayMessage(char* Level, char* funcName, char* Text, INT Err); // выдать сообщение Text уровня Level
 void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в позиции курсора
-void  __fastcall stackDump (lua_State *L, char *s); // выдаёт содержимое стека Lua
 char* __fastcall ReplManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
 void  __fastcall DelSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
 void  __fastcall DelAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
@@ -350,13 +341,9 @@ void  __fastcall WriteConfig();
 bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
 bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаёт (на основе ИГА из массива FileName ЯПФ в "верхней" канонической форме
 bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаёт (на основе ИГа из файла FileName ЯПФ в "нижней" канонической форме
-static      void LuaHook( lua_State *L, lua_Debug *ar); // функция перехватчик выполнения строк Lua
 void  __fastcall GetFileFromServer( char FileName[] ); // получить файл с сервера
 void  __fastcall Copy_Stdout_To_Memo(); // для вывода stdout в M0_stdout
 //
-static int       errorHandler( lua_State* L ); // функция - обработчик ошибок
-static int       luaPanic( lua_State* L ); // функция паники Lua
-int   __fastcall lua_pcall_Debug( lua_State* L, int args, int results ); // начало исполнения Lua с отладкой
 void  __fastcall ShowBreakpoint( char *str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
 //
 void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
@@ -391,10 +378,28 @@ bool PutParamsTiersOnTextFrame = FALSE; // если трудно обдумать быстро бегущие д
 bool luaExecute = FALSE; // флаг времени выполнения Lua (при выполнеЕнии TRUE, иначе FALSE)
 //
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//#include "./lua/src/lua.hpp"
+extern "C" // Lua - исходные тексты на "чистом С"
+{
+#include "./lua/src/lua.h"
+#include "./lua/src/lauxlib.h"
+#include "./lua/src/lualib.h"
+}
 #include "./lua/src/lua_src.c"
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
+void  __fastcall stackDump (lua_State *L, char *s); // выдаёт содержимое стека Lua
+int   __fastcall lua_pcall_Debug( lua_State* L, int args, int results ); // начало исполнения Lua с отладкой
+static void LuaHook( lua_State *L, lua_Debug *ar); // функция перехватчик выполнения строк Lua
+static int  errorHandler( lua_State* L ); // функция - обработчик ошибок
+static int  luaPanic( lua_State* L ); // функция паники Lua
+//
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest))-strlen(dest)-5) // безопасное добавление src к dest
 //
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
