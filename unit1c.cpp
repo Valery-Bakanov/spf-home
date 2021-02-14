@@ -744,6 +744,8 @@ void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
  {case IDYES: fclose( fptr_protocol ); // закрыли файл протокола исполнения скрипта
               WriteConfig(); // сохранили файл протокола
 //
+              StopLuaScript( Sender ); // остановить выполнение скрипта
+//
               if( L )
                lua_close( L ); // закрыть Lua
 //
