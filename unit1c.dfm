@@ -1,12 +1,12 @@
 object F1: TF1
-  Left = 663
-  Top = 93
-  Width = 775
-  Height = 625
+  Left = 100
+  Top = 100
+  Width = 900
+  Height = 600
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   BorderIcons = [biSystemMenu, biMinimize, biHelp]
-  Caption = ' SPF@home client ver. 4.3 (2015-2020)'
+  Caption = ' SPF@home client ver. 4.4 (2015-2021'
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -68,8 +68,8 @@ object F1: TF1
   end
   object SB: TStatusBar
     Left = 0
-    Top = 547
-    Width = 759
+    Top = 522
+    Width = 884
     Height = 19
     Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080' '#1103#1086' '#1089#1086#1089#1090#1086#1103#1085#1080#1080' '#1089#1080#1089#1090#1077#1084#1099
     AutoHint = True

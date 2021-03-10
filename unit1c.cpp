@@ -357,8 +357,8 @@ void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в 
 char* __fastcall ReplManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
 void  __fastcall DelSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
 void  __fastcall DelAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
-void  __fastcall ReadConfig(); // читать и записывать файл конфигурации
-void  __fastcall WriteConfig();
+void  __fastcall Read_Config(); // читать и записывать файл конфигурации
+void  __fastcall Write_Config();
 bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
 bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаёт (на основе ИГА из массива FileName ЯПФ в "верхней" канонической форме
 bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаёт (на основе ИГа из файла FileName ЯПФ в "нижней" канонической форме
@@ -404,7 +404,7 @@ bool luaExecute = FALSE; // флаг времени выполнения Lua (при выполнеЕнии TRUE, и
 #include "API_lua.cpp" // описание на С вызовов Lua
 #include "LMD_c.cpp" // описание на С LMD-пакетов
 //
-const int minW_F1=775, minH_F1=600; // минимальные размеры главной формы F1
+const int minW_F1=900, minH_F1=600; // минимальные размеры главной формы F1
 extern const int minW_F2, minH_F2; // минимальный размер дочерной формы F2
 ////////////////////////////////////////////////////////////////////////////////
 //int outGlobal = 0; // глобал для запоминания, из какого MenuItem вызван CD0 (перенесено в LMD_c.cpp)
@@ -413,13 +413,14 @@ REAL partHeightStdout[3] = {0.2, 0.1, 0.5}; // доля высоты окна stdout (текущая,
 ////////////////////////////////////////////////////////////////////////////////
 int FileSizeFromServer; // размер файла при выгрузке с сервера
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+//
 __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале всего..!
 {
- struct timeb t;
-// ftime( &t ); // взять время c 01.01.1970 года
-// setlocale(Lc_ALL, "Russian"); // настройка на кириллицу ( должна быть десятичная ЗАПЯТАЯ !!! )
-// CreateUpperSPF->Caption = "abc\x19";
+//
+ F1->Position = poDefault; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+ time_t t;
+//
  DecimalSeparator = '.'; // разделитель целой и десятичной частей - точка
 //
  strNcpy( FileNameINI, ChangeFileExt(ParamStr(0), ".ini").c_str()); // INI-файл в текущем каталоге
@@ -742,7 +743,7 @@ void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
                        "Предупреждение",
                         MB_YESNO | MB_ICONWARNING | MB_TOPMOST))
  {case IDYES: fclose( fptr_protocol ); // закрыли файл протокола исполнения скрипта
-              WriteConfig(); // сохранили файл протокола
+              Write_Config(); // сохранили файл протокола
 //
               StopLuaScript( Sender ); // остановить выполнение скрипта
 //
@@ -810,7 +811,7 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
 void __fastcall TF1::SaveScriptToCurrentFile(TObject *Sender)
 { // сохранить скрипт в текущий файл без вопросов
  TED0->SaveToFile( ScriptFileName );
- WriteConfig(); // сохранить файл конфигурации
+ Write_Config(); // сохранить файл конфигурации
 } //-------SaveScriptDirect-----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1018,7 +1019,7 @@ void __fastcall DisplayMessage( char* Level, char* funcName, char* Text, INT Err
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall ReadConfig()
+void __fastcall Read_Config()
 { // восстанавливает данные в файл конфигурации
 //
  TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniIFile
@@ -1046,7 +1047,7 @@ void __fastcall ReadConfig()
 //
  F1->Top    = tINI->ReadInteger(RWC.Sect2, RWC.Sect2_Var1,   20); // положение и размеры главной формы
  F1->Left   = tINI->ReadInteger(RWC.Sect2, RWC.Sect2_Var2,   20);
- F1->Width  = tINI->ReadInteger(RWC.Sect2, RWC.Sect2_Var3,  minW_F1);
+ F1->Width  = tINI->ReadInteger(RWC.Sect2, RWC.Sect2_Var3, minW_F1);
  F1->Height = tINI->ReadInteger(RWC.Sect2, RWC.Sect2_Var4, minH_F1);
 //
  partHeightStdout[0] = StrToFloat(tINI->ReadString(RWC.Sect2, RWC.Sect2_Var5, "0.2")); // относительная высота окна stdout
@@ -1098,11 +1099,11 @@ void __fastcall ReadConfig()
  F1->mnuColorScheme ->Caption = Format("Цветовая схема: %s[.%s]",   OPENARRAY(TVarRec, (AnsiString(ActiveColorScheme),  extSchemes) ) );
  F1->mnuSyntaxScheme->Caption = Format("Cхема синтаксиса: %s[.%s]", OPENARRAY(TVarRec, (AnsiString(ActiveSyntaxScheme), extSchemes) ) );
 //
-} // ----- конец ReadConfig ----------------------------------------------------
+} // ----- конец Read_Config ----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall WriteConfig()
+void __fastcall Write_Config()
 { // сохраняет данные в файл конфигурации
 //
  TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniIFile
@@ -1151,31 +1152,22 @@ void __fastcall WriteConfig()
 //
  delete tINI; // уничтожили объект - более не нужен !...
 //
-// MessageBeep( MB_OK );
+ MessageBeep( MB_OK ); // звуковое предупреждение...
 //
-} // ----- конец WriteConfig -----------------------------------
+} // ----- конец Write_Config -----------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::OnResize_F1(TObject *Sender)
 { // выполняется при каждом изменении размера главного окна
- int W = F1->Width, // взяли текущий размер главного окна программы
-     H = F1->Height;
 //
- if( W < minW_F1 ) // окно не может быть менее minW_F1 * minH_F1
-  W = minW_F1;
-//
- if( H < minH_F1 ) // ...
-  H = minH_F1;
-//
-// теперь можем установить размеры главного лкна и всех подокон
-//
- F1->Width  = W; // новый размер окна программы
- F1->Height = H;
+// теперь можем установить размеры главного окна проиложения
+ F1->Width  = max( F1->Width,  minW_F1 ); // новый размер главного окна F1
+ F1->Height = max( F1->Height, minH_F1 );
 //
 // внутренние компоненты окна F1
 //
- PN0->Width  = F1->Width  -  24 ; // контейнер текстовых фреймов
+ PN0->Width  = F1->Width  -  24 ; // окно-контейнер текстовых фреймов
  PN0->Height = F1->Height - 137 ;
 //
  PN->Width = PN0->Width; // полоска управляющих кнопок
@@ -1209,7 +1201,7 @@ void __fastcall TF1::SelectFont(TObject *Sender)
 // F2->M1->Font->Assign(FD0->Font); // фонт окна текстового вывода
    TEV0->SetFocus(); // фокус - на окно редактирования
    IndicateColRowNumberOfEV0(); // выводим номер строки и столбца под курсором
-   WriteConfig(); // сохранить настройки...
+   Write_Config(); // сохранить настройки...
   }
 //
 } //----------------------------------------------------------------------------
@@ -1235,7 +1227,7 @@ void __fastcall TF1::SelectColorBackGround(TObject *Sender)
  {
   color_BackGround = CD0->Color; // новый цвет фона
   TEV0->Color = color_BackGround;
-  WriteConfig(); // запомним...
+  Write_Config(); // запомним...
  }
 } //----------------------------------------------------------------------------
 
@@ -1366,7 +1358,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
  F2->Show(); // показать окно формы F2 в НЕМОДАЛЬНОМ РЕЖИМЕ
  F2->L_TMM->Caption = TitleF2; // заголовок окна
 // -----------------------------------------------------------------------------
- ReadConfig(); // читать файл конфиг.(параметры фонта и посл. файла Lua-скпипта)
+ Read_Config(); // читать файл конфиг.(параметры фонта и посл. файла Lua-скпипта)
 //
  strNcpy( str, ScriptFileName ); // запомнили имя файла скрипта из Config'а
 //
@@ -1377,12 +1369,12 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 //
 //  flag = TRUE; // автоматически стартовать Lua-скрипт
 //
- if( FileExists( ScriptFileName ) ) // если файл скрипта существует...
- {
-  PutScriptFileName(); // вывод на форму
-  TED0->LoadFromFile( ScriptFileName );// загрузить в TR0
+  if( FileExists( ScriptFileName ) ) // если файл скрипта существует...
+  {
+   PutScriptFileName(); // вывод на форму
+   TED0->LoadFromFile( ScriptFileName );// загрузить в TR0
+  } // конец if FileExists..
  } // конец if ParamCount...
- }
 //
  else
 //
@@ -1413,15 +1405,12 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 ////////////////////////////////////////////////////////////////////////////////
   fclose( fptr_protocol ); // закрыли файл протокола исполнения скрипта
 //
-// WriteConfig(); // сохранили файл протокола
-//
-// fclose( fptr_stdin );
   DeleteFile( stdinFileName );  // временный файл Lua-скрипта ( stdin )
    fclose( fptr_stdout );
   DeleteFile( stdoutFileName ); // stdout
    fclose( fptr_stderr );
   DeleteFile( stderrFileName ); // stderr
-
+//
 // --- конец без показа окна редактирования ------------------------------------
   F2->Close(); // закрыли F2 - форму выдачи данных
 //
@@ -2099,7 +2088,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
  Master_Timer-> Enabled = TRUE; // запустили Master_Timer
  flag_Busy = FALSE; // вызов Lua по таймеру разрешён
 //
- WriteConfig(); // сохранить файл конфигурации
+ Write_Config(); // сохранить файл конфигурации
 //
  MessageBeep( MB_ICONEXCLAMATION );
 //
