@@ -14,7 +14,7 @@ char Test_symb[]="=/: |";
 //
 #define strEndZero(s) s[strlen(s)]='\0' // добавление '\0' в конец строки str
 //
-#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // безопасное копирование
+#define strNcpy(d,s)  strncpy(d,s,sizeof(d)) // безопасное копирование
 //
 ////////////////////////////////////////////////////////////////////////////////
 // файл API_func.cpp ===========================================================
@@ -24,7 +24,7 @@ char Test_symb[]="=/: |";
 //#define TEST_PRINT // если определено - тестова€ печать
 ////////////////////////////////////////////////////////////////////////////////
 //
-#define APM Application->ProcessMessages(); // дать поработать Windows
+#define APM Application->ProcessMessages(); // дать поработать Windows ---------
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -570,12 +570,13 @@ INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
-
+//
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по общему списку дуг между операторами
   if ( (Op1 == Edges(0,iEdge)) && (Op2 == Edges(1,iEdge)) ) // така€ дуга в списке имеетс€...
    return ( TRUE );
-
+//
  return ( FALSE );
+// 
 } // --- конец c_IsOpsHaveEdge -------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1030,6 +1031,7 @@ bool __fastcall c_IsOpDependOnlyAboveTiers(INT toOp, INT Tier)
 // --- ищем, ќ“  ј »’ операторов зависит toOp ----------------------------------
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам графа...
  {
+//
   if( Edges(1,iEdge) == toOp ) // нашли (очередную) дугу к оператору toOp
   {
    fromOp = Edges(0,iEdge); // нашли fromOp, соответствующий заданному toOp
@@ -1064,6 +1066,7 @@ INT __fastcall GetCountInOp(INT toOp, INT Numb)
 //
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам графа
  {
+//
   if( Edges(1,iEdge) == toOp )  // нашли дугу, ¬’ќƒяў”ё в нужный оператор toOp
    nIn ++ ;
   if( nIn == Numb ) // если эта дуга дл€ toOp €вл€етс€ Numb-той...
@@ -1090,6 +1093,7 @@ INT __fastcall GetCountOutOp(INT fromOp, INT Numb)
 //
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам графа
  {
+//
   if( Edges(0,iEdge) == fromOp )  // нашли дугу, ¬’ќƒяў”ё в нужный оператор fromOp
    nOut ++ ;
   if( nOut == Numb ) // если эта дуга дл€ fromOp €вл€етс€ Numb-той...
@@ -1130,6 +1134,7 @@ INT __fastcall c_GetMaxTierMaybeOp(INT Op)
 // --- у оператора Op имеетс€ GetInToOp(Op) ¬’ќƒЌџ’ (In) дуг... ищем их!
  for(INT iEdge=1; iEdge<=nEdges;  iEdge++) // по всем дугам в графе...
  {
+//
   if ( Edges(0,iEdge) != Op ) // неинтересно - нужна така€ дуга, где оператор Op €вл€етс€ ¬џ’ќƒ€ў»ћ...
    continue;
 //
@@ -1166,6 +1171,7 @@ INT __fastcall c_GetMinTierMaybeOp(INT Op)
 // --- у оператора Op имеетс€ GetInToOp(Op) ¬’ќƒЌџ’ (In) дуг... ищем их!
  for(INT iEdge=1; iEdge<=nEdges;  iEdge++) // по всем дугам в графе...
  {
+//
   if ( Edges(1,iEdge) != Op ) // неинтересно - нужна така€ дуга, где оператор Op €вл€етс€ ¬’ќƒ€ў»ћ...
    continue;
 //
@@ -1610,7 +1616,7 @@ INT __fastcall c_GetCountInEdgesByOp(INT Op)
 //
  for(INT i=0; i<=1; i++) // проверка наличи€ Op в списке операторов
   for(iEdge=1; iEdge<=nEdges; iEdge++)
-   if(Op == Edges(i,iEdge))
+   if( Op == Edges(i,iEdge) )
     goto find_Op;
 //
  return ERR_IN_DATA; // оператор Op не входит в список существующих
@@ -3463,27 +3469,27 @@ INT __fastcall c_CanExecOpCalc(INT Op, INT Calc)
       flagNameParam = FALSE; // есть ли совпадающие имена параметров
  REAL ValOp, minValCalc, maxValCalc; // значени€ параметров
  char NameParamOp[_512], NameParamCalc[_512]; // им€ параметров ќѕ≈–ј“ќ–ј и ¬џ„»—Ћ»“≈Ћя
-
+//
  if( !strlen( sOps ) || // строка параметров ќѕ≈–ј“ќ–ј Op пуста€...
      !nOp ) // нет параметров ќѕ≈–ј“ќ–а Op
   return maxRet ;
-
+//
  if( !strlen( sCalcs ) || // строка параметров ¬џ„»—Ћ»“≈Ћя Calc пуста€...
      !nCalc ) // нет параметров ¬џ„»—Ћ»“≈Ћ≈…
   return -maxRet ;
-
+//
  for( iOp=1; iOp<=nOp; iOp++ ) // цикл по параметрам ќѕ≈–ј“ќ–ј
  {
   APM // -----------------------------------------------------------------------
-
+//
   strNcpy( NameParamOp, c_GetNameNumbParamByOp( iOp, Op ) ); // запомнили...
-
+//
   for( iCalc=1; iCalc<=nCalc; iCalc++ ) // цикл по параметрам ¬џ„»—Ћ»“≈Ћя
   {
    APM // ----------------------------------------------------------------------
-
+//
    strNcpy( NameParamCalc, c_GetNameNumbParamByCalc( iCalc, Calc ) ); // запомнили...
-
+//
 // --- совпадает ли им€ параметра ќѕ≈–ј“ќ–ј и именем параметра ¬џ„»—Ћ»“≈Ћя ? ---
    if( !strcmp( NameParamOp, NameParamCalc ) ) // совпадение = 0
    { // обрабатываем случай —ќ¬ѕјƒеЌ»я по имени параметра...
@@ -3491,18 +3497,18 @@ INT __fastcall c_CanExecOpCalc(INT Op, INT Calc)
     ValOp      = c_GetValNumbParamByOp( iOp, Op ); // значение параметра Op
     minValCalc = c_GetMinValNumbParamByCalc( iCalc, Calc ); // значение min параметра Calc
     maxValCalc = c_GetMaxValNumbParamByCalc( iCalc, Calc ); // значение max параметра Calc
-
+//
 // --- сравниваем значени€ параметра по величине -------------------------------
     if( ValOp>=min(minValCalc,maxValCalc) && ValOp<=max(minValCalc,maxValCalc) ) // входит в диапазон...
     // по параметру с именем NameParamOp = NameParamCalc получили "¬џѕќЋЌ≈Ќ»≈ ¬ќ«ћќ∆Ќќ"
      countEq ++ ;
    } // конец if !strcmp (по именам ѕј–јћ≈“–ќ¬)
-
+//
   } // конец for iCalc (по ¬џ„»—Ћ»“≈Ћяћ)
  } // конец for iOp (по ќѕ≈–ј“ќ–јћ)
-
+//
  return ( countEq == nOp ) ? countEq : -countEq ; // число совпадений по параметрам
-
+//
 } // --- конец c_—anExecOpCalc -------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4153,10 +4159,13 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] 
   strNcpy( sN, "" ); // очистили строку параметров диапазона €русов с "дном" в виде €руса iBot
   l = 0; // число параметров данной строки
 //
-  for(i=0; i<iBottom; i++) // по €русам яѕ‘, не ЅоЋ№Ў»ћ (включающим) iBot
+  for(i=0; i<iBottom; i++) // по €русам яѕ‘, не бќльшим (включающим) iBot
   {
    for(j=1; j<=c_GetCountOpsOnTier(i); j++) // по операторам по €русе i
    {
+//
+    APM // дать поработать Wimdows ---------------------------------------------
+//
     from_Op = c_GetOpByNumbOnTier(j,i); // получили номер вершины, из которой ¬џ’ќƒя“ дуги
     to_Op = c_GetOpByMaxTierLowerPreset( from_Op ); // если выходных дуг нет вообще - возвращаетс€ ERR_COMMON
 //
@@ -4186,6 +4195,7 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] 
 //
    } // конец по j (номерам операторов на €русе i)
 //
+
   } // конец цикла по i (по всем €русам яѕ‘)
 //
  if( iBottom == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
@@ -4732,21 +4742,18 @@ ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char str[_4096], w0[_256], w1[_256], w2[_512], w3[_256];
+ char str[_4096], w0[_256], w1[_256], w2[_512], w3[_512]; // рабочие массивы (строки)
  REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
  INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
       Op,  dTiers,  sdOps = 0, sdTiers = 0;
-// char s[128];
 //
  if( !isTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-//
-// nOps = c_GetCountOps(); // общее число операторов ("на вс€кий случай")
 //
  AverWidth = c_CalcAverMeanOpsOnTiers(); // средн€€ ширина яѕ‘ по €русам кроме ¬’ќƒЌќ√ќ (нулевого)
 //
@@ -4779,6 +4786,7 @@ INT __fastcall c_PutParamsTiers()
 //
  INT  OpFrom, OpTo, nOutEdges,
       sDump = 0,    sEdges = 0; // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»
+//
 // --- вычисл€ем —–≈ƒЌёё ƒЋ»Ќ” ƒ”√» --------------------------------------------
  for( iTier=1; iTier<=nTiers-1; iTier++ ) // по всем €русам яѕ‘ (кроме самого нижнего)
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
@@ -4795,7 +4803,18 @@ INT __fastcall c_PutParamsTiers()
 //
   } // конец цикла for( iOp=1...
 //
-// === начало обработки информации о времени жижни данных между €русами яѕ‘ ====
+// === конец вычислени€ параметров яѕ‘, вариативности, средней длины дуги
+//
+// === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+ strcpy( w3, "\0" ); // обнулим дл€ вывода при !PutParamsDataLiveOnTextFrame
+//
+ if( PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
+ {
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //
  INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
      maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
@@ -4843,24 +4862,29 @@ INT __fastcall c_PutParamsTiers()
  else
   sprintf( w3,"min=%d(%d/%d), ", minM,n1n,n2n );
 //
- strcat( w2,w3 ); // "слили" w3 в w2
-//
+ strcat( w2,w3 ); // в w2 добавили s3
  sprintf( w3,"средн.арифм.=%.4g", 1.0*averTLD/n );
-//
- strcat( w2,w3 ); // "слили" w3 в w2
-//
-// t_printf( "=-= w2= %s =-= %s %s", w2, __FUNC__, __FILE__ ); /////////////////
+ strcat( w2,w3 ); // w2 -> врем€ "жизни данных": max=1000(1/2), min=100(10/$), средн.арифм.=518.2
+ strcpy( w3, "\246 " ); // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
+ strcat( w3, w2 ); // подготовили строку дл€ вывода на F2
 //
 // === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
 //
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+ } // выполнение или обход вычислени€ и вывода в F2 и в файл протокола времени жизни данных 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
 // --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
- snprintf(str,sizeof(str), // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
+//
+ snprintf(str,sizeof(str),
 "ќператоров=%d, дуг=%d, €русов=%d \246 средн. опер./€рус=%.4g, %s \
 \246 операторов на €русе/€рус (min:max)=%d/%d:%d/%d \
 \246 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
 \246 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
-\246 средн.арифм. длина дуги=%.4g €русов яѕ‘ \
-\246 %s",
+\246 средн.арифм.длина дуги=%.4g €русов яѕ‘ \
+%s",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
@@ -4869,14 +4893,23 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sdTiers / nOps, // Vt
   (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
   (REAL)sDump / sEdges ,
-  w2 );
+  w3 );
+//
  F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
 //
+//
+ strcpy( w3, "\n" );
+ strcat( w3, w2 ); // подготовили строку дл€ вывода в файл протокола
+ if( !PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
+  strcpy( w3, "\0" );
+//
 // ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
+//
  snprintf(str,sizeof(str),
- "\nќператоров=%d, дуг=%d, €русов=%d \nсредн. опер./€рус=%.4g, %s\nоператоров на €русе/€рус (min:max)\
-=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\nсредн.арифм. длина дуги=%.4g €русов яѕ‘\n%s\n\n",
+"\nќператоров=%d, дуг=%d, €русов=%d \nсредн. опер./€рус=%.4g, %s\nоператоров на €русе/€рус (min:max)\
+=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\
+\nсредн.арифм. длина дуги=%.4g €русов яѕ‘%s\n\n",
   nOps, nEdges, nTiers, AverWidth, w0,
   Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
   Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
@@ -4885,7 +4918,7 @@ INT __fastcall c_PutParamsTiers()
   (REAL)sdTiers / nTiers, // Vt
   (REAL)sdOps*sdTiers / (nOps*nTiers), // Vot
   (REAL)sDump / sEdges ,
-  w2 ) ;
+  w3 ) ;
 //
  if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
   t_printf( str ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода

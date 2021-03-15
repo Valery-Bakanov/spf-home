@@ -292,7 +292,7 @@ char TitleF2[_256] = " Текстовое представление информации"; // заголовок F2
 struct { // ReadWriteConfig (имена секций фала конфигурации системы)
 char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_Var6,*Sect1_Var7,*Sect1_Var8,*Sect1_Var9,
      *Sect2, *Sect2_Var1,*Sect2_Var2,*Sect2_Var3,*Sect2_Var4,*Sect2_Var5,
-     *Sect3, *Sect3_Var1,*Sect3_Var2,*Sect3_Var3,*Sect3_Var4,*Sect3_Var5,
+     *Sect3, *Sect3_Var1,*Sect3_Var2,*Sect3_Var3,*Sect3_Var4,*Sect3_Var5,*Sect3_Var6,
      *Sect4, *Sect4_Var1,
      *Sect5, *Sect5_Var1,*Sect5_Var2,*Sect5_Var3,*Sect5_Var4,*Sect5_Var5,*Sect5_Var6,*Sect5_Var7,*Sect5_Var8,
      *Sect6, *Sect6_Var1 ;
@@ -302,7 +302,7 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
  "Pos_F1", // [2] положение формы главного окна
   "Top","Left","Width","Height","partheightStdout",
  "Pos_F2", // [3] оложение формы дочернего окна
-  "Top","Left","Width","Height","PutParamsTiersOnTextFrame",
+  "Top","Left","Width","Height","PutParamsTiersOnTextFrame","PutParamsDataLiveOnTextFrame",
  "LastScript", // [4] последний файл скрипта
   "ScriptFileName",
  "LMD_EditViewColors", // [5] цвета окна редактирования Lua
@@ -393,12 +393,16 @@ WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" для компон
            ActiveSyntaxScheme = "defSyntaxScheme";
 char extSchemes[] = "xml"; // расширение файлов схем цветов и синтаксиса ( БЕЗ ТОЧКИ )
 ////////////////////////////////////////////////////////////////////////////////
-bool PutParamsTiersOnTextFrame = FALSE; // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
+bool PutParamsTiersOnTextFrame = FALSE, // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
+     PutParamsDataLiveOnTextFrame = FALSE; // выводить ли данные о времени жиэни в окно F2
 // при TRUE выводится в текстовое окно то же самое, что в нижней части текстового окна вывода
 ////////////////////////////////////////////////////////////////////////////////
 bool luaExecute = FALSE; // флаг времени выполнения Lua (при выполнеЕнии TRUE, иначе FALSE)
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest))-strlen(dest)-5) // безопасное добавление src к dest
+//
+char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n", // начальная строка для Lua
+     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel.on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
 //
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
 #include "API_lua.cpp" // описание на С вызовов Lua
@@ -437,8 +441,6 @@ __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале вс
  Mem_EV = (ev*)   calloc( i_Events, sizeof(ev) ); // массив событий
 // стандартные имена файлов ----------------------------------------------------
  strNcpy( _FileNameEdges, ChangeFileExt( _FileNameEdges, extEdges ).c_str() ); // расширение - extEdges
-//
- F1->Position = poDefault; // чтобы не мешала позиционированию...
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -861,10 +863,9 @@ void __fastcall TF1::CreateNewScript(TObject *Sender)
    } //конец блока SWITCH
   } // конец if
 //
- TED0->Clear(); // очистить R0
- snprintf(str,sizeof(str), "-- новый скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n-- %s\n--\n",
-              PutDateTimeToString(0));
+ TED0->Clear(); // очистить R0               snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка Lua
  TED0->Lines->Add( str ); // добавить строку (в RichEdit работает '\n')
+
  IndicateColRowNumberOfEV0(); // выводим номер строки и столбца под курсором
 //
 } //----конец CreaneNewScript --------------------------------------------------
@@ -1073,6 +1074,7 @@ void __fastcall Read_Config()
  TEV0->Color                     = tINI->ReadInteger(RWC.Sect5, RWC.Sect5_Var8, clWhite);
 //
  PutParamsTiersOnTextFrame       = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var5, 0); // выводить ли параметры ЯПФ в текстовый фрейм
+ PutParamsDataLiveOnTextFrame    = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var6, 0); // выводить ли параметры времени жизни данных в F2
 //
  F1->Master_Timer->Interval      = tINI->ReadInteger(RWC.Sect6, RWC.Sect6_Var1, 10); // интевал главного таймера (мсек)
 //
@@ -1387,8 +1389,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
  else
  {
   TED0->Clear(); // очистить TR0
-  snprintf(str,sizeof(str), "-- %s: новый скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n--\n",
-               PutDateTimeToString(0));
+  snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка дляч Lua
   TED0->Lines->Add( str ); // добавить строку
  }
 //
@@ -1929,8 +1930,6 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  nOpsInput  = Tiers( 0, 0 ); // число ВХОДНЫХ вершин (операторов)
  nOpsOutput = Tiers( nTiers, 0 ); // число ВЫХОДНЫХ вершин (операторов)
 //
-// c_PutParamsTiers(); // вывод параметров графа и его ЯПФ на главную форму и в файл протокола
-//
  t_printf( "\n-I- %s(): ЯПФ графа в \"верхней\" канонической форме по файлу %s успешно построена -I-", __FUNC__, FileNameEdges );
 //
  isTiers = TRUE ; // массив Tiers[][] сформирован..!
@@ -1947,7 +1946,6 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 // - вычисляет общее количество операторов в информационном графе алгоритма
 // - верифицирует корректность "нижней" формы ЯПФ (условие невозможности перенОса ВСЕХ операторов "вверх")
  UINT iTier, jOp, Op, errCount=0;
-// char str[_2048], w[_256];
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -2078,8 +2076,6 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 //
  TED0->SaveToFile(ScriptFileName); // сохранить скрипт в текущий файл без вопросов (без полного пути...)
 //
-// Delay ( 100 ); // ждём 0.1 сек...
-//
  ticks = 0; // обнуляем глобальный счётчик тиков
 //
  max_Events = _128; // начальный размер массива Mem_EV
@@ -2089,8 +2085,6 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
  flag_Busy = FALSE; // вызов Lua по таймеру разрешён
 //
  Write_Config(); // сохранить файл конфигурации
-//
- MessageBeep( MB_ICONEXCLAMATION );
 //
  if( luaExecute ) // Lua в данный момент уже выполняется !!!!!!!!!!!!!!!!!!!!!!!
   return;
@@ -2102,6 +2096,9 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 //
  F2->L_GP->Caption = ""; // очистить строки параметров графа
  SetActiveWindow( F2->Handle ); // дочернее окно F2 выдвинуть на передний план
+//
+ t_printf( first_F2, PutDateTimeToString(0) ); // выдача в текстовый фрейм
+ MessageBeep( MB_ICONASTERISK );
 //
 // =============================================================================
  flagHook = FALSE; // "ловушка" отключена
