@@ -784,11 +784,13 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
 //
  if( npTiers == NULL ) // совсем плохо - память в "куче" закончилась
   {
-   snprintf(str,sizeof(str), "Массив ЯРУСОВ (%d) перераспределён на %d x %d = %d элементов...",
-                 flag, _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
+   snprintf(str,sizeof(str), "нехватка памяти для размещения массива Tiers[][] (2). Затребовано %d x %d = %d элементов...",
+                _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
+   isTiers = FALSE ; // массив Tiers[][] не создан...
+   DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+   MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
    MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
-   MessageBeep( MB_OK ); // звуковое предупреждение...
-   return FALSE ;
+   return ERR_NOT_MASSIVE_TIERS ;
   }
 //
  t_printf( "\n-I- Массив ЯРУСОВ (%d) перераспределён на %d x %d = %d элементов -I-",
@@ -1777,6 +1779,8 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
                 _maxTiersPrim+1, _maxOpsOnTierPrim+1, (_maxTiersPrim+1) * (_maxOpsOnTierPrim+1));
   isTiers = FALSE ; // массив Tiers[][] не создан...
   DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
+  MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
@@ -1888,10 +1892,12 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
    if( pTiers == NULL ) // совсем плохо - память в "куче" закончилась
    {
-    snprintf(str,sizeof(str), "нехватка памяти для размещения массива Tiers[][] (2). Затребовано %d x %d = %d элементов...",
-                  _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
+    snprintf(str,sizeof(str), "Нехватка памяти для размещения массива Tiers[][] (2). Затребовано %d x %d = %d элементов...",
+                 _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
     isTiers = FALSE ; // массив Tiers[][] не создан...
     DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+    MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
+    MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
     return ERR_NOT_MASSIVE_TIERS ;
    } // конец if ( npTiers == NULL )
 //
