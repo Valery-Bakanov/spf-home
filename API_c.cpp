@@ -2828,22 +2828,23 @@ INT __fastcall c_GetNumbOp(INT Numb)
  bool flag;
 //
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = FALSE; // сн€ли метку со всех операторов
+   Mem_Edges[iEdges].flag_From =
+   Mem_Edges[iEdges].flag_To   = FALSE; // сн€ли метку со всех операторов
 //
 // === по всем дугам »√ј =======================================================
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
   {
-   if( !Mem_Edges[iEdges].FlagFrom ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
+   if( !Mem_Edges[iEdges].flag_From ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
 // if( ( nW=Edges(0,iEdges) ) > 0 ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
    { // --- вершины метим номерами с минусом -----------------------------------
     nW=Edges(0,iEdges);
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
      if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From"
+      Mem_Edges[jEdges].flag_From == TRUE; // пометили "From"
 //
      if( Edges(1,jEdges) == nW )
-      Mem_Edges[iEdges].FlagTo == TRUE;  // пометили "To" (это лишнее)
+      Mem_Edges[jEdges].flag_To == TRUE;  // пометили "To" (это лишнее)
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 //
    } // конец if( nW > 0 )
@@ -2853,7 +2854,7 @@ INT __fastcall c_GetNumbOp(INT Numb)
 //
    flag = FALSE;
    for(jEdges=1; jEdges<=nEdges; jEdges++) // ищем вхождение -nW
-    if( Mem_Edges[iEdges].FlagTo && Edges(1,jEdges)==nW )
+    if( Mem_Edges[jEdges].flag_To && Edges(1,jEdges)==nW )
 //  if( Edges(1,jEdges) == -nW )
      flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
 //
@@ -2865,17 +2866,17 @@ INT __fastcall c_GetNumbOp(INT Numb)
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-   if( !Mem_Edges[iEdges].FlagTo ) // запомнили ¬’ќƒяў”ё вершину дуги iEdges
+   if( !Mem_Edges[iEdges].flag_To ) // запомнили ¬’ќƒяў”ё вершину дуги iEdges
 // if( ( nW=Edges(1,iEdges) ) > 0 ) // запомнили ¬’ќƒяў”ё вершину дуги iEdges
    { // --- вершины метим номерами с минусом -----------------------------------
     nW=Edges(1,iEdges);
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
      if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From" (это лишнее)
+      Mem_Edges[jEdges].flag_From == TRUE; // пометили "From" (это лишнее)
 //
       if( Edges(1,jEdges) == nW )
-       Mem_Edges[iEdges].FlagTo == TRUE; // пометили "To"
+       Mem_Edges[jEdges].flag_To == TRUE; // пометили "To"
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 //
     iOps ++ ; // счЄтчик ќЅў≈√ќ числа вершин
@@ -2917,7 +2918,8 @@ INT __fastcall c_GetCountOps()
 #ifdef METHOD_OF_CALC_COUNT_OPS //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ////////////////////////////////////////////////////////////////////////////////
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = TRUE; // пометили все операторы
+   Mem_Edges[iEdges].flag_From =
+   Mem_Edges[iEdges].flag_To   = TRUE; // пометили все операторы
 //
 // === по всем дугам »√ј =======================================================
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем nEdges дугам начина€ с #1
@@ -2926,7 +2928,7 @@ INT __fastcall c_GetCountOps()
     continue;
 //
 // обработка случа€ ¬’ќƒяў≈… (From) вершины дуги iEdges
-   if( Mem_Edges[iEdges].FlagFrom ) // запомнили "пом≈ченную" ¬’ќƒяў”ё вершину дуги iEdges
+   if( Mem_Edges[iEdges].flag_From ) // запомнили "пом≈ченную" ¬’ќƒяў”ё вершину дуги iEdges
    {
     nW = Edges(0,iEdges);
     nOps ++ ; // счЄтчик числа вершин (»—’ќƒяў»’ по дугам)
@@ -2934,15 +2936,16 @@ INT __fastcall c_GetCountOps()
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
      if( Edges(0,jEdges) == nW )
-      Mem_Edges[jEdges].FlagFrom = FALSE; // сн€ли метку с вершины "откуда" (From)
+      Mem_Edges[jEdges].flag_From = FALSE; // сн€ли метку с вершины "откуда" (From)
+//
      if( Edges(1,jEdges) == nW )
-      Mem_Edges[jEdges].FlagTo   = FALSE; // сн€ли метку с вершины "куда" (To)
+      Mem_Edges[jEdges].flag_To   = FALSE; // сн€ли метку с вершины "куда" (To)
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 //
    } // конец if( Mem_Edges[iEdges].FlagFrom )
 ////////////////////////////////////////////////////////////////////////////////
 // обработка случа€ ¬џ’ќƒяў≈… (To) вершины дуги iEdges
-   if( Mem_Edges[iEdges].FlagTo ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
+   if( Mem_Edges[iEdges].flag_To ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
    {
     nW = Edges(1,iEdges);
     nOps ++ ; // счЄтчик вершин числа (¬’ќƒяў»’ по дугам)
@@ -2950,9 +2953,10 @@ INT __fastcall c_GetCountOps()
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
      if( Edges(0,jEdges) == nW )
-      Mem_Edges[jEdges].FlagFrom = FALSE; // сн€ли метку с вершины "откуда" (From)
+      Mem_Edges[jEdges].flag_From = FALSE; // сн€ли метку с вершины "откуда" (From)
+//
      if( Edges(1,jEdges) == nW )
-      Mem_Edges[jEdges].FlagTo   = FALSE; // сн€ли метку с вершины "куда" (To)
+      Mem_Edges[jEdges].flag_To   = FALSE; // сн€ли метку с вершины "куда" (To)
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 ////////////////////////////////////////////////////////////////////////////////
    } // конец if( Mem_Edges[iEdges].FlagFTo )
@@ -2962,11 +2966,11 @@ INT __fastcall c_GetCountOps()
 #else //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ////////////////////////////////////////////////////////////////////////////////
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   Mem_Edges[iEdges].FlagTo = TRUE; // пометили  операторы ...To
+   Mem_Edges[iEdges].flag_To = TRUE; // пометили  операторы ...To
 //
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем nEdges дугам начина€ с #1
 // обработка случа€ ¬џ’ќƒяў≈… (To) вершины дуги iEdges
-   if( Mem_Edges[iEdges].FlagTo ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
+   if( Mem_Edges[iEdges].flag_To ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
    {
     nW = Edges(1,iEdges);
     nOps ++ ; // счЄтчик вершин числа (¬’ќƒяў»’ по дугам)
@@ -2974,7 +2978,7 @@ INT __fastcall c_GetCountOps()
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
      if( Edges(1,jEdges) == nW )
-      Mem_Edges[jEdges].FlagTo   = FALSE; // сн€ли метку с вершины "куда" (To)
+      Mem_Edges[jEdges].flag_To   = FALSE; // сн€ли метку с вершины "куда" (To)
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 ////////////////////////////////////////////////////////////////////////////////
    } // конец if( Mem_Edges[iEdges].FlagFTo )
@@ -2990,8 +2994,57 @@ INT __fastcall c_GetCountOps()
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetNumbOpInput(INT Numb)
+{ // возвращает номер Numb оператора (только из ¬’ќƒЌџ’ операторов)
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем Numb-тый оператор (имеем nEdges дуг графа)==========================
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdges, jEdges,
+     iOps = 0 ; // счЄтчик числа вершин графа (операторов)
+ bool flag;
+//
+  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
+   Edges_f(0,iEdges) =
+   Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин
+//
+// === по всем дугам »√ј =======================================================
+  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
+   if( !Edges_f(0,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
+   {
+    nW = Edges(0,iEdges);
+    for(jEdges=1; jEdges<=nEdges; jEdges++)
+    {
+     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
+     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
+    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+//
+   flag = FALSE;
+   for(jEdges=1; jEdges<=nEdges; jEdges++)
+    if( Edges_f(1,jEdges) && Edges(1,jEdges)==nW ) // помечено и равно nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
+    iOps ++ ;
+//
+   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
+    return nW ;
+//
+   } // конец if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
+//
+} // ------ конец c_GetNumbOpInput ---------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetNumbOpOutput(INT Numb)
-{ // возвращает номер Numb оператора (только из ¬џ’ќƒЌџ’) по мере вхождени€ в файл дуг
+{ // возвращает номер Numb вершины (только из ¬џ’ќƒЌџ’ операторов)
 //
  if( !isEdges ) // нет массива Mem_Edges[]
  {
@@ -3003,52 +3056,88 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
 // --- ищем число операторов (имеем nEdges дуг графа)===========================
 ////////////////////////////////////////////////////////////////////////////////
  INT nW, iEdges, jEdges,
-     iOps = 0; // счЄтчик числа вершин
+     iOps = 0 ; // счЄтчик числа вершин
  bool flag;
 //
  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-  Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = FALSE; // сн€ли метку со всех операторов
+  Edges_f(0,iEdges) =
+  Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин (операторов0
 //
 // === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   if( !Mem_Edges[iEdges].FlagTo ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-// if( ( nW=Edges(1,iEdges) ) > 0 ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
+  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
+   if( !Edges_f(1,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
    {
     nW = Edges(1,iEdges);
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
-     if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From"
-//
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[iEdges].FlagTo == TRUE;  // пометили "To" (это лишнее)
-
+     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
+     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
     } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
 //
-// --- найденное nW принимаетс€, если только его Ќ≈“ в Edges(0,*) --------------
-// --- если оно встречаетс€ в Edges(0,*), то пропускаем iEdges -----------------
-//
    flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++) // ищем вхождение -nW
-    if( Mem_Edges[iEdges].FlagFrom && Edges(0,jEdges)==nW )
-//  if( Edges(0,jEdges) == -nW )
+   for(jEdges=1; jEdges<=nEdges; jEdges++)
+    if( Edges_f(0,jEdges) && Edges(0,jEdges)==nW ) // помечено и равно nW
      flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
 //
    if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
     iOps ++ ;
 //
    if( iOps == Numb ) // нашли вхожд≈ние номер Numb
-    goto cont ;
-
-   } // конец if( nW > 0 )
+     return nW ;
 //
-////////////////////////////////////////////////////////////////////////////////
- cont:
-////////////////////////////////////////////////////////////////////////////////
-//
- return nW ;
+   } // конец if(!Edges_f(1,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
 //
 } // ------ конец c_GetNumbOpOutput --------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetCountOpsInput()
+{ // возвращает только ¬’ќƒЌџ≈ вершины (0-й €рус) в »√ј ------------------------
+//
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdges, jEdges;
+ bool flag;
+ nOpsInput = 0; // число входных операторов (0-й €рус; глобальное)
+//
+ for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
+  Edges_f(0,iEdges) =
+  Edges_f(1,iEdges) = FALSE; // "сн€ли метку" со всех вершин (операторов)
+//
+// === по всем дугам »√ј =======================================================
+  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
+   if( !Edges_f(0,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
+   {
+    nW = Edges(0,iEdges);
+    for(jEdges=1; jEdges<=nEdges; jEdges++) // по всем дугам начина€ с #1
+    {
+     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
+     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
+    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+//
+   flag = FALSE;
+   for(jEdges=1; jEdges<=nEdges; jEdges++)
+    if( Edges_f(1,jEdges) && Edges(1,jEdges)==nW ) // помечено и =nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
+    nOpsInput ++ ;
+//
+   } // if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
+//
+ return nOpsInput ;
+//
+} // --- конец c_GetCountOpsInput-----------------------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -3068,156 +3157,35 @@ INT __fastcall c_GetCountOpsOutput()
  bool flag;
  nOpsOutput = 0; // число ¬џ’ќƒЌџ’ операторов (глобальное)
 //
- for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-  Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = FALSE; // сн€ли метку со всех операторов
+ for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
+  Edges_f(0,iEdges) =
+  Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин (операторов)
 //
 // === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   if( !Mem_Edges[iEdges].FlagTo ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-//   if( ( nW=Edges(1,iEdges) ) > 0 ) // запомнили ¬’ќƒяў”ё вершину дуги iEdges
-   { // --- вершины метим номерами с минусом -----------------------------------
+  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
+   if( !Edges_f(1,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
+   {
     nW = Edges(1,iEdges);
     for(jEdges=1; jEdges<=nEdges; jEdges++)
     {
-     if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From" (это лишнее)
-//
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[iEdges].FlagTo == TRUE;  // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-// --- найденное nW принимаетс€, если только его Ќ≈“ в Edges(0,*) --------------
-// --- если оно встречаетс€ в Edges(0,*), то пропускаем iEdges -----------------
+     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
+     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
+    }
 //
    flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++) // ищем вхождение -nW
-    if( Mem_Edges[iEdges].FlagFrom && Edges(0,jEdges)==nW )
-//    if( Edges(0,jEdges) == -nW )
+   for(jEdges=1; jEdges<=nEdges; jEdges++)
+    if( Edges_f(0,jEdges) && Edges(0,jEdges)==nW ) // помечено и =nW
      flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
 //
    if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
     nOpsOutput ++ ;
 //
-   } // конец if( nW > 0 )
+   } // конец if(!Edges_f(1,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
 //
  return nOpsOutput ;
 //
 } // --- конец c_GetCountOpsOutput----------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetNumbOpInput(INT Numb)
-{ // возвращает номер Numb оператора (только из ¬’ќƒЌџ’) по мере вхождени€ в файл дуг
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем Numb-тый оператор (имеем nEdges дуг графа)==========================
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges,
-     iOps = 0; // счЄтчик числа вершин графа - операторов
- bool flag;
-//
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = FALSE; // сн€ли метку со всех операторов
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   if( !Mem_Edges[iEdges].FlagFrom ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-// if( ( nW=Edges(0,iEdges) ) > 0 ) // запомнили »—’ќƒяў”ё вершину дуги iEdges -
-   {
-    nW = Edges(0,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-    {
-     if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From"
-//
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[iEdges].FlagTo == TRUE;  // пометили "To" (это лишнее)
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-// --- найденное nW принимаетс€, если только его Ќ≈“ в Edges(1,*) --------------
-// --- если оно встречаетс€ в Edges(1,*), то пропускаем iEdges -----------------
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++) // ищем вхождение -nW
-    if( Mem_Edges[iEdges].FlagTo && Edges(1,jEdges)==nW )
-//  if( Edges(1,jEdges) == -nW )
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
-    iOps ++ ;
-//
-   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
-    goto cont ;
-//
-   } // конец if( nW > 0 )
-//
-////////////////////////////////////////////////////////////////////////////////
- cont:
-////////////////////////////////////////////////////////////////////////////////
-//
- return nW ;
-//
-} // ------ конец c_GetNumbOpInput ---------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetCountOpsInput()
-{ // возвращает число вершин в »√ј (только ¬’ќƒЌџ≈ вершины)
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges;
- bool flag;
- nOpsInput = 0; // число входных операторов (глобальное)
-//
- for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-  Mem_Edges[iEdges].FlagFrom = Mem_Edges[iEdges].FlagTo = FALSE; // сн€ли метку со всех операторов
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   if( !Mem_Edges[iEdges].FlagFrom ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-// if( (nW=Edges(0,iEdges)) > 0 ) // запомнили »—’ќƒяў”ё вершину дуги iEdges ---
-   { // --- вершины метим номерами с минусом -----------------------------------
-    nW = Edges(0,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-    {
-     if( Edges(0,jEdges) == nW )
-      Mem_Edges[iEdges].FlagFrom == TRUE; // пометили "From"
-//
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[iEdges].FlagTo == TRUE;  // пометили "To" (это лишнее)
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-// --- найденное nW принимаетс€, если только его Ќ≈“ в Edges(1,*) --------------
-// --- если оно встречаетс€ в Edges(1,*), то пропускаем iEdges -----------------
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++) // ищем вхождение -nW
-    if( Mem_Edges[iEdges].FlagTo  && Edges(1,jEdges)==nW )
-//  if( Edges(1,jEdges) == -nW )
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
-    nOpsInput ++ ;
-//
-   } // конец if( nW > 0 )
-//
- return nOpsInput ;
-//
-} // --- конец c_GetCountOpsInput-----------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

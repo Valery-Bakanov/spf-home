@@ -94,6 +94,7 @@ Comments=http://vbakanov.ru/spf@home/
 
 [Excluded Packages]
 c:\program files (x86)\borland\cbuilder6\Bin\dclite60.bpl=Borland Integrated Translation Environment
+c:\program files (x86)\borland\cbuilder6\Bin\dclsoap60.bpl=Borland SOAP Components
 
 [HistoryLists\hlIncludePath]
 Count=3

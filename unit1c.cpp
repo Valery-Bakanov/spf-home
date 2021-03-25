@@ -239,11 +239,12 @@ void /*__fastcall*/ safe_printf(int rule, char *fmt, ...); // форматный вывод в 
 struct me {
  INT From, To; // определяющие дугу узлы "откуда -> куда"
  char Operators[_512]; // текстовое описание операторов, составляющих дугу
- bool FlagFrom, FlagTo; // флаги для вспомогательных действий с дугами
+ bool flag_From, flag_To; // флаги для вспомогательных действий с дугами
 } M__E, *Mem_Edges=NULL;
 ULI Max_Edges = _128, // первоначальный захват (будет переопределено в c_ReadEdges)
     Really_Edges = 0; // текущее значение
-#define Edges(i,j) ( !i ? Mem_Edges[j].From : Mem_Edges[j].To ) // "откуда/куда" направлена дуга ИГА
+#define Edges(i,j)   ( !i ? Mem_Edges[j].From      : Mem_Edges[j].To ) // "откуда/куда" направлена дуга ИГА
+#define Edges_f(i,j) ( !i ? Mem_Edges[j].flag_From : Mem_Edges[j].flag_To ) // флаги "откуда/куда" направлена дуга ИГА
 // Edges(0,j) - номер оператора, от которого отходит дуга ("From");
 // Edges(1,j) - номер оператора, к которому "приходит" дуга ("To")
 // индексацию по j начинаем с 1 (для согласования с правилами индексации в Lua)
@@ -406,7 +407,7 @@ char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n
 //
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
 #include "API_lua.cpp" // описание на С вызовов Lua
-#include "LMD_c.cpp" // описание на С LMD-пакетов
+#include "LMD_c.cpp" // описание на С пакетов LMD
 //
 const int minW_F1=900, minH_F1=600; // минимальные размеры главной формы F1
 extern const int minW_F2, minH_F2; // минимальный размер дочерной формы F2
