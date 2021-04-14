@@ -1513,7 +1513,7 @@ void __fastcall TF1::SPL0Moved(TObject *Sender)
 
 void __fastcall TF1::OnClickGetLua_01(TObject *Sender)
 { // получить файл Lua_01 с сервера
- GetFileFromServer( "GeteroCalcs.lua" );
+ GetFileFromServer( "Test_Lua_API.lua" );
 } //----------------------------------------------------------------------------
 
 
