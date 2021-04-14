@@ -1139,8 +1139,8 @@ void __fastcall Write_Config()
  tINI->WriteInteger(RWC.Sect3, RWC.Sect3_Var4, F2->Height);
 //
 // --- если путь к Lua-файлу = текущему каталогу, путь не пишем (только имя файла)
-// if( !strcmp( ExtractFileDir(ScriptFileName).c_str(),ExtractFileDir(ParamStr(0)).c_str() ) )
-//  strNcpy( ScriptFileName,ExtractFileName(ScriptFileName).c_str() );
+ if( !strcmp( ExtractFileDir(ScriptFileName).c_str(),ExtractFileDir(ParamStr(0)).c_str() ) )
+  strNcpy( ScriptFileName,ExtractFileName(ScriptFileName).c_str() );
 //
  tINI->WriteString(RWC.Sect4, RWC.Sect4_Var1, ScriptFileName); // имя файла скрипта
 //
