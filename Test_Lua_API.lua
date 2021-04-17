@@ -1,4 +1,6 @@
 --
+-- весна 2021
+--
 projectName = "abc_r" -- имя проекта 
 --
 projectName = "squa_equ_2"
@@ -11,6 +13,7 @@ projectName = "slau_2"
 --projectName = "slau_3"
 --projectName = "slau_4" 
 --projectName = "slau_5"
+--projectName = "slau_7"
 --projectName = "slau_10"
 --
 --projectName = "doubling_32"
