@@ -198,8 +198,8 @@ long color_BackGround = clWhite; // цвет фона окна редактировани€
 //
 // ----- цвета дл€ отрисовки диаграммы распр. операторов по €русам яѕ‘ ( DrawDiagrSPF, DrawDiagrTLD )
 long brush_draw_color_TIERS = clBlack, // цвет кисти обычный дл€ графика яѕ‘ (чЄрный)
-//     brush_draw_color_TLD   = RGB(0,64,0), // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
-     brush_draw_color_TLD   = clBlack, // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
+     brush_draw_color_TLD   = RGB(0,64,0), // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
+//     brush_draw_color_TLD   = clBlack, // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
      brush_draw_color_MIN   = clRed, // цвет кисти ћ»Ќ»ћ”ћ
      brush_draw_color_MAX   = clFuchsia, // цвет кисти ћј —»ћ”ћ
      pen_draw_b_average     = clWhite, // цвет линии среднего числа
