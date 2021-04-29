@@ -92,7 +92,6 @@ static int PutTiersToTextFrame(lua_State *L) // описываем функцию PutTiersToText
 ////////////////////////////////////////////////////////////////////////////////
 static int PutEdgesToTextFrame(lua_State *L) // описываем функцию PutEdgesToTextFrame на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_PutEdgesToTextFrame()");
  APM //-------------------------------------------------------------------------
@@ -104,7 +103,6 @@ static int PutEdgesToTextFrame(lua_State *L) // описываем функцию PutEdgesToText
 ////////////////////////////////////////////////////////////////////////////////
 static int ClearTextFrame(lua_State *L) // описываем функцию ClearTextFrame на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_ClearTextFrame()");
  APM //-------------------------------------------------------------------------
@@ -116,7 +114,6 @@ static int ClearTextFrame(lua_State *L) // описываем функцию ClearTextFrame на С
 ////////////////////////////////////////////////////////////////////////////////
 static int DrawDiagrTiers(lua_State *L) // описываем функцию DrawDiagrTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DrawDiagrTiers()");
  APM //-------------------------------------------------------------------------
@@ -128,7 +125,6 @@ static int DrawDiagrTiers(lua_State *L) // описываем функцию DrawDiagrTiers на С
 ////////////////////////////////////////////////////////////////////////////////
 static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_DrawDiagrTLD()");
  APM //-------------------------------------------------------------------------
@@ -140,7 +136,6 @@ static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
 ////////////////////////////////////////////////////////////////////////////////
 static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call PutParamsTiers()");
  APM //-------------------------------------------------------------------------
@@ -152,7 +147,6 @@ static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 ////////////////////////////////////////////////////////////////////////////////
 static int ClearDiagrArea(lua_State *L) // описываем функцию ClearDiagrArea на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_ClearDiagrArea()");
  APM //-------------------------------------------------------------------------
@@ -202,7 +196,6 @@ static int OutLine(lua_State *L) // описываем функцию OutLine на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountTiers(lua_State *L) // описываем функцию GetCountTiers на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountTiers()");
  APM //-------------------------------------------------------------------------
@@ -276,7 +269,6 @@ static int CreateTiersByEdges_Bottom(lua_State *L) // описываем функцию CreateTi
 ////////////////////////////////////////////////////////////////////////////////
 static int GetOpsMoves(lua_State *L) // описываем функцию GetOpsMoves на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetOpsMoves()");
  APM //-------------------------------------------------------------------------
@@ -288,7 +280,6 @@ static int GetOpsMoves(lua_State *L) // описываем функцию GetOpsMoves на С
 ////////////////////////////////////////////////////////////////////////////////
 static int CountMovesZeroing(lua_State *L) // описываем функцию CountMovesZeroing на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_CountMovesZeroing()");
  APM //-------------------------------------------------------------------------
@@ -352,7 +343,6 @@ static int GetTierLastMaxOps(lua_State *L) // описываем функцию GetTierLastMaxOp
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOpsInput(lua_State *L) // описываем функцию GetCountOpsInput на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOpsInput()");
  APM //-------------------------------------------------------------------------
@@ -364,7 +354,6 @@ static int GetCountOpsInput(lua_State *L) // описываем функцию GetCountOpsInput 
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOpsOutput(lua_State *L) // описываем функцию GetCountOpsOutput на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOpsOutput()");
  APM //-------------------------------------------------------------------------
@@ -376,7 +365,6 @@ static int GetCountOpsOutput(lua_State *L) // описываем функцию GetCountOpsOutpu
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOps(lua_State *L) // описываем функцию GetCountOps на С
 {
-// INT arg = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountOps()");
  APM //-------------------------------------------------------------------------
@@ -388,7 +376,6 @@ static int GetCountOps(lua_State *L) // описываем функцию GetCountOps на С
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountEdges(lua_State *L) // описываем функцию GetCountEdges на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим один аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountEdges()");
  APM //-------------------------------------------------------------------------
@@ -782,7 +769,6 @@ static int LoadFileNameParamsVertices(lua_State *L) // описываем функцию LoadFil
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountCalcs(lua_State *L) // описываем функцию GetCountCalcs на С
 {
-// INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
  sp_printf(" Lua call c_GetCountCalcs()" );
  APM //-------------------------------------------------------------------------
@@ -1012,30 +998,55 @@ static int LuaCallByTimer(lua_State *L) // описываем функцию LuaCallByTimer на С
 } // ===== конец LuaCallByTimer ================================================
 
 ////////////////////////////////////////////////////////////////////////////////
-static int CalcAverMeanOpsOnTiers(lua_State *L) // описываем функцию c_CalcAverMeanOpsOnTiers на С
+static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers на С
 {
-// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
-//     arg2 = luaL_checkinteger(L, 2);
+ INT arg1 = luaL_checkinteger(L, 1); // получим аргумент (с проверкой "на целое")
+ arg1 = ( arg1 <= 0 ) ? 0 : arg1 ;
+ arg1 = ( arg1 > sizeof(StatTiers)/sizeof(REAL) ) ? sizeof(StatTiers)/sizeof(REAL) : arg1 ;
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_CalcAverMeanOpsOnTiers()" );
+ sp_printf(" Lua call c_CalcStatParamsSPF()" );
  APM //-------------------------------------------------------------------------
+//
+ c_CalcParamsTiers() ; // вычисляет статистичекие параметры SPF и заносит их в структуру StatTiers
+//
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushnumber(L, c_CalcAverMeanOpsOnTiers()); // вызовем c_CalcAverMeanOpsOnTiers и результат -> стек
- return 1 ; // число результатов выполнения функции
-} // ===== конец c_CalcAverMeanOpsOnTiers ======================================
+//
+ switch( arg1 )
+ {
+  case 0:
+   lua_pushnumber(L, StatTiers.averWidth ); // среднеарифметическая ширина ЯПФ (кроме 0-го уровня)
+   lua_pushnumber(L, StatTiers.sumSqWidth); // сумма квадратов невязок
+   lua_pushnumber(L, StatTiers.SD); // СКО (Standard Deviation)
+   lua_pushnumber(L, StatTiers.CV); // коэфиициент корреляции числа операторов по ярусам ЯПФ
+   lua_pushnumber(L, StatTiers.IC); // коэффициент неравномерности (max/min)
+   lua_pushnumber(L, StatTiers.ICL); // коэффициент неравномерности (по кривой Лоренца)
+   lua_pushnumber(L, StatTiers.AAL); // среднеарифметическая длина дуги (Average Arc Length)
+   return sizeof(StatTiers)/sizeof(REAL) ; // число чисел на стеке Lua
+  case 1:
+   lua_pushnumber(L, StatTiers.averWidth );
+   return 1 ;
+  case 2:
+   lua_pushnumber(L, StatTiers.sumSqWidth);
+   return 1 ;
+  case 3:
+   lua_pushnumber(L, StatTiers.SD);
+   return 1 ;
+  case 4:
+   lua_pushnumber(L, StatTiers.CV);
+   return 1 ;
+  case 5:
+   lua_pushnumber(L, StatTiers.IC);
+   return 1 ;
+  case 6:
+   lua_pushnumber(L, StatTiers.ICL);
+   return 1 ;
+  case 7:
+   lua_pushnumber(L, StatTiers.ICL);
+   return 1 ;
+  } // конец  switch( arg1 )
+//
+} // ===== конец c_CalcStatParamsSPF ===========================================
 
-////////////////////////////////////////////////////////////////////////////////
-static int CalcStdDevOpsOnTiers(lua_State *L) // описываем функцию c_CalcStdDevOpsOnTiers на С
-{
-// INT arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
-//     arg2 = luaL_checkinteger(L, 2);
- APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_CalcStdDevOpsOnTiers()" );
- APM //-------------------------------------------------------------------------
- lua_settop(L, 0); // сброcим стек Lua
- lua_pushnumber(L, c_CalcStdDevOpsOnTiers()); // вызовем c_CalcStdDevOpsOnTiers и результат -> стек
- return 1 ; // число результатов выполнения функции
-} // ===== конец c_CalcAverMeanOpsOnTiers ======================================
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1157,8 +1168,7 @@ void __fastcall RegisterFunctions(lua_State *L)
 //
  lua_register(L, "LuaCallByTimer",   LuaCallByTimer);
 //
- lua_register(L, "CalcAverMeanOpsOnTiers", CalcAverMeanOpsOnTiers );
- lua_register(L, "CalcStdDevOpsOnTiers", CalcStdDevOpsOnTiers );
+ lua_register(L, "CalcParamsTiers",        CalcParamsTiers );
 //
 } // ---- конец RegisterFunctions ----------------------------------------------
 

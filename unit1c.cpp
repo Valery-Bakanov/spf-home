@@ -123,7 +123,7 @@ TStringList *TLD; // список строк дл€ обмена информацией о времени жизни данных 
 #define _4096  4096
 #define _8192  8192
 #define _16384 16384
-#define _32†768 32768
+#define _32768 32768
 //
 #define maxRet 1000000000 // максимальное возвращаемое число (не более 2^32... с запјсом!)
 //
@@ -272,6 +272,16 @@ INT *pTiers  = NULL, // указатель на (плоский) массив Tiers
 ////////////////////////////////////////////////////////////////////////////////
 #define stockMem 1.667 // величина "запаса" при увеличении массивов
 ////////////////////////////////////////////////////////////////////////////////
+struct {
+REAL averWidth, // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
+     sumSqWidth, // сумма квадратов нев€зок
+     SD,//  — ќ (Standard Deviation)
+     CV, // коэфиициент коррел€ции числа операторов по €русам яѕ‘
+     IC, // коэффициент неравномерности (max/min)
+     ICL, // коэффициент неравномерности (по кривой Ћоренца)
+     AAL; // среднеарифметическа€ длина дуги (Average Arc Length)
+} StatTiers; // структура параметров статистики SPF
+////////////////////////////////////////////////////////////////////////////////
 INT nEdges, // всего число дуг в графе
     nOpsInput, // входных операторов в графе (исходные данные)
     nOpsOutput, // выходных операторов в графе (рассчитанные данные)
@@ -369,6 +379,8 @@ void  __fastcall Copy_Stdout_To_Memo(); // дл€ вывода stdout в M0_stdout
 void  __fastcall ShowBreakpoint( char *str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
 //
 void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
+//
+void  __fastcall ReplEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
 //
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
 ////////////////////////////////////////////////////////////////////////////////
@@ -671,7 +683,26 @@ char* __fastcall ReplManySpacesOne( char *pszStr )
  } // конец if( pszStr )
 //
    return pszOld;
-} // --- конец функции ReplManySpacesOne -------------------------------------------
+} // --- конец функции ReplManySpacesOne ---------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall ReplEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring )
+// в строке Strint замен€ет подстроки OldSubstring на NewSubstring ќƒ»Ќј ќ¬ќ… ƒЋ»Ќџ
+{
+ INT lenOldSubstring = strlen( OldSubstring ),
+     lenNewSubstring = strlen( NewSubstring ) ;
+ char *p ;
+//
+ if( lenOldSubstring != lenNewSubstring )
+  return ;
+//
+ do // делать, пока p != NULL
+  if( p = strstr( String, OldSubstring ) ) // в строке String нашли подстроку OldSubstring
+   memcpy( p,NewSubstring,lenOldSubstring ); // копируем NewSubstring начина€ с p
+ while( p ) ;
+//
+} // --- конец функции ReplEqualLegthSubstring ---------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

@@ -171,6 +171,7 @@
 
         <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcAverMeanOpsOnTiers\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcStdDevOpsOnTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\CalcParamsTiers\b' />
 
 <!--================================================================================-->
 

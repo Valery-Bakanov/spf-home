@@ -195,10 +195,9 @@ INT  __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua
 //
 void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
 //
-REAL __fastcall c_CalcAverMeanOpsOnTiers(); // вычисление средне-арифметического числа операторов по €русам (кроме 0-вого)
-REAL __fastcall c_CalcStdDevOpsOnTiers(); // вычисление стандартного отклонени€ числа операторов по €русам (кроме 0-вого)
-//
 char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать им€ файла
+//
+INT  __fastcall c_CalcParamsTiers(); // расчЄт статистики €русов яѕ‘
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1404,9 +1403,9 @@ INT __fastcall c_CountMovesZeroing()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountOpsOnTier(INT Tier)
-{ // возвращает количество операторов на €русе Tier яѕ‘ данного »√ј
+{ // возвращает количество операторов на €русе Tier дл€ яѕ‘ данного »√ј
 //
- if( ( Tier < 0 )  || ( Tier > nTiers) ) // проверка допустимости значени€ Tier
+ if( ( Tier < 0 ) || ( Tier > nTiers) ) // проверка допустимости значени€ Tier
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
@@ -1420,7 +1419,7 @@ INT __fastcall c_GetCountOpsOnTier(INT Tier)
 INT __fastcall c_GetOpByNumbOnTier(INT Numb, INT Tier)
 { // возвращает номер Numb-ного по счЄту оператора на €русе Tier
 //
- if( ( Tier < 0 )  || ( Tier > nTiers ) ) // проверка допустимости значени€ Tier
+ if( ( Tier < 0 ) || ( Tier > nTiers ) ) // проверка допустимости значени€ Tier
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
@@ -4706,250 +4705,6 @@ ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 //
 } // ----- конец CallLuaThread -------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_PutParamsTiers()
-{ // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char str[_4096], w0[_256], w1[_256], w2[_512], w3[_512]; // рабочие массивы (строки)
- REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
-      SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
-      AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
- INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
-      Op,  dTiers,  sdOps = 0, sdTiers = 0;
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
- AverWidth = c_CalcAverMeanOpsOnTiers(); // средн€€ ширина яѕ‘ по €русам кроме ¬’ќƒЌќ√ќ (нулевого)
-//
- AverSqDevWidth = c_CalcStdDevOpsOnTiers(); // стандартное отклонение ширин €русов (несмещЄнна€, состо€тельна€ оценка)
-//
-////////////////////////////////////////////////////////////////////////////////
- if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
-  snprintf( w1,sizeof(w1), "%.3f", 1.0 * Tiers( c_GetTierFirstMaxOps(1,nTiers), 0 ) / Tiers( c_GetTierFirstMinOps(1,nTiers), 0 ) );
- else
-  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на €русе..!
-//
- if( nTiers != 1 )
-  snprintf( w0,sizeof(w0), "— ќ шир.яѕ‘= %.4g, CV= %.4g", AverSqDevWidth, AverSqDevWidth / AverWidth ) ;
- else
-  snprintf( w0,sizeof(w0), "— ќ шир.яѕ‘= x.x, CV= x.x") ;
-//
-// --- вычисл€ем ¬ј–»ј“»¬Ќќ—“№ -------------------------------------------------
- for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
-  for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
-  {
-   Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
-   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон перемещени€ Op по €русам
-
-   if( dTiers ) // если не нуль...
-   {
-    sdOps += 1; // суммируем число ќѕ≈–ј“ќ–ќ¬, которые могут быть перемещены по €русам яѕ‘
-    sdTiers += dTiers; // сумма диапазонов возможных перемещений по €русам дл€ оператора Op
-   }
-  } // конец цикла по iOp
-//
- INT  OpFrom, OpTo, nOutEdges,
-      sDump = 0,    sEdges = 0; // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»
-//
-// --- вычисл€ем —–≈ƒЌёё ƒЋ»Ќ” ƒ”√» --------------------------------------------
- for( iTier=1; iTier<=nTiers-1; iTier++ ) // по всем €русам яѕ‘ (кроме самого нижнего)
-  for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
-  {
-   OpFrom = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
-   nOutEdges = c_GetCountOutEdgesByOp( OpFrom ); // число »—’ќƒяў»’ дуг у оператора OpFrom
-//
-   for( INT iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ ) // цикл по всем »—’ќƒяў»ћ дугам
-   {
-    OpTo = c_GetNumbOutEdgeByOp( iOutEdge, OpFrom ); // номер оператора, к которому идЄт дуга iOutEdge от оператора OpFrom
-    sDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#€руса оператора OpFrom) - (#€руса оператора OpTo)
-    sEdges += 1; // сумма числа проанализированных дуг
-   } // конец цикла for( int iOutEdgers...
-//
-  } // конец цикла for( iOp=1...
-//
-// === конец вычислени€ параметров яѕ‘, вариативности, средней длины дуги
-//
-// === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
-//
- INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
-     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
- REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
-//
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
- strcpy( w3, "\0" ); // обнулим дл€ вывода при !PutParamsDataLiveOnTextFrame
-//
- if( !PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
-  goto calc_data_live; // ...да простит мен€ Ёдсгер ¬ибе ƒейкстра! -------------
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
-//
- sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
-//
- for( INT i=1; i<=n; i++) // по числу промежутков между €русами яѕ‘
- {
-  if( i < n ) // кроме последней строки с $
-   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
-  else // последн€€ строка формата "n/$|m"
-  {
-   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
-   n2=n1+1;
-  }
-//
-  if( m >= maxM ) // ищем мах число живых данных
-  {
-   maxM = max(maxM,m);
-   n1x=n1; // запомнили €рус выше
-   n2x=n2; // запомнили €рус ниже (избыточно вообще-то...)
-  }
-//
-  if( m < minM ) // ищем мin число живых данных
-  {
-   minM = min(minM,m);
-   n1n=n1; // запомнили €рус выше
-   n2n=n2; // запомнили €рус ниже (избыточно вообще-то...)
-  }
-//
-  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
- } // конец цикла по промежуткам между €русами яѕ‘
-//
-// дополнение строки информацией о времени жизни данных
- if( n2x==n )
-  sprintf( w2,"врем€ \"жизни данных\": max=%d(%d/%c), ", maxM,n1x,'$' );
- else
-  sprintf( w2,"врем€ \"жизни данных\": max=%d(%d/%d), ", maxM,n1x,n2x );
-//
- if( n2n==n )
-  sprintf( w3,"min=%d(%d/%c), ", minM,n1n,'$' );
- else
-  sprintf( w3,"min=%d(%d/%d), ", minM,n1n,n2n );
-//
- strcat( w2,w3 ); // в w2 добавили s3
- sprintf( w3,"средн.арифм.=%.4g", 1.0*averTLD/n );
- strcat( w2,w3 ); // w2 -> врем€ "жизни данных": max=1000(1/2), min=100(10/$), средн.арифм.=518.2
- strcpy( w3, "\246 " ); // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
- strcat( w3, w2 ); // подготовили строку дл€ вывода на F2
-//
-// === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
-//
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-calc_data_live: //проще, чем разбиратьс€ в куче фигурных скобок ----------------
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
-// --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
-//
- snprintf(str,sizeof(str),
-"ќператоров=%d, дуг=%d, €русов=%d \246 средн. опер./€рус=%.4g, %s \
-\246 операторов на €русе/€рус (min:max)=%d/%d:%d/%d \
-\246 неравном.ширины яѕ‘ (по €русам %d-%d)=%s \
-\246 вариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g \
-\246 средн.арифм.длина дуги=%.4g €русов яѕ‘ \
-%s",
-  nOps, nEdges, nTiers, AverWidth, w0,
-  Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
-  Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
-//
-  (REAL)sdOps / nOps, // Vo
-  (REAL)sdTiers / nOps, // Vt
-  (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
-  (REAL)sDump / sEdges ,
-  w3 );
-//
- F2->L_GP->Caption = str; // вывод основных параметров яѕ‘ графа
- F2->L_GP->Repaint(); // принудительно перерисовываем
-//
-//
- strcpy( w3, "\n" );
- strcat( w3, w2 ); // подготовили строку дл€ вывода в файл протокола
- if( !PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
-  strcpy( w3, "\0" );
-//
-// ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
-//
- snprintf(str,sizeof(str),
-"\nќператоров=%d, дуг=%d, €русов=%d \nсредн. опер./€рус=%.4g, %s\nоператоров на €русе/€рус (min:max)\
-=%d/%d:%d/%d \nнеравном.ширины яѕ‘ (по €русам %d-%d)=%s\nвариативность яѕ‘: Vo|Vt|Vot=%.4g|%.4g|%.4g\
-\nсредн.арифм. длина дуги=%.4g €русов яѕ‘%s\n\n",
-  nOps, nEdges, nTiers, AverWidth, w0,
-  Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ), c_GetTierFirstMinOps(1,nTiers),
-  Tiers( c_GetTierFirstMaxOps(1,nTiers) , 0 ), c_GetTierFirstMaxOps(1,nTiers), 1, nTiers, w1,
-//
-  (REAL)sdOps / nOps, // Vo
-  (REAL)sdTiers / nTiers, // Vt
-  (REAL)sdOps*sdTiers / (nOps*nTiers), // Vot
-  (REAL)sDump / sEdges ,
-  w3 ) ;
-//
- if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
-  t_printf( str ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода
-//
- p_printf( str ); // допќлнили файл протокола
-//
- snprintf(str,sizeof(str), "H|N/W=%d|%d/%d", nTiers,c_GetTierFirstMaxOps(1,nTiers),Tiers(c_GetTierFirstMaxOps(1,nTiers),0) );
- F2->L_OM->Caption = str; // вывод максимума операторов на €русе по всему яѕ‘
- F2->L_OM->Repaint(); // принудительно перерисовываем
-//
- return TRUE ;
-//
-} // ----- конец c_PutParamsTiers ----------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-REAL __fastcall c_CalcAverMeanOpsOnTiers()
-{ // вычисление средне-арифметического числа операторов по €русам (кроме 0-вого)
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_CALC ;
- }
-//
- if( nTiers < 2 ) // бессмысленный расчЄт при числе €русов менее 2
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_CALC ;
- }
-//
- return ( 1.0 * nOps ) / nTiers;  // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
-//
-} // ----- конец c_CalcAverMeanOpsOnTiers --------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-REAL __fastcall c_CalcStdDevOpsOnTiers()
-{ // вычисление стандартного отклонени€ числа операторов по €русам (кроме 0-вого)
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_CALC ;
- }
-//
- if( nTiers < 2 ) // бессмысленный расчЄт при числе €русов менее 2
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_CALC ;
- }
-//
- REAL AverWidth  = c_CalcAverMeanOpsOnTiers(), // средне-арифметическое значение ширин €русов яѕ‘
-      SumSqWidth = 0.0 ;
-//
- for( INT iTier=1; iTier<=nTiers; iTier++ )
-  SumSqWidth += ( AverWidth - Tiers(iTier,0) ) * ( AverWidth - Tiers(iTier,0) ); // сумма квадратов нев€зок
-//
- return sqrt( SumSqWidth / ( nTiers - 1.0 ) ) ; // стандартное отклонение ширин €русов (несмещЄнна€, состо€тельна€ оценка)
-//
-} // ----- конец c_CalcStdDevOpsOnTiers ----------------------------------------
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -5081,7 +4836,7 @@ bool __fastcall c_DrawDiagrTLD()
    n2n=n2; // запомнили €рус ниже (избыточно вообще-то...)
   }
 //
- averTLD += 1.0*m; // суммируем дл€ получени€ средн.арифметического времени жизни данных между €русам
+ averTLD += (REAL)m; // суммируем дл€ получени€ средн.арифметического времени жизни данных между €русам
 //
  } // конец  for(INT i=1; i<=n; i++)
 //
@@ -5227,6 +4982,275 @@ cont:
  return NewFileName ;
 //
 } // --- конец ReformFileName --------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_PutParamsTiers()
+{ // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
+ char szOut[_4096], w1[_256], // рабочие массивы (строки)
+      Delimeter[] = " \246 " ; // разделитель частей выводимых данных
+// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
+ REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
+      SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
+      AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
+ INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
+      Op,  dTiers,  sdOps = 0, sdTiers = 0;
+//
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+// =============================================================================
+ c_CalcParamsTiers() ; // вычисление параметров ширин €русов яѕ‘ и занесение в стр-ру StatTiers (глобал)
+//
+ AverWidth = StatTiers.averWidth ; // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
+//
+ AverSqDevWidth = StatTiers.SD ; // сумма квадратов нев€зок
+ //
+////////////////////////////////////////////////////////////////////////////////
+//
+ if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
+  snprintf( w1,sizeof(w1), "%.3f", (REAL)Tiers( c_GetTierFirstMaxOps(1,nTiers), 0 ) / Tiers( c_GetTierFirstMinOps(1,nTiers), 0 ) );
+ else
+  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на €русе..!
+//
+ char szStatTiers[_256]; // данные статистики €русов яѕ‘
+//
+ if( nTiers != 1 )
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, — ќ= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g",
+            StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL ) ;
+ else
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %,4g, — ќ= x.x, CV= x.x, IC= x.x, ICL= x.x",
+            StatTiers.averWidth ) ;
+//
+// --- вычисл€ем ¬ј–»ј“»¬Ќќ—“№ -------------------------------------------------
+ for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
+  for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
+  {
+   Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
+   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон перемещени€ Op по €русам
+
+   if( dTiers ) // если не нуль...
+   {
+    sdOps += 1; // суммируем число ќѕ≈–ј“ќ–ќ¬, которые могут быть перемещены по €русам яѕ‘
+    sdTiers += dTiers; // сумма диапазонов возможных перемещений по €русам дл€ оператора Op
+   }
+  } // конец цикла по iOp
+//
+// === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
+//
+ INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
+     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
+ REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// strcpy( szStatTLD, "\0" ); // обнулим дл€ вывода при !PutParamsDataLiveOnTextFrame
+//
+ if( !PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
+  goto calc_data_live; // ...да простит мен€ Ёдсгер ¬ибе ƒейкстра! -------------
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+ c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+//
+ sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
+//
+ for( INT i=1; i<=n; i++) // по числу промежутков между €русами яѕ‘
+ {
+  if( i < n ) // кроме последней строки с $
+   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
+  else // последн€€ строка формата "n/$|m"
+  {
+   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:",  &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  if( m >= maxM ) // ищем мах число живых данных
+  {
+   maxM = max(maxM,m);
+   n1x=n1; // запомнили €рус выше
+   n2x=n2; // запомнили €рус ниже (избыточно вообще-то...)
+  }
+//
+  if( m < minM ) // ищем мin число живых данных
+  {
+   minM = min(minM,m);
+   n1n=n1; // запомнили €рус выше
+   n2n=n2; // запомнили €рус ниже (избыточно вообще-то...)
+  }
+//
+  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
+ } // конец цикла по промежуткам между €русами яѕ‘
+//
+// дополнение строки информацией о времени жизни данных
+//
+ char szStatTLD[_512], // строка данных о времени жизни локальных данных (TLD)
+      tmp2[_512] ;
+//
+ if( n2n == n )
+  sprintf( szStatTLD,"%sTLD: min=%d(%d/%c), ", Delimeter, minM,n1n,'$' );
+ else
+  sprintf( szStatTLD,"%sTLD: min=%d(%d/%d), ", Delimeter, minM,n1n,n2n );
+//
+ if( n2x == n )
+  sprintf( tmp2, "max=%d(%d/%c), ср.арифм.=%.4g", maxM,n1x,'$',averTLD / n );
+ else
+  sprintf( tmp2, "max=%d(%d/%d), ср.арифм.=%.4g", maxM,n1x,n2x,averTLD / n );
+//
+ strcat( szStatTLD, tmp2 ); // подготовили строку дл€ вывода на F2
+//
+// === конец обработки информации о времени жижни данных между €русами яѕ‘ =====
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+calc_data_live: //проще, чем разбиратьс€ в куче фигурных скобок ----------------
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+// --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
+//
+ char szFormat[] = // строка формата дл€ вывода данных в строку szOut ----------
+"ќператоров= %d, дуг= %d, €русов= %d\
+%sяѕ‘: %s\
+%sоператоров на €русе/€рус (min:max)= %d/%d:%d/%d\
+%sвариативность яѕ‘: Vo|Vt|Vot= %.4g|%.4g|%.4g\
+%sср.арифм.длин дуг= %.4g €русов\
+%s";
+//
+ snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
+//
+ nOps, nEdges, nTiers,
+ Delimeter,
+//
+ szStatTiers, // данные статистики €русов яѕ‘
+ Delimeter,
+//
+ Tiers(c_GetTierFirstMinOps(1,nTiers),0), c_GetTierFirstMinOps(1,nTiers),
+ Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
+ Delimeter,
+//
+ (REAL)sdOps / nOps, // Vo
+ (REAL)sdTiers / nOps, // Vt
+ (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
+ Delimeter,
+//
+ StatTiers.AAL, // среднеарифметическа€ длина дуги
+//
+ szStatTLD ); // данные статистики времени жизни локальных данных (TLD)
+//
+ F2->L_GP->Caption = szOut; // вывод основных параметров яѕ‘ графа
+ F2->L_GP->Repaint(); // принудительно перерисовываем
+//
+//
+ strcpy( szStatTLD, "\n" );
+ strcat( szStatTLD, tmp2 ); // подготовили строку дл€ вывода в файл протокола
+ if( !PutParamsDataLiveOnTextFrame ) // обход вычислени€ времени жизни данных
+  strcpy( szStatTLD, "\0" );
+//
+// ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
+//
+////////////////////////////////////////////////////////////////////////////////
+ ReplEqualLengthSubstring( szOut, Delimeter, "  \n" ) ; // замен€ем Delimeter на "^^\n"
+////////////////////////////////////////////////////////////////////////////////
+//
+ if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
+  t_printf( szOut ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода
+//
+ p_printf( "\n" ); // перед и после - пуста€ строка !!!
+ p_printf( szOut ); // допќлнили файл протокола
+ p_printf( "\n\n" );
+//
+ snprintf(szOut,sizeof(szOut), "H|N/W=%d|%d/%d", nTiers,c_GetTierFirstMaxOps(1,nTiers),
+                                Tiers(c_GetTierFirstMaxOps(1,nTiers),0) );
+ F2->L_OM->Caption = szOut; // вывод максимума операторов на €русе по всему яѕ‘
+ F2->L_OM->Repaint(); // принудительно перерисовываем
+//
+ return TRUE ;
+//
+} // ----- конец c_PutParamsTiers ----------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ‘
+{
+//
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ REAL averWidth = ( 1.0 * nOps ) / nTiers, // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
+      sumSqWidth = 0.0 , // суммирование квадратов нев€зок
+      sumOps = 0.0 , // сумма операторов по €русам  яѕ‘
+      sumICL = 0.0 , // сумма дл€ коэффициента неравномерности по кривой Ћоренца
+      xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
+ INT iTier, iOp ,
+     nOpsOnTier, // число операторов на €русе
+     minOpsByTiers = 1000000, maxOpsByTiers = -minOpsByTiers , // минимум и максимум операторов по €русам яѕ‘
+//
+     sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
+     OpFrom, OpTo, nOutEdges, iOutEdge ; // ... то же ...
+//
+// =============================================================================
+ for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
+ {
+//
+  nOpsOnTier = c_GetCountOpsOnTier(iTier); // число операторов на €русе iTier
+//
+  minOpsByTiers = min( minOpsByTiers, nOpsOnTier ) ; // ищем min / max
+  maxOpsByTiers = max( maxOpsByTiers, nOpsOnTier ) ;
+//
+  sumSqWidth += ( averWidth - nOpsOnTier ) * ( averWidth - nOpsOnTier ) ; // сумма квадратов нев€зок
+// -----------------------------------------------------------------------------
+//
+  sumOps += nOpsOnTier ; // накопленное число операторов по €русам яѕ‘
+  xAxis = (REAL)iTier / nTiers ; // ось абсцисс  (доли единицы)
+  yAxis = sumOps / nOps ; // ось ординат  (доли единицы)
+//
+  sumICL += 0.5 * ( yAxis + yAxis_old ) * ( xAxis - xAxis_old ) ; // площадь трапеции
+//
+  xAxis_old = xAxis ; yAxis_old = yAxis ; // запомним предыдущие значени€
+//
+// =============================================================================
+  for( iOp=1; iOp<=nOpsOnTier; iOp++ ) // по номерам операторов на €русе iTier
+  {
+//
+   OpFrom = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
+   nOutEdges = c_GetCountOutEdgesByOp( OpFrom ); // число »—’ќƒяў»’ дуг у оператора OpFrom
+//
+   for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ ) // цикл по всем »—’ќƒяў»ћ дугам
+   {
+    OpTo = c_GetNumbOutEdgeByOp( iOutEdge, OpFrom ); // номер оператора, к которому идЄт дуга iOutEdge от оператора OpFrom
+    sumDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#€руса оператора OpFrom) - (#€руса оператора OpTo)
+    sumEdges += 1; // сумма числа проанализированных дуг
+   } // конец цикла    for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ )
+//
+// =============================================================================
+  } // конец for( iOp=1; iOp<=nOpsOnTier; iOp++ )
+//
+ } // конец for( iTier=1; iTier<=nTiers; iTier++ )
+//
+ StatTiers.averWidth  = averWidth ;  // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
+ StatTiers.sumSqWidth = sumSqWidth ; // сумма квадратов нев€зок
+ StatTiers.SD = nTiers>1 ? sqrt(sumSqWidth/(nTiers-1.0)) : ERR_CALC ; // — ќ (Standard Deviation)
+ StatTiers.CV = nTiers>1 ? StatTiers.SD/averWidth : ERR_CALC ; // коэффициент вариации CV (несмещЄнный)
+//
+// IC = max/min операторов по €русам яѕ‘ ( Irregularity Coefficient, коэффициент неравномерности )
+ StatTiers.IC = (REAL)maxOpsByTiers / minOpsByTiers ;
+//
+// неравномерность распределени€ операторов по €русам яѕ‘ по кривой Ћоренца
+ StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
+//
+ StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическа€ длина дуги (Average Arc Length)
+//
+} // ----- конец c_—alcParamsTiers() -------------------------------------------
+
 
 
 
