@@ -2050,7 +2050,7 @@ char* __fastcall c_GetNumbParamInString(INT Numb, char* str)
 //
      strEndZero( s_ret ); // добавим "\0" в конце строки
 //
-     DelSpacesTabsAround( s_ret ); // удаляем внешние пробелы
+     DeleteSpacesTabsAround( s_ret ); // удаляем внешние пробелы
      return s_ret ; // возвращаем результат
 //
     } // конец if по str[j]
@@ -2157,7 +2157,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
   iEnd = c_FindSubString( sWork, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
-  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
+  DeleteSpacesTabsAround( sN ); // обрезаем внешние пробелы
 //
 ////////////////////////////////////////////////////////////////////////////////
   lPrevCalcs = strlen( sCalcs ) ; // длина строки sCalcs ПЕРЕД добавлением '=n1/n2:' или '=Def:'
@@ -2189,7 +2189,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
 //   Delay( -5 );
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   } // конец else... if( sscanf( sN, ...
   } // конец if( sN[0]=='='...
@@ -2213,7 +2213,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
 //   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   }  // конец обработки конструкции "=Def:^"
 //
@@ -2257,8 +2257,8 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
   iStart = iEnd;
  } while( iEnd !=lW ); // пока не конец строки sW ( конец соотв. do )
 //
- DelSpacesTabsAround ( sCalcs ); // удаляем внешние пробелы
- ReplManySpacesOne( sCalcs ); // удаляем повторы пробелов внутри
+ DeleteSpacesTabsAround ( sCalcs ); // удаляем внешние пробелы
+ ReplaceManySpacesOne( sCalcs ); // удаляем повторы пробелов внутри
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  c_AddLineToTextFrame( sCalcs ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2307,7 +2307,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   iEnd = c_FindSubString( sWork, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
-  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
+  DeleteSpacesTabsAround( sN ); // обрезаем внешние пробелы
 //
 ////////////////////////////////////////////////////////////////////////////////
   lPrevOps = strlen( sOps ) ; // длина строки sOps ПЕРЕД добавлением '=n1/n2:' или '=Def:'
@@ -2333,7 +2333,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
 //  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-  DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+  DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   } // конец if( sscanf( sN, ...
   } // конец if( sN[0]=='='...
@@ -2357,7 +2357,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
 //   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   }  // конец обработки конструкции "=Def:^"
 //
@@ -2401,8 +2401,8 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   iStart = iEnd;
  } while( iEnd !=lW ); // пока не конец строки sW ( конец соотв. do )
 //
- DelSpacesTabsAround ( sOps ); // удаляем внешние пробелы
- ReplManySpacesOne( sOps ); // удаляем повторы пробелов внутри
+ DeleteSpacesTabsAround ( sOps ); // удаляем внешние пробелы
+ ReplaceManySpacesOne( sOps ); // удаляем повторы пробелов внутри
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  c_AddLineToTextFrame( sOps ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2447,7 +2447,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
   iEnd = c_FindSubString( sWork, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
-  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
+  DeleteSpacesTabsAround( sN ); // обрезаем внешние пробелы
 //
 ////////////////////////////////////////////////////////////////////////////////
   lPrevOps = strlen( sEdg ) ; // длина строки sEdg ПЕРЕД добавлением '=n1/n2|m1/m2:' или '=Def:'
@@ -2473,7 +2473,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
 //  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-  DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+  DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   } // конец if( sscanf( sN, ...
   } // конец if( sN[0]=='='...
@@ -2497,7 +2497,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
 //   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   }  // конец обработки конструкции "=Def:^"
 //
@@ -2546,8 +2546,8 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
   iStart = iEnd;
  } while( iEnd !=lW ); // пока не конец строки sW ( конец соотв. do )
 //
- DelSpacesTabsAround ( sEdg ); // удаляем внешние пробелы
- ReplManySpacesOne( sEdg ); // удаляем повторы пробелов внутри
+ DeleteSpacesTabsAround ( sEdg ); // удаляем внешние пробелы
+ ReplaceManySpacesOne( sEdg ); // удаляем повторы пробелов внутри
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  c_AddLineToTextFrame( sEdg ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2596,7 +2596,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   iEnd = c_FindSubString( sWork, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
-  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
+  DeleteSpacesTabsAround( sN ); // обрезаем внешние пробелы
 //
 ////////////////////////////////////////////////////////////////////////////////
   lPrevOps = strlen( sVrt ); // длина строки sVrt ПЕРЕД добавлением '=n1/n2:' или '=Def:'
@@ -2622,7 +2622,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
 //  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-  DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+  DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   } // конец if( sscanf( sN, ...
   } // конец if( sN[0]=='='...
@@ -2646,7 +2646,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
 //   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
-   DelSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
+   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
 //
   }  // конец обработки конструкции "=Def:^"
 //
@@ -2690,8 +2690,8 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   iStart = iEnd;
  } while( iEnd !=lW ); // пока не конец строки sW ( конец соотв. do )
 //
- DelSpacesTabsAround ( sVrt ); // удаляем внешние пробелы
- ReplManySpacesOne( sVrt ); // удаляем повторы пробелов внутри
+ DeleteSpacesTabsAround ( sVrt ); // удаляем внешние пробелы
+ ReplaceManySpacesOne( sVrt ); // удаляем повторы пробелов внутри
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  c_AddLineToTextFrame( sVrt ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2718,7 +2718,7 @@ INT __fastcall c_GetCountCalcs()
   iEnd = c_FindSubString( sCalcs, sN, iStart, 0 );
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
-  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
+  DeleteSpacesTabsAround( sN ); // обрезаем внешние пробелы
 //
 // --- проверяем корректность преобразования '=n1/n2:' -------------------------
 //  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // вoзврат !=2 - ошибка
@@ -2760,7 +2760,7 @@ char* __fastcall c_GetNumbParamByCalc(INT Numb, INT Calc )
 //
   if ( rep == Numb ) // нашли что надо...
   {
-   DelSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
+   DeleteSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
 //
@@ -2795,7 +2795,7 @@ char* __fastcall c_GetNumbParamByOp(INT Numb, INT Op )
 
   if ( rep == Numb ) // нашли что надо...
   {
-   DelSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
+   DeleteSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
 
@@ -3791,7 +3791,7 @@ char* __fastcall c_GetNumbMetricByOp(INT Numb, INT Op)
 //
   if ( rep == Numb ) // нашли что надо...
   {
-   DelSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
+   DeleteSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
 //
@@ -3934,7 +3934,7 @@ char* __fastcall c_GetNumbMetricByEdge(INT Numb, INT from_Op, INT to_Op)
 //
   if ( rep == Numb ) // нашли что надо...
   {
-   DelSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
+   DeleteSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
 //
@@ -4375,8 +4375,8 @@ bool __fastcall c_ReadEdges(char FileName[])
   if( fgets( str,sizeof(str), fptr ) == NULL ) // читаем очередную строку GV-файла
    break; // если строки кончились или ошибка считывания...
 //
-  ReplManySpacesOne( str ); // заменяем множество пробелов внутри строки одним-единственным
-  DelSpacesTabsAround( str ); // удаляем пробелы в начале и конце строки
+  ReplaceManySpacesOne( str ); // заменяем множество пробелов внутри строки одним-единственным
+  DeleteSpacesTabsAround( str ); // удаляем пробелы в начале и конце строки
 //
   if( ( str[0] == '#' ) || ( (str[0] == '/') && (str[1] == '/') ) )
    continue; // строку пропускаем - это комментарий
@@ -4482,8 +4482,8 @@ bool __fastcall ParseStringAndAddEdges( char *str )
    for( j=i+1; j<=strlen(str); j++ ) // от первого справа символа за ";" до конца строки
     Mem_Edges[ nEdges ].Operators[ k++ ] = str[ j ]; // копируем посимвольно
 //
-   DelSpacesTabsAround( Mem_Edges[nEdges].Operators ); // удаляем пробелы справа и слева в строке Mem_Edges[nEdges].Operators
-   ReplManySpacesOne( Mem_Edges[nEdges].Operators ); // множествкнные пробелы заменяем единственным
+   DeleteSpacesTabsAround( Mem_Edges[nEdges].Operators ); // удаляем пробелы справа и слева в строке Mem_Edges[nEdges].Operators
+   ReplaceManySpacesOne( Mem_Edges[nEdges].Operators ); // множествкнные пробелы заменяем единственным
 //
 //   t_printf( "-= %d %s =-", nEdges, Mem_Edges[ nEdges ].Operators );
 //
@@ -4491,7 +4491,7 @@ bool __fastcall ParseStringAndAddEdges( char *str )
    break;
   }
 //
- DelAllSpaces( str ); // удаляем ВСЕ пробелы в строке str
+ DeleteAllSpaces( str ); // удаляем ВСЕ пробелы в строке str
 //
  while( 1 ) // бесконечный цикл по подстрокам вида "a -> b"
  {
@@ -4516,7 +4516,7 @@ bool __fastcall ParseStringAndAddEdges( char *str )
 //
  } // конец for( i=0; i<strlen( str ); i++ )
 //
- DelSpacesTabsAround( str ); // удаляем пробелы в НАЧАЛЕ и конце строки
+ DeleteSpacesTabsAround( str ); // удаляем пробелы в НАЧАЛЕ и конце строки
 //
  if( strstr( str, "->" ) == NULL ) // более в str нет подстроки "->"...
   return TRUE;
@@ -4559,8 +4559,8 @@ bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] )
   if( sWork[j] == '\n' || sWork[j] == '\r' || sWork[j] == '\t' )
    sWork[j] = ' ';
 //
- DelSpacesTabsAround ( sWork ); // удаляем внешние пробелы
- ReplManySpacesOne( sWork ); // удаляем повторы пробелов внутри
+ DeleteSpacesTabsAround ( sWork ); // удаляем внешние пробелы
+ ReplaceManySpacesOne( sWork ); // удаляем повторы пробелов внутри
 //
  return TRUE;
 } // ----- конец ReadAndPrimWorkOpsCalcsVertEdgeFiles --------------------------
@@ -4943,8 +4943,8 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
   strcat( FileName,ExtractFileExt(FileName).c_str() );
  }
 //
- DelSpacesTabsAround( FileName ); // удаляем пробелы и Tabs с начала и с конца строки
- DelSpacesTabsAround( Ext );
+ DeleteSpacesTabsAround( FileName ); // удаляем пробелы и Tabs с начала и с конца строки
+ DeleteSpacesTabsAround( Ext );
 //
  if( FileName[0] == Comma[0] ) // имя начинается с '.'
  {
@@ -4969,7 +4969,7 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
  if( wE[0] == Comma[0] ) // начальный символ wE=='.'
  {
   wE[0] = Space[0]; // начальный символ wE заменяем на пробел
-  DelSpacesTabsAround( wE); // чистим от пробелов
+  DeleteSpacesTabsAround( wE); // чистим от пробелов
  }
 //
  if( !strlen( wE ) ) // если пусто...
@@ -4983,195 +4983,6 @@ cont:
 //
 } // --- конец ReformFileName --------------------------------------------------
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_PutParamsTiers()
-{ // --- вывод основных параметров ИГА и его ЯПФ -------------------------------
- char szOut[_4096], w1[_256], // рабочие массивы (строки)
-      Delimeter[] = " \246 " ; // разделитель частей выводимых данных
-// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.линия \246 \x00A6
- REAL AverWidth, // средняя ширина по ярусам кроме первого и последнего
-      SumSqWidth = 0.0, // сумма квадратов невязок ширины по ярусам
-      AverSqDevWidth = 0.0; // ср.кв.отклонение ширины ярусов ЯПФ (кроме ярусов 1 и nTiers)
- INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
-      Op,  dTiers,  sdOps = 0, sdTiers = 0;
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
-// =============================================================================
- c_CalcParamsTiers() ; // вычисление параметров ширин ярусов ЯПФ и занесение в стр-ру StatTiers (глобал)
-//
- AverWidth = StatTiers.averWidth ; // среднеарифметичесая ширина ЯПФ (кроме 0-го уровня)
-//
- AverSqDevWidth = StatTiers.SD ; // сумма квадратов невязок
- //
-////////////////////////////////////////////////////////////////////////////////
-//
- if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
-  snprintf( w1,sizeof(w1), "%.3f", (REAL)Tiers( c_GetTierFirstMaxOps(1,nTiers), 0 ) / Tiers( c_GetTierFirstMinOps(1,nTiers), 0 ) );
- else
-  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на ярусе..!
-//
- char szStatTiers[_256]; // данные статистики ярусов ЯПФ
-//
- if( nTiers != 1 )
-  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, СКО= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g",
-            StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL ) ;
- else
-  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %,4g, СКО= x.x, CV= x.x, IC= x.x, ICL= x.x",
-            StatTiers.averWidth ) ;
-//
-// --- вычисляем ВАРИАТИВНОСТЬ -------------------------------------------------
- for( iTier=1; iTier<=nTiers; iTier++ ) // по всем ярусам ЯПФ
-  for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на ярусе iTier
-  {
-   Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на ярусе iTier
-   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон перемещения Op по ярусам
-
-   if( dTiers ) // если не нуль...
-   {
-    sdOps += 1; // суммируем число ОПЕРАТОРОВ, которые могут быть перемещены по ярусам ЯПФ
-    sdTiers += dTiers; // сумма диапазонов возможных перемещений по ярусам для оператора Op
-   }
-  } // конец цикла по iOp
-//
-// === начало обработки информации о времени жизни данных между ярусами ЯПФ ====
-//
- INT n,n1,n2,m, // n1,n2 - номера промежутков между ярусами ЯПФ
-     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны ярусов выше и ниже
- REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
-//
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// strcpy( szStatTLD, "\0" ); // обнулим для вывода при !PutParamsDataLiveOnTextFrame
-//
- if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
-  goto calc_data_live; // ...да простит меня Эдсгер Вибе Дейкстра! -------------
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
-//
- sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков ярусов в ЯПФ
-//
- for( INT i=1; i<=n; i++) // по числу промежутков между ярусами ЯПФ
- {
-  if( i < n ) // кроме последней строки с $
-   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
-  else // последняя строка формата "n/$|m"
-  {
-   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:",  &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
-   n2=n1+1;
-  }
-//
-  if( m >= maxM ) // ищем мах число живых данных
-  {
-   maxM = max(maxM,m);
-   n1x=n1; // запомнили ярус выше
-   n2x=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
-//
-  if( m < minM ) // ищем мin число живых данных
-  {
-   minM = min(minM,m);
-   n1n=n1; // запомнили ярус выше
-   n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
-//
-  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
- } // конец цикла по промежуткам между ярусами ЯПФ
-//
-// дополнение строки информацией о времени жизни данных
-//
- char szStatTLD[_512], // строка данных о времени жизни локальных данных (TLD)
-      tmp2[_512] ;
-//
- if( n2n == n )
-  sprintf( szStatTLD,"%sTLD: min=%d(%d/%c), ", Delimeter, minM,n1n,'$' );
- else
-  sprintf( szStatTLD,"%sTLD: min=%d(%d/%d), ", Delimeter, minM,n1n,n2n );
-//
- if( n2x == n )
-  sprintf( tmp2, "max=%d(%d/%c), ср.арифм.=%.4g", maxM,n1x,'$',averTLD / n );
- else
-  sprintf( tmp2, "max=%d(%d/%d), ср.арифм.=%.4g", maxM,n1x,n2x,averTLD / n );
-//
- strcat( szStatTLD, tmp2 ); // подготовили строку для вывода на F2
-//
-// === конец обработки информации о времени жижни данных между ярусами ЯПФ =====
-//
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
-// --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
-//
- char szFormat[] = // строка формата для вывода данных в строку szOut ----------
-"Операторов= %d, дуг= %d, ярусов= %d\
-%sЯПФ: %s\
-%sоператоров на ярусе/ярус (min:max)= %d/%d:%d/%d\
-%sвариативность ЯПФ: Vo|Vt|Vot= %.4g|%.4g|%.4g\
-%sср.арифм.длин дуг= %.4g ярусов\
-%s";
-//
- snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
-//
- nOps, nEdges, nTiers,
- Delimeter,
-//
- szStatTiers, // данные статистики ярусов ЯПФ
- Delimeter,
-//
- Tiers(c_GetTierFirstMinOps(1,nTiers),0), c_GetTierFirstMinOps(1,nTiers),
- Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
- Delimeter,
-//
- (REAL)sdOps / nOps, // Vo
- (REAL)sdTiers / nOps, // Vt
- (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
- Delimeter,
-//
- StatTiers.AAL, // среднеарифметическая длина дуги
-//
- szStatTLD ); // данные статистики времени жизни локальных данных (TLD)
-//
- F2->L_GP->Caption = szOut; // вывод основных параметров ЯПФ графа
- F2->L_GP->Repaint(); // принудительно перерисовываем
-//
-//
- strcpy( szStatTLD, "\n" );
- strcat( szStatTLD, tmp2 ); // подготовили строку для вывода в файл протокола
- if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
-  strcpy( szStatTLD, "\0" );
-//
-// ===== вывод рассчитанных данных в протокол расчёта (файл) ===================
-//
-////////////////////////////////////////////////////////////////////////////////
- ReplEqualLengthSubstring( szOut, Delimeter, "  \n" ) ; // заменяем Delimeter на "^^\n"
-////////////////////////////////////////////////////////////////////////////////
-//
- if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
-  t_printf( szOut ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода
-//
- p_printf( "\n" ); // перед и после - пустая строка !!!
- p_printf( szOut ); // допОлнили файл протокола
- p_printf( "\n\n" );
-//
- snprintf(szOut,sizeof(szOut), "H|N/W=%d|%d/%d", nTiers,c_GetTierFirstMaxOps(1,nTiers),
-                                Tiers(c_GetTierFirstMaxOps(1,nTiers),0) );
- F2->L_OM->Caption = szOut; // вывод максимума операторов на ярусе по всему ЯПФ
- F2->L_OM->Repaint(); // принудительно перерисовываем
-//
- return TRUE ;
-//
-} // ----- конец c_PutParamsTiers ----------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5250,6 +5061,199 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
  StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическая длина дуги (Average Arc Length)
 //
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_PutParamsTiers()
+{ // --- вывод основных параметров ИГА и его ЯПФ -------------------------------
+ char szOut[_4096], w1[_256], // рабочие массивы (строки)
+      Delimeter[] = " \246 " ; // разделитель частей выводимых данных
+// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.линия \246 \x00A6
+ REAL AverWidth, // средняя ширина по ярусам кроме первого и последнего
+      SumSqWidth = 0.0, // сумма квадратов невязок ширины по ярусам
+      AverSqDevWidth = 0.0; // ср.кв.отклонение ширины ярусов ЯПФ (кроме ярусов 1 и nTiers)
+ INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
+      Op,  dTiers,  sdOps = 0, sdTiers = 0;
+//
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+// =============================================================================
+ c_CalcParamsTiers() ; // вычисление параметров ширин ярусов ЯПФ и занесение в стр-ру StatTiers (глобал)
+//
+ AverWidth = StatTiers.averWidth ; // среднеарифметичесая ширина ЯПФ (кроме 0-го уровня)
+//
+ AverSqDevWidth = StatTiers.SD ; // сумма квадратов невязок
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+ if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
+  snprintf( w1,sizeof(w1), "%.3f", (REAL)Tiers( c_GetTierFirstMaxOps(1,nTiers),0) / Tiers(c_GetTierFirstMinOps(1,nTiers),0) );
+ else
+  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на ярусе..!
+//
+ char szStatTiers[_256]; // данные статистики ярусов ЯПФ
+//
+ if( nTiers != 1 )
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, СКО= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g",
+            StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL ) ;
+ else
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %,4g, СКО= x.x, CV= x.x, IC= x.x, ICL= x.x",
+            StatTiers.averWidth ) ;
+//
+// --- вычисляем ВАРИАТИВНОСТЬ -------------------------------------------------
+ for( iTier=1; iTier<=nTiers; iTier++ ) // по всем ярусам ЯПФ
+  for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на ярусе iTier
+  {
+   Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на ярусе iTier
+   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон перемещения Op по ярусам
+
+   if( dTiers ) // если не нуль...
+   {
+    sdOps += 1; // суммируем число ОПЕРАТОРОВ, которые могут быть перемещены по ярусам ЯПФ
+    sdTiers += dTiers; // сумма диапазонов возможных перемещений по ярусам для оператора Op
+   }
+  } // конец цикла по iOp
+//
+// === начало обработки информации о времени жизни данных между ярусами ЯПФ ====
+//
+ INT n,n1,n2,m, // n1,n2 - номера промежутков между ярусами ЯПФ
+     maxM=-1e10,minM=-maxM, // max данных, min данных
+     n1x,n2x, n1n,n2n; //  диапазоны ярусов выше и ниже
+ REAL averTLD=0.0; // средне-арифметическое времени жизни данных между ярусами ЯПФ (ЕДВ)
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+ if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
+  goto calc_data_live; // ...да простит меня Эдсгер Вибе Дейкстра! -------------
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+ c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+//
+ sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков ярусов в ЯПФ
+//
+ for( INT i=1; i<=n; i++) // по числу промежутков между ярусами ЯПФ
+ {
+  if( i < n ) // кроме последней строки с $
+   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний ярус / нижний ярус / число данных в этом промежутке
+  else // последняя строка формата "n/$|m"
+  {
+   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:",  &n1,&m ); // верхний ярус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  if( m >= maxM ) // ищем мах число TLD
+  {
+   maxM = max(maxM,m);
+   n1x=n1; // запомнили ярус выше
+   n2x=n2; // запомнили ярус ниже (избыточно вообще-то...)
+  }
+//
+  if( m < minM ) // ищем мin число TLD
+  {
+   minM = min(minM,m);
+   n1n=n1; // запомнили ярус выше
+   n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
+  }
+//
+  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
+ } // конец цикла по промежуткам между ярусами ЯПФ
+//
+// дополнение строки информацией о времени жизни данных
+//
+ char szStatTLD[_512], // строка данных о времени жизни локальных данных (TLD)
+      tmp2[_128] ;
+//
+ if( n2n == n )
+  sprintf( szStatTLD,"%sTLD: min=%d(%d/%c), ", Delimeter, minM,n1n,'$' );
+ else
+  sprintf( szStatTLD,"%sTLD: min=%d(%d/%d), ", Delimeter, minM,n1n,n2n );
+//
+ if( n2x == n )
+  sprintf( tmp2, "max=%d(%d/%c), ср.арифм.=%.4g", maxM,n1x,'$',averTLD / n );
+ else
+  sprintf( tmp2, "max=%d(%d/%d), ср.арифм.=%.4g", maxM,n1x,n2x,averTLD / n );
+//
+ strcat( szStatTLD, tmp2 ); // подготовили строку для вывода на F2
+//
+// === конец обработки информации о времени жижни данных между ярусами ЯПФ =====
+//
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+// --- вывод рассчитанных данных на форму F2 в L_GP ----------------------------
+//
+ char szFormat[] = // строка формата для вывода данных в строку szOut ----------
+"Операторов= %d, дуг= %d, ярусов= %d\
+%sЯПФ: %s\
+%sоператоров на ярусе/ярус (min:max)= %d/%d:%d/%d\
+%sвариативность ЯПФ: Vo|Vt|Vot= %.4g|%.4g|%.4g\
+%sср.арифм.длин дуг= %.4g ярусов\
+%s";
+//
+ snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
+//
+ nOps, nEdges, nTiers,
+ Delimeter,
+//
+ szStatTiers, // данные статистики ярусов ЯПФ
+ Delimeter,
+//
+ Tiers(c_GetTierFirstMinOps(1,nTiers),0), c_GetTierFirstMinOps(1,nTiers),
+ Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
+ Delimeter,
+//
+ (REAL)sdOps / nOps, // Vo
+ (REAL)sdTiers / nOps, // Vt
+ (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
+ Delimeter,
+//
+ StatTiers.AAL, // среднеарифметическая длина дуги
+//
+ szStatTLD ); // данные статистики времени жизни локальных данных (TLD)
+//
+ F2->L_GP->Caption = szOut; // вывод основных параметров ЯПФ графа
+ F2->L_GP->Repaint(); // принудительно перерисовываем
+//
+//
+ strcpy( szStatTLD, "\n" );
+ strcat( szStatTLD, tmp2 ); // подготовили строку для вывода в файл протокола
+//
+ if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
+  strcpy( szStatTLD, "\0" );
+//
+// ===== вывод рассчитанных данных в протокол расчёта (файл) ===================
+//
+////////////////////////////////////////////////////////////////////////////////
+ ReplaceEqualLengthSubstring( szOut, Delimeter, "  \n" ) ; // заменяем Delimeter на "^^\n"
+////////////////////////////////////////////////////////////////////////////////
+//
+ if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
+  t_printf( szOut ); // вывод в текстовое окно того же самого, что в нижней части текстового окна вывода
+//
+ p_printf( "\n" ); // перед и после - пустая строка !!!
+ p_printf( szOut ); // допОлнили файл протокола
+ p_printf( "\n\n" );
+//
+ snprintf(szOut,sizeof(szOut), "H|N/W=%d|%d/%d", nTiers,c_GetTierFirstMaxOps(1,nTiers),
+                                Tiers(c_GetTierFirstMaxOps(1,nTiers),0) );
+ F2->L_OM->Caption = szOut; // вывод максимума операторов на ярусе по всему ЯПФ
+ F2->L_OM->Repaint(); // принудительно перерисовываем
+//
+ return TRUE ;
+//
+} // ----- конец c_PutParamsTiers ----------------------------------------------
+
+
 
 
 

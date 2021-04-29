@@ -169,7 +169,7 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\blCreateProcess\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bLuaCallByTimer\b' />
 
-        <Regex token0 = 'SPF_API_Keywords' regex = '\CalcParamsTiers\b' />
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcParamsTiers\b' />
 
 <!--================================================================================-->
 

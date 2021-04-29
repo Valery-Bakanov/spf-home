@@ -365,9 +365,10 @@ bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное имя файла п
 void  __fastcall PutScriptFileName(); // выдаёт имя файла скрипта на форму
 void  __fastcall DisplayMessage(char* Level, char* funcName, char* Text, INT Err); // выдать сообщение Text уровня Level
 void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в позиции курсора
-char* __fastcall ReplManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
-void  __fastcall DelSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
-void  __fastcall DelAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
+char* __fastcall ReplaceManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
+void  __fastcall DeleteSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
+void  __fastcall DeleteAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
+void  __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
 bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
@@ -379,8 +380,6 @@ void  __fastcall Copy_Stdout_To_Memo(); // для вывода stdout в M0_stdout
 void  __fastcall ShowBreakpoint( char *str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
 //
 void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
-//
-void  __fastcall ReplEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
 //
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (для Out!Data)
 ////////////////////////////////////////////////////////////////////////////////
@@ -623,7 +622,7 @@ void safe_printf(int rule, char *fmt, ...)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall DelAllSpaces(char *str)
+void __fastcall DeleteAllSpaces(char *str)
 { // удаляет ВСЕ пробелы в строке str
 //
 // для использования AnsiReplaceStr ytj,[jlbvj #include <vcl/StrUtils.hpp>
@@ -632,12 +631,12 @@ void __fastcall DelAllSpaces(char *str)
 // нижеприведённое взято с http://www.quizful.net/interview/cpp/VbW07kq70NCY
  for (int i=0,j=0; str[i]; (str[j++]=str[i]!=' '?str[i]:(j--,str[j]),i++,(!str[i]?(str[j]=0):0)));
 //
-} // ------ конец DelAllSpaces -------------------------------------------------
+} // ------ конец DeleteAllSpaces ----------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall DelSpacesTabsAround(char *str)
+void __fastcall DeleteSpacesTabsAround(char *str)
 { // удаляет пробелы и Tabs слева и справа строки str
 // Trim, TrimLeft, TrimRight работают только с AnsiString
 // strNcpy(str, Trim(AnsiString(str)).c_str());
@@ -662,11 +661,11 @@ void __fastcall DelSpacesTabsAround(char *str)
  if(i<(strlen(str)-1))
   str[i+1]='\0';
 //
-} // --- конец функции trim ----------------------------------------------------
+} // --- конец функции DeleteSpacesTabsAround ----------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char* __fastcall ReplManySpacesOne( char *pszStr )
+char* __fastcall ReplaceManySpacesOne( char *pszStr )
 { // заменяет множество пробелов одним-единственным
  char *pszOld = pszStr,
       *pszCur = pszStr;
@@ -683,11 +682,11 @@ char* __fastcall ReplManySpacesOne( char *pszStr )
  } // конец if( pszStr )
 //
    return pszOld;
-} // --- конец функции ReplManySpacesOne ---------------------------------------
+} // --- конец функции ReplaceManySpacesOne ------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall ReplEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring )
+void __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring )
 // в строке Strint заменяет подстроки OldSubstring на NewSubstring ОДИНАКОВОЙ ДЛИНЫ
 {
  INT lenOldSubstring = strlen( OldSubstring ),
@@ -702,7 +701,7 @@ void __fastcall ReplEqualLengthSubstring( char *String, char *OldSubstring, char
    memcpy( p,NewSubstring,lenOldSubstring ); // копируем NewSubstring начиная с p
  while( p ) ;
 //
-} // --- конец функции ReplEqualLegthSubstring ---------------------------------
+} // --- конец функции ReplaceEqualLegthSubstring ------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1331,8 +1330,8 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
   if( strchr(str[i],';' ) ) // если в строке str[i] имеется ';'
    str[ i ][ strchr(str[i],';') - str[i] ] = '\0'; // заменяем ';' "конец строки" '\0'
 //
-  ReplManySpacesOne( str[i] ); // удаляем повторы пробелов внутри
-  DelSpacesTabsAround ( str[i] ); // удаляем внешние пробелы
+  ReplaceManySpacesOne( str[i] ); // удаляем повторы пробелов внутри
+  DeleteSpacesTabsAround ( str[i] ); // удаляем внешние пробелы
 //
  } // конец по 6-ти строкам внутри  FileNameProject
 //

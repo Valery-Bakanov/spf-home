@@ -1168,7 +1168,7 @@ void __fastcall RegisterFunctions(lua_State *L)
 //
  lua_register(L, "LuaCallByTimer",   LuaCallByTimer);
 //
- lua_register(L, "CalcParamsTiers",        CalcParamsTiers );
+ lua_register(L, "CalcParamsTiers",  CalcParamsTiers );
 //
 } // ---- конец RegisterFunctions ----------------------------------------------
 
