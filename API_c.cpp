@@ -2168,11 +2168,8 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:^"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
   if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
-//   F2->L_TMM->Caption = IntToStr(sscanf( sN, "=%d/%d:^", &n1, &n2 )).c_str() ;
-//   Delay( -10 );
    iStart = iEnd;
    continue; // ...do
   }
@@ -2183,10 +2180,6 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
    snprintf( s,sizeof(s), "=%d/%d: ", n1, n2 );  // начинаем новый "=n1/n2:^"
    strcat( sCalcs, s );
 ///
-// --- чистим строку sN от подстроки "xxx:" ------------------------------------
-//  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
-//   F2->L_TMM->Caption = sN ;
-//   Delay( -5 );
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
    DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
@@ -2245,9 +2238,6 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
 // --- конец обработки строки параметра sP -------------------------------------
   jStart = jEnd;
  } while( jEnd !=lN ); // пока не конец строки sN ( конец соотв. do )
-//
-// если ни одного подпараметра, то дезавуируем
-// [=][число]/[число][:] или [=][Def:] в строке sOps
 //
  if( countSP==0 )
   sOps[ lPrevCalcs ] = '\0' ;
@@ -2318,7 +2308,6 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
   if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
@@ -2329,8 +2318,6 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
    snprintf( s,sizeof(s), "=%d/%d: ", n1,n2 );  // начинаем новый "=n1/n2:^"
    strcat( sOps, s );
 //
-// --- чистим строку sN от подстроки "xxx:" ------------------------------------
-//  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
@@ -2342,8 +2329,6 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
   else // if( sN[0]=='=' ...
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  if( !( sN[0]=='='          && toupper(sN[1])=='D' && toupper(sN[2])=='E' &&
-//         toupper(sN[3])=='F' &&  sN[4]==':' ) )
   if( ! cmp_def( sN ) ) // это как раз случай '=Def:'
   {
    iStart = iEnd;
@@ -2389,9 +2374,6 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
 // --- конец обработки строки параметра sP -------------------------------------
   jStart = jEnd;
  } while( jEnd !=lN ); // пока не конец строки sN ( конец соотв. do )
-//
-// если ни одного подпараметра, то дезавуируем
-// [=][число]/[число][:] или [=][Def:] в строке sOps
 //
  if( countSP==0 )
   sOps[ lPrevOps ] = '\0' ;
@@ -2469,8 +2451,6 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
    snprintf( s,sizeof(s), "=%d/%d|%d/%d: ", n1,n2, m1,m2 );  // начинаем новый "=n1/n2|m1/m2:^"
    strcat( sEdg, s );
 //
-// --- чистим строку sN от подстроки "xxx:" ------------------------------------
-//  DEL_TO_COLON // макрос для очистки sN от 'xxx:'
   strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
   DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
@@ -2482,8 +2462,6 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
   else // if( sN[0]=='=' ...
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  if( !( sN[0]=='='          && toupper(sN[1])=='D' && toupper(sN[2])=='E' &&
-//         toupper(sN[3])=='F' &&  sN[4]==':' ) )
   if( ! cmp_def( sN ) ) // это как раз случай '=Def:'
   {
    iStart = iEnd;
@@ -2494,7 +2472,6 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
    snprintf( s,sizeof(s), "%s ", sDef );
    strcat( sEdg, s );
 //
-//   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
    DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
@@ -2514,11 +2491,6 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
 //
 // --- начало обработки строки параметра sP ------------------------------------
 //
-//  snprintf( s,sizeof(s), "sP (%d-%d) |%s|", jStart, jEnd, sP ) ;
-//  c_AddLineToTextFrame( s );
-//  MessageBeep( MB_OK );
-//  Delay( 100 );
-//
 // --- проверка на корректность считывания значений параметров путём использования sscanf(...)
   if( !c_IsCorrectParamOpVertEdg( sP ) )
   {
@@ -2534,9 +2506,6 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
 // --- конец обработки строки параметра sP -------------------------------------
   jStart = jEnd;
  } while( jEnd !=lN ); // пока не конец строки sN ( конец соотв. do )
-//
-// если ни одного подпараметра, то дезавуируем
-// [=][число]/[число][:] или [=][Def:] в строке sOps
 //
  if( countSP==0 )
   sOps[ lPrevOps ] = '\0' ;
@@ -2589,8 +2558,6 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
      lW = strlen( sWork ), // длина строки sW
      lPrevOps;
 //
-// int countSP = 0 ; // сколько строк sP подпараметров было найдено в строке sN
-//
  do // по подстрокам [=][цифра][/][цифра][:] или [=][Def:] ( по sN )
  {
   iEnd = c_FindSubString( sWork, sN, iStart, 0 );
@@ -2607,7 +2574,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) != 2 ) // читаем n1/n2 из sN (вoзврат !=2 - ошибка )
+
   if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
@@ -2631,8 +2598,6 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   else // if( sN[0]=='=' ...
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  if( !( sN[0]=='='          && toupper(sN[1])=='D' && toupper(sN[2])=='E' &&
-//         toupper(sN[3])=='F' &&  sN[4]==':' ) )
   if( ! cmp_def( sN ) ) // это как раз случай '=Def:'
   {
    iStart = iEnd;
@@ -2643,7 +2608,6 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
    snprintf( s,sizeof(s), "%s ", sDef );
    strcat( sVrt, s );
 //
-//   DEL_TO_COLON // макрос для очистки SN от 'xxx:'
    strNcpy( sN, strchr( sN,':' ) + 2 ) ; // убрали также пробел после ':'
 //
    DeleteSpacesTabsAround( sN ); // очистили sN от ведущих пробелов...
@@ -2678,9 +2642,6 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
 // --- конец обработки строки параметра sP -------------------------------------
   jStart = jEnd;
  } while( jEnd !=lN ); // пока не конец строки sN ( конец соотв. do )
-//
-// если ни одного подпараметра, то дезавуируем
-// [=][число]/[число][:] или [=][Def:] в строке sOps
 //
  if( countSP==0 )
   sOps[ lPrevOps ] = '\0' ;
@@ -2792,15 +2753,13 @@ char* __fastcall c_GetNumbParamByOp(INT Numb, INT Op )
 // --- начало обработки строки sN списка параметров параметра ------------------
 //
   rep ++ ; // номер вхождения sR в sN
-
+//
   if ( rep == Numb ) // нашли что надо...
   {
    DeleteSpacesTabsAround( sR ); // удаляем пробелы спереди и сзади
    return sR ; // возвращаем результат
   }
-
 // --- конец обработки строки sN спиcка параметров -----------------------------
-//  cont_i:
   iStart = iEnd;
  } while( iEnd !=lN ); // пока не конец строки sN
 //
@@ -2834,7 +2793,6 @@ INT __fastcall c_GetNumbOp(INT Numb)
   for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начиная с #1
   {
    if( !Mem_Edges[iEdges].flag_From ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdges
-// if( ( nW=Edges(0,iEdges) ) > 0 ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdges
    { // --- вершины метим номерами с минусом -----------------------------------
     nW=Edges(0,iEdges);
     for(jEdges=1; jEdges<=nEdges; jEdges++)
@@ -3822,16 +3780,12 @@ char* __fastcall c_GetMetricsByOp(INT Op)
   iEnd = c_FindSubString( sVrt, sN, iStart, 0 );
 // --- начало обработки строки sOps списка параметров --------------------------
 //
-//  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-//
-//  if( !strncmp( sN, sDef, 5 ) ) // '=Def:' пока не нужна... уходим на do !
   if( cmp_def( sN ) ) // '=Def:' пока не нужна... уходим на do !
   {
    iStart = iEnd ;
    continue; // ...do
   }
 //
-//  if( sscanf( sN, "=%d/%d: ", &n1, &n2 ) == 2 ) // правильное чтение
   if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Op >= min(n1,n2) && Op <= max(n1,n2) ) // Op в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
@@ -3850,9 +3804,6 @@ char* __fastcall c_GetMetricsByOp(INT Op)
   iEnd = c_FindSubString( sVrt, sN, iStart, 0 );
 // --- начало обработки строки sMess списка параметров -------------------------
 //
-//  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-//
-//  if( strncmp( sN, sDef, 5 ) ) // '=Def:' как раз нужна...
   if( ! cmp_def( sN ) ) // '=Def:' как раз нужна...
   {
    iStart = iEnd ;
@@ -3939,7 +3890,6 @@ char* __fastcall c_GetNumbMetricByEdge(INT Numb, INT from_Op, INT to_Op)
   }
 //
 // --- конец обработки строки sN спиcка параметров -----------------------------
-//  cont_i:
   iStart = iEnd;
  } while( iEnd !=lN ); // пока не конец строки sN
 //
@@ -3965,16 +3915,12 @@ char* __fastcall c_GetMetricsByEdge(INT from_Op, INT to_Op)
   iEnd = c_FindSubString( sEdg, sN, iStart, 0 );
 // --- начало обработки строки sOps списка параметров --------------------------
 //
-//  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-//
-//  if( !strncmp( sN, sDef, 5 ) ) // '=Def:' пока не нужна... уходим на do !
   if( cmp_def( sN ) ) // '=Def:' пока не нужна... уходим на do !
   {
    iStart = iEnd ;
    continue; // ...do
   }
 //
-//  if( sscanf( sN, "=%d/%d|%d/%d: ", &n1,&n2, &m1,&m2 ) == 4 ) // правильное чтение - 4 поля прочитано
   if( Test_n1n2m1m2 ) // правильное чтение "=n1/n2|m1/m2:^" из sN
    if( ( from_Op >= min(n1,n2) && from_Op <= max(n1,n2) ) &&
        (   to_Op >= min(m1,m2) &&   to_Op <= max(m1,m2) ) ) // Op в диапазоне n1/n2 - m1/m2
@@ -4111,8 +4057,6 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] 
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-//
-//  setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
  TLD->Clear(); // очистим на всякий случай...
 //
@@ -4823,24 +4767,16 @@ bool __fastcall c_DrawDiagrTLD()
   }
 //
   if( m >= maxM ) // ищем мах число живых данных
-  {
-   maxM = max(maxM,m);
-   n1x=n1; // запомнили ярус выше
-   n2x=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
+  { maxM = max(maxM,m); n1x=n1; n2x=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
   if( m < minM ) // ищем мin число живых данных
-  {
-   minM = min(minM,m);
-   n1n=n1; // запомнили ярус выше
-   n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
+  { minM = min(minM,m); n1n=n1; n2n=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
  averTLD += (REAL)m; // суммируем для получения средн.арифметического времени жизни данных между ярусам
 //
  } // конец  for(INT i=1; i<=n; i++)
 //
- averTLD /= 1.0*n; // средн.арифметическое времени жизни данных между ярусам
+ averTLD /= (REAL)n; // средн.арифметическое времени жизни данных между ярусам
 //
  REAL dH_pix = 1.0 * H_pix / n, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
       dB_pix = 1.0 * B_pix / maxM;
@@ -4924,15 +4860,7 @@ char* __fastcall ReformFileName( char FileName[], char Ext[] )
       NewFileName[_512],extFile[_128], // новое имя файла, расширение без '>'
       Comma[]=".\0",Space[]=" \0",Unknown_Name[]="Unknown_Name\0", // точка, пробел, неопределенность
       UnacceptableSymbols[]="\/\\:*?\"<>|\0"; // недопустимые символы '/\:*?"<>|'
-/*
- FileName         = C:\Program Files\Borland\Delphi7\Projects\Unit1.cpp
 //
- ExtractFileDrive = C:
- ExtractFileDir   = C:\Program Files\Borland\Delphi7\Projects
- ExtractFilePath  = C:\Program Files\Borland\Delphi7\Projects\
- ExtractFileName  = Unit1.cpp
- ExtractFileExt   = .cpp
-*/
  if( strpbrk( ExtractFileName(FileName).c_str(),UnacceptableSymbols ) ) // проверка на недопустимые символы UnacceptableSymbols в имени файла
  {
   TVarRec Vr[]={ FileName,Unknown_Name,ExtractFileExt(FileName).c_str() }; // открытый массив для последующей форматной печати
@@ -5067,7 +4995,7 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров ИГА и его ЯПФ -------------------------------
- char szOut[_4096], w1[_256], // рабочие массивы (строки)
+ char szOut[_4096], // строка для выдачи интегрированных данных
       Delimeter[] = " \246 " ; // разделитель частей выводимых данных
 // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.линия \246 \x00A6
  REAL AverWidth, // средняя ширина по ярусам кроме первого и последнего
@@ -5091,11 +5019,6 @@ INT __fastcall c_PutParamsTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
- if( Tiers( c_GetTierFirstMinOps(1,nTiers) , 0 ) != 0 ) // если ненулевое...
-  snprintf( w1,sizeof(w1), "%.3f", (REAL)Tiers( c_GetTierFirstMaxOps(1,nTiers),0) / Tiers(c_GetTierFirstMinOps(1,nTiers),0) );
- else
-  strNcpy(  w1, " -?- " ); // не определено при нулевом чмсле операторов на ярусе..!
-//
  char szStatTiers[_256]; // данные статистики ярусов ЯПФ
 //
  if( nTiers != 1 )
@@ -5110,7 +5033,7 @@ INT __fastcall c_PutParamsTiers()
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на ярусе iTier
   {
    Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на ярусе iTier
-   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон перемещения Op по ярусам
+   dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон возможного перемещения Op по ярусам
 
    if( dTiers ) // если не нуль...
    {
@@ -5149,26 +5072,18 @@ INT __fastcall c_PutParamsTiers()
   }
 //
   if( m >= maxM ) // ищем мах число TLD
-  {
-   maxM = max(maxM,m);
-   n1x=n1; // запомнили ярус выше
-   n2x=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
+  { maxM = max(maxM,m); n1x=n1; n2x=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
   if( m < minM ) // ищем мin число TLD
-  {
-   minM = min(minM,m);
-   n1n=n1; // запомнили ярус выше
-   n2n=n2; // запомнили ярус ниже (избыточно вообще-то...)
-  }
+  { minM = min(minM,m); n1n=n1; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
-  averTLD += 1.0*m; // средне-арифметическое времени жизни данных
+  averTLD += (REAL)m; // средне-арифметическое времени жизни данных
  } // конец цикла по промежуткам между ярусами ЯПФ
 //
 // дополнение строки информацией о времени жизни данных
 //
  char szStatTLD[_512], // строка данных о времени жизни локальных данных (TLD)
-      tmp2[_128] ;
+      szTemp[_128] ;
 //
  if( n2n == n )
   sprintf( szStatTLD,"%sTLD: min=%d(%d/%c), ", Delimeter, minM,n1n,'$' );
@@ -5176,11 +5091,11 @@ INT __fastcall c_PutParamsTiers()
   sprintf( szStatTLD,"%sTLD: min=%d(%d/%d), ", Delimeter, minM,n1n,n2n );
 //
  if( n2x == n )
-  sprintf( tmp2, "max=%d(%d/%c), ср.арифм.=%.4g", maxM,n1x,'$',averTLD / n );
+  sprintf( szTemp, "max=%d(%d/%c), ср.арифм.=%.4g", maxM,n1x,'$',averTLD / n );
  else
-  sprintf( tmp2, "max=%d(%d/%d), ср.арифм.=%.4g", maxM,n1x,n2x,averTLD / n );
+  sprintf( szTemp, "max=%d(%d/%d), ср.арифм.=%.4g", maxM,n1x,n2x,averTLD / n );
 //
- strcat( szStatTLD, tmp2 ); // подготовили строку для вывода на F2
+ strcat( szStatTLD, szTemp ); // подготовили строку для вывода на F2
 //
 // === конец обработки информации о времени жижни данных между ярусами ЯПФ =====
 //
@@ -5226,7 +5141,7 @@ calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
 //
 //
  strcpy( szStatTLD, "\n" );
- strcat( szStatTLD, tmp2 ); // подготовили строку для вывода в файл протокола
+ strcat( szStatTLD, szTemp ); // подготовили строку для вывода в файл протокола
 //
  if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
   strcpy( szStatTLD, "\0" );
