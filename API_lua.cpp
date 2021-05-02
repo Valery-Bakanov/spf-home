@@ -1,7 +1,7 @@
 //
 #define APM Application->ProcessMessages(); // дать поработать Windows
 //
-#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // ?????????? ???????????
+#define strNcpy(d,s) strncpy(d,s,sizeof(d)) // копирование с проверкой на длину строку "куда копировать"
 //
 ////////////////////////////////////////////////////////////////////////////////
 static int AddTier(lua_State *L) // вызов С-функции AddTier из Lua
@@ -1053,122 +1053,121 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
 ////////////////////////////////////////////////////////////////////////////////
 
 void __fastcall RegisterFunctions(lua_State *L)
-{ // ----регистрирует С-функции в Lua в экземпляре L ---------------------------
- lua_register(L, "AddTier", AddTier);
- lua_register(L, "DelTier", DelTier);
- lua_register(L, "GetMaxTierMaybeOp", GetMaxTierMaybeOp);
- lua_register(L, "GetMinTierMaybeOp", GetMinTierMaybeOp);
- lua_register(L, "MoveOpTierToTier",  MoveOpTierToTier);
- lua_register(L, "SwapOpsTierToTier", SwapOpsTierToTier);
- lua_register(L, "PutTiersToTextFrame", PutTiersToTextFrame);
- lua_register(L, "PutEdgesToTextFrame", PutEdgesToTextFrame);
- lua_register(L, "ClearTextFrame", ClearTextFrame);
- lua_register(L, "DrawDiagrTiers", DrawDiagrTiers);
- lua_register(L, "DrawDiagrTLD",   DrawDiagrTLD);
- lua_register(L, "ClearDiagrArea", ClearDiagrArea);
- lua_register(L, "DelayMS", DelayMS);
- lua_register(L, "AddLineToTextFrame", AddLineToTextFrame);
- lua_register(L, "GetCountTiers", GetCountTiers);
- lua_register(L, "GetCountOpsOnTier", GetCountOpsOnTier);
- lua_register(L, "GetOpByNumbOnTier", GetOpByNumbOnTier);
- lua_register(L, "SoundPlay", SoundPlay);
- lua_register(L, "CreateTiersByEdges", CreateTiersByEdges);
- lua_register(L, "CreateTiersByEdges_Bottom", CreateTiersByEdges_Bottom);
- lua_register(L, "GetOpsMoves", GetOpsMoves);
- lua_register(L, "CountMovesZeroing", CountMovesZeroing);
- lua_register(L, "GetTierFirstMinOps", GetTierFirstMinOps);
- lua_register(L, "GetTierLastMinOps", GetTierLastMinOps);
- lua_register(L, "GetTierFirstMaxOps", GetTierFirstMaxOps);
- lua_register(L, "GetTierLastMaxOps", GetTierLastMaxOps);
- lua_register(L, "GetCountEdges", GetCountEdges);
- lua_register(L, "GetTierByOp", GetTierByOp);
- lua_register(L, "ReadEdges", ReadEdges);
- lua_register(L, "SaveEdges", SaveEdges);
- lua_register(L, "ReadTiers", ReadTiers);
- lua_register(L, "SaveTiers", SaveTiers);
- lua_register(L, "SaveTiersVizu", SaveTiersVizu);
- lua_register(L, "SaveEdgesVizu", SaveEdgesVizu);
- lua_register(L, "SaveInOutOpVizu", SaveInOutOpVizu);
- lua_register(L, "SaveParamsVizu", SaveParamsVizu);
- lua_register(L, "PutParamsTiers", PutParamsTiers);
- lua_register(L, "GetCountInEdgesByOp", GetCountInEdgesByOp);
- lua_register(L, "GetCountOutEdgesByOp", GetCountOutEdgesByOp);
- lua_register(L, "GetNumbInEdgeByOp", GetNumbInEdgeByOp);
- lua_register(L, "GetNumbOutEdgeByOp", GetNumbOutEdgeByOp);
+{
+// ----регистрирует С-функции в Lua в экземпляре L ---------------------------
 //
+ static const struct luaL_Reg lr[] = { // список С-функций
+  { "AddTier", AddTier },
+  { "DelTier", DelTier },
+  { "GetMaxTierMaybeOp", GetMaxTierMaybeOp },
+  { "GetMinTierMaybeOp", GetMinTierMaybeOp },
+  { "MoveOpTierToTier",  MoveOpTierToTier },
 ////////////////////////////////////////////////////////////////////////////////
-// учёт гетерогенности вычислительного поля ////////////////////////////////////
+  { "SwapOpsTierToTier", SwapOpsTierToTier },
+  { "PutTiersToTextFrame", PutTiersToTextFrame },
+  { "PutEdgesToTextFrame", PutEdgesToTextFrame },
+  { "ClearTextFrame", ClearTextFrame },
+  { "DrawDiagrTiers",  DrawDiagrTiers },
 ////////////////////////////////////////////////////////////////////////////////
-// сторона вычислителей --------------------------------------------------------
-//------------------------------------------------------------------------------
- lua_register(L, "GetParamsByCalc", GetParamsByCalc);
- lua_register(L, "GetCountParamsByCalc", GetCountParamsByCalc);
- lua_register(L, "GetNumbParamByCalc",   GetNumbParamByCalc);
- lua_register(L, "GetNameNumbParamByCalc", GetNameNumbParamByCalc);
- lua_register(L, "GetMinValNumbParamByCalc", GetMinValNumbParamByCalc);
- lua_register(L, "GetMaxValNumbParamByCalc", GetMaxValNumbParamByCalc);
-// сторона операторов ----------------------------------------------------------
- lua_register(L, "GetParamsByOp", GetParamsByOp);
- lua_register(L, "GetCountParamsByOp", GetCountParamsByOp);
- lua_register(L, "GetNumbParamByOp",   GetNumbParamByOp);
- lua_register(L, "GetNameNumbParamByOp", GetNameNumbParamByOp);
- lua_register(L, "GetValNumbParamByOp",  GetValNumbParamByOp);
-// функции логического вывода о возможности выполнения оператора Op на вычислителе Calc
- lua_register(L, "CanExecOpCalc", CanExecOpCalc );
+  { "DrawDiagrTLD",    DrawDiagrTLD },
+  { "ClearDiagrArea",  ClearDiagrArea },
+  { "DelayMS", DelayMS },
+  { "AddLineToTextFrame", AddLineToTextFrame },
+  { "GetCountTiers", GetCountTiers },
 ////////////////////////////////////////////////////////////////////////////////
-//
+  { "GetCountOpsOnTier", GetCountOpsOnTier },
+  { "GetOpByNumbOnTier", GetOpByNumbOnTier },
+  { "SoundPlay", SoundPlay },
+  { "CreateTiersByEdges", CreateTiersByEdges },
+  { "CreateTiersByEdges_Bottom", CreateTiersByEdges_Bottom },
 ////////////////////////////////////////////////////////////////////////////////
-// функции работы с гетерогенным полем вычислителей ============================
+  { "GetOpsMoves", GetOpsMoves },
+  { "CountMovesZeroing",  CountMovesZeroing },
+  { "GetTierFirstMinOps", GetTierFirstMinOps },
+  { "GetTierLastMinOps",  GetTierLastMinOps },
+  { "GetTierFirstMaxOps", GetTierFirstMaxOps },
 ////////////////////////////////////////////////////////////////////////////////
- lua_register(L, "LoadFileNameParamsCalcs", LoadFileNameParamsCalcs);
- lua_register(L, "LoadFileNameParamsOps",   LoadFileNameParamsOps);
- lua_register(L, "LoadFileNameParamsEdges",    LoadFileNameParamsEdges);
- lua_register(L, "LoadFileNameParamsVertices", LoadFileNameParamsVertices);
+  { "GetTierLastMaxOps",  GetTierLastMaxOps },
+  { "GetCountEdges", GetCountEdges },
+  { "GetTierByOp",   GetTierByOp },
+  { "ReadEdges", ReadEdges },
+  { "SaveEdges", SaveEdges },
+////////////////////////////////////////////////////////////////////////////////
+  { "ReadTiers", ReadTiers },
+  { "SaveTiers", SaveTiers },
+  { "SaveTiersVizu", SaveTiersVizu },
+  { "SaveEdgesVizu", SaveEdgesVizu },
+  { "SaveInOutOpVizu", SaveInOutOpVizu },
+////////////////////////////////////////////////////////////////////////////////
+  { "SaveParamsVizu",  SaveParamsVizu },
+  { "PutParamsTiers",  PutParamsTiers },
+  { "GetCountInEdgesByOp", GetCountInEdgesByOp },
+  { "GetNumbInEdgeByOp", GetNumbInEdgeByOp },
+  { "GetNumbInEdgeByOp",  GetNumbInEdgeByOp },
+////////////////////////////////////////////////////////////////////////////////
+  { "GetNumbOutEdgeByOp", GetNumbOutEdgeByOp },
+// ----- учёт гетерогенности вычислительного поля ------------------------------
+  { "GetParamsByCalc", GetParamsByCalc }, // сторона вычислителей
+  { "GetCountParamsByCalc", GetCountParamsByCalc },
+  { "GetNumbParamByCalc",   GetNumbParamByCalc },
+  { "GetNameNumbParamByCalc", GetNameNumbParamByCalc },
+////////////////////////////////////////////////////////////////////////////////
+  { "GetMinValNumbParamByCalc", GetMinValNumbParamByCalc },
+  { "GetMaxValNumbParamByCalc", GetMaxValNumbParamByCalc },
+  { "GetParamsByOp",        GetParamsByOp }, // сторона операторов
+  { "GetCountParamsByOp",   GetCountParamsByOp },
+  { "GetNumbParamByOp",     GetNumbParamByOp },
+////////////////////////////////////////////////////////////////////////////////
+  { "GetNameNumbParamByOp", GetNameNumbParamByOp },
+  { "GetValNumbParamByOp",  GetValNumbParamByOp },
+  { "CanExecOpCalc", CanExecOpCalc }, // функция логического вывода о возможности выполнения оператора Op на вычислителе Calc
+  { "LoadFileNameParamsCalcs", LoadFileNameParamsCalcs }, // функции работы с гетерогенным полем вычислителей
+  { "LoadFileNameParamsOps",   LoadFileNameParamsOps },
+////////////////////////////////////////////////////////////////////////////////
+  { "LoadFileNameParamsEdges",    LoadFileNameParamsEdges  },
+  { "LoadFileNameParamsVertices", LoadFileNameParamsVertices },
+// -----------------------------------------------------------------------------
+  { "GetCountCalcs", GetCountCalcs },
+  { "GetCountOps", GetCountOps },
+  { "GetNumbOp",   GetNumbOp },
+////////////////////////////////////////////////////////////////////////////////
+  { "GetCountOpsInput", GetCountOpsInput },
+  { "GetNumbOpInput",   GetNumbOpInput },
+  { "GetCountOpsOutput", GetCountOpsOutput },
+  { "GetNumbOpOutput",   GetNumbOpOutput },
+  { "PutParamsAll",           PutParamsAll },
+////////////////////////////////////////////////////////////////////////////////
+  { "TestCanExecAllOpsCalcs", TestCanExecAllOpsCalcs },
+  { "InputDialog",   InputDialog }, // окна ввода / вывода (Windows)
+  { "MessageDialog", MessageDialog },
+  { "OutLine", OutLine }, // аналог ADDLineToTexFrame
+  { "GetMetricOpByName",   GetMetricOpByName }, // взять МЕТРИКИ ВЕРШИН (операторов) и ДУГ (по имени параметра) ------------
+////////////////////////////////////////////////////////////////////////////////
+  { "GetMetricEdgeByName", GetMetricEdgeByName },
+  { "GetOpByMaxTierLowerPreset", GetOpByMaxTierLowerPreset }, // выдаёт оператор, информационно зависимый от заданного и находящийся на ярусе
+// ----- с максимальным номером (если таких оператор несколько - выдаётся последний по списку)
+  { "PutTLDToTextFrame", PutTLDToTextFrame }, // создание и сохранение информации о "времени жизни данных" внутри ЯПФ
+  { "SaveTLD",         SaveTLD },
+  { "lWinExec",        lWinExec }, // выполнение команд операционной системы
+////////////////////////////////////////////////////////////////////////////////
+  { "lShellExecute",   lShellExecute },
+  { "lCreateProcess",  lCreateProcess },
+  { "LuaCallByTimer",  LuaCallByTimer }, // асинхронная функция
+  { "CalcParamsTiers", CalcParamsTiers }, // вычисления статистических параметров ярусов ЯПФ
+////////////////////////////////////////////////////////////////////////////////
+// ----- всего описано 79 функций ----------------------------------------------
+  {  NULL, NULL } // признак конца списка функций
+ } ;
 //
- lua_register(L, "GetCountCalcs", GetCountCalcs);
+// luaL_setfuncs( L, lr, 80 ) ; // регистрация всех C-функций из списка lr[]
 //
-//------------------------------------------------------------------------------
- lua_register(L, "GetCountOps", GetCountOps);
- lua_register(L, "GetNumbOp",   GetNumbOp);
+// luaL_register( L, NULL, lr ) ;
 //
- lua_register(L, "GetCountOpsInput", GetCountOpsInput);
- lua_register(L, "GetNumbOpInput",   GetNumbOpInput);
-//
- lua_register(L, "GetCountOpsOutput", GetCountOpsOutput);
- lua_register(L, "GetNumbOpOutput",   GetNumbOpOutput);
-//
-//------------------------------------------------------------------------------
- lua_register(L, "PutParamsAll",           PutParamsAll);
- lua_register(L, "TestCanExecAllOpsCalcs", TestCanExecAllOpsCalcs);
-//
-// --- окна ввода / вывода -----------------------------------------------------
- lua_register(L, "InputDialog",   InputDialog);
- lua_register(L, "MessageDialog", MessageDialog);
-//
-// --- аналог ADDLineToTexFrame ------------------------------------------------
- lua_register(L, "OutLine", OutLine);
-//
-// --- взять МЕТРИКИ ВЕРШИН (операторов) и ДУГ (по имени параметра) ------------
- lua_register(L, "GetMetricOpByName",   GetMetricOpByName);
- lua_register(L, "GetMetricEdgeByName", GetMetricEdgeByName);
-//
-// выдаёт оператор, информационно зависимый от заданного и находящийся на ярусе
-// с максимальным номером (если таких оператор несколько - выдаётся последний по списку)
- lua_register(L, "GetOpByMaxTierLowerPreset", GetOpByMaxTierLowerPreset);
-//
-// создание и сохранение информации о "времени жизни данных" внутри ЯПФ --------
- lua_register(L, "PutTLDToTextFrame",  PutTLDToTextFrame);
- lua_register(L, "SaveTLD",            SaveTLD);
-//
-// --- выполнение команд операционной системы ----------------------------------
-//
- lua_register(L, "lWinExec",       lWinExec);
- lua_register(L, "lShellExecute",  lShellExecute);
- lua_register(L, "lCreateProcess", lCreateProcess);
-//
- lua_register(L, "LuaCallByTimer",   LuaCallByTimer);
-//
- lua_register(L, "CalcParamsTiers",  CalcParamsTiers );
+ for( int i=0; ; i++ ) // по всем функциям из списка lr[]
+  if( lr[i].name || lr[i].func  ) // ещё не конец списка функций..!
+   lua_register( L, lr[i].name, lr[i].func ) ; // регистрируем С-функцию в Lua
+  else
+   break;
 //
 } // ---- конец RegisterFunctions ----------------------------------------------
 

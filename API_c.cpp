@@ -28,7 +28,7 @@ char Test_symb[]="=/: |";
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-INT  __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
+INT  __fastcall c_CreateAndOutput_TLD_DiagrByTiers( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
 INT  __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
 INT  __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
@@ -4041,7 +4041,7 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] )
+INT __fastcall  c_CreateAndOutput_TLD_DiagrByTiers( int Rule, char FileName[] )
 { // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
 // числа сообщений между €русами (полезно дл€ определени€ числа необходимых
 // дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
@@ -4121,21 +4121,21 @@ INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] 
  if( Rule == 1 ) // вывод в файл
   TLD->SaveToFile( ReformFileName(FileName,extTld) );
 //
-} // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
+} // ---- конец  c_CreateAndOutput_TLD_DiagrByTiers --------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutTLDToTextFrame()
 { // выдать диаграмму времени жизни данных в текстовое окно
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "" );
+  c_CreateAndOutput_TLD_DiagrByTiers( 0, "" );
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
- c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName ); // преобразование Filename - при непосредственном вызове
+  c_CreateAndOutput_TLD_DiagrByTiers( 1, FileName ); // преобразование Filename - при непосредственном вызове
 } // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4707,7 +4707,7 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutTimeLiveDataToTextFrame()
 { // построить и выдать в текстовое окно диаграмму жизни данных (аналог F6)
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
+  c_CreateAndOutput_TLD_DiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
 } //----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4751,7 +4751,7 @@ bool __fastcall c_DrawDiagrTLD()
      maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
 //
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // рассчитали информацию дл€ времени жизни данных по текущ. Tiers[][]
+  c_CreateAndOutput_TLD_DiagrByTiers( 2, "" ); // рассчитали информацию дл€ времени жизни данных по текущ. Tiers[][]
 //
  sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число меж-€русов в яѕ‘
 //
@@ -5057,7 +5057,7 @@ INT __fastcall c_PutParamsTiers()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+  c_CreateAndOutput_TLD_DiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
  sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
 //
@@ -5169,6 +5169,14 @@ calc_data_live: //проще, чем разбиратьс€ в куче фигурных скобок ----------------
 } // ----- конец c_PutParamsTiers ----------------------------------------------
 
 
+
+//INT  __fastcall  c_CreateAndOutput_POP_DiagrByTiers( 0, "" ); // создать и выдать в текстовое окно
+// диаграмму карты возможных положений операторов (Possible Operator Position - POP)
+// по €русам яѕ‘ (дл€ текущeго Tiers[][] )
+//
+//INT  __fastcall c_PutPOPToTextFrame(); // выдать диаграмму возможных положений операторов по €русам в текстовое окно
+//
+//INT  __fastcall c_SavePOP( char FileName[] ); // выдать диаграмму возможных положений операторов по €русам в файл
 
 
 
