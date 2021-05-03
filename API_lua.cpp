@@ -510,7 +510,7 @@ static int GetCountInEdgesByOp(lua_State *L) // описываем функцию GetCountInEdge
  lua_settop(L, 0); // сброcим стек Lua
  lua_pushinteger(L, c_GetCountInEdgesByOp( arg )); // вызовем c_GetCountInEdgesByOp и результат -> стек
  return 1 ; // число результатов выполнения функции
-} // ===== конец GetCountOutEdgesByOp ==========================================
+} // ===== конец GetCountInEdgesByOp ==========================================
 
 ////////////////////////////////////////////////////////////////////////////////
 static int GetCountOutEdgesByOp(lua_State *L) // описываем функцию GetCountOutEdgesByOp на С
@@ -1101,7 +1101,8 @@ void __fastcall RegisterFunctions(lua_State *L)
 ////////////////////////////////////////////////////////////////////////////////
   { "SaveParamsVizu",  SaveParamsVizu },
   { "PutParamsTiers",  PutParamsTiers },
-  { "GetCountInEdgesByOp", GetCountInEdgesByOp },
+  { "GetCountInEdgesByOp",  GetCountInEdgesByOp },
+  { "GetCountOutEdgesByOp", GetCountOutEdgesByOp },
   { "GetNumbInEdgeByOp", GetNumbInEdgeByOp },
   { "GetNumbInEdgeByOp",  GetNumbInEdgeByOp },
 ////////////////////////////////////////////////////////////////////////////////
@@ -1155,7 +1156,7 @@ void __fastcall RegisterFunctions(lua_State *L)
   { "LuaCallByTimer",  LuaCallByTimer }, // асинхронная функция
   { "CalcParamsTiers", CalcParamsTiers }, // вычисления статистических параметров ярусов ЯПФ
 ////////////////////////////////////////////////////////////////////////////////
-// ----- всего описано 79 функций ----------------------------------------------
+// ----- всего описано 80 функций ----------------------------------------------
   {  NULL, NULL } // признак конца списка функций
  } ;
 //

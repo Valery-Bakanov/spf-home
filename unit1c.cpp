@@ -21,9 +21,9 @@
 #include "cstring.h"
 #include "SysUtils.hpp"
 #include <System.hpp>
-
+//
 #include <shellapi.h>
-
+//
 #include <time.h>
 #include <alloc.h>
 #include <math.h>
@@ -2626,7 +2626,7 @@ void Set_FileNames_All_Protocols()
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::PutTimeLiveDataToTextFrame_Menu(TObject *Sender)
 { // F6 - построить и выдать в текстовое окно диаграмму жизни данных ------------
- c_CreateAndOutput_TLD_DiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeму Tiers[][]
+ c_CreateAndOutputTLDDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeму Tiers[][]
 } //----------------------------------------------------------------------------
 
 

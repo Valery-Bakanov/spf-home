@@ -1,6 +1,6 @@
 object F1: TF1
-  Left = 1143
-  Top = 162
+  Left = 956
+  Top = 203
   Width = 900
   Height = 600
   HorzScrollBar.Visible = False
