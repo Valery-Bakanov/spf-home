@@ -188,23 +188,25 @@ INT  __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priorit
 //==============================================================================
 bool __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличени€ пам€ти дл€ Mem_Edges[]
 bool __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавл€ет дуги в общий массив дуг
-//
 bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
-//
 INT  __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
-//
 void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
-//
 char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать им€ файла
-//
 INT  __fastcall c_CalcParamsTiers(); // расчЄт статистики €русов яѕ‘
+INT  __fastcall c_GetMaxTiersByOpsOutputTLD( INT Op ); // возвращает max номер €рус яѕ‘ дл€ оператора Op по выходным его данным
+//
+void __fastcall setFlagsAll( INT FromTo ); // устанавливает в TRUE все флаги операторов массива дуг From/To=0/1 списка Edges[][]
+void __fastcall clearFlagsAll( INT FromTo ); // устанавливает в FALSE все флаги операторов массива дуг From/To=0/1 списка Edges[][]
+void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в FALSE все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall cmp_def( char *s )
 { // сравнивает попарно 5 первых символов s и sDef; возвращает TRUE, если они все равны
- return( toupper(s[0])==toupper(sDef[0]) && toupper(s[1])==toupper(sDef[1]) &&
-         toupper(s[2])==toupper(sDef[2]) && toupper(s[3])==toupper(sDef[3]) &&
+ return( toupper(s[0])==toupper(sDef[0]) &&
+         toupper(s[1])==toupper(sDef[1]) &&
+         toupper(s[2])==toupper(sDef[2]) &&
+         toupper(s[3])==toupper(sDef[3]) &&
          toupper(s[4])==toupper(sDef[4]) ) ;
 } // === конец cmp_def =========================================================
 
@@ -1613,6 +1615,8 @@ INT __fastcall c_GetCountInEdgesByOp(INT Op)
   return ERR_NOT_MASSIVE_EDGES ;
  }
 //
+////////////////////////////////////////////////////////////////////////////////
+//
  for(INT i=0; i<=1; i++) // проверка наличи€ Op в списке операторов
   for(iEdge=1; iEdge<=nEdges; iEdge++)
    if( Op == Edges(i,iEdge) )
@@ -1641,6 +1645,7 @@ INT __fastcall c_GetCountOutEdgesByOp(INT Op)
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
+////////////////////////////////////////////////////////////////////////////////
 //
  for(INT i=0; i<=1; i++) // проверка наличи€ Op в списке операторов
   for(iEdge=1; iEdge<=nEdges; iEdge++)
@@ -1671,6 +1676,8 @@ INT __fastcall c_GetNumbInEdgeByOp(INT Numb, INT Op)
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
+//
+////////////////////////////////////////////////////////////////////////////////
 //
  if( ( Numb < 1 ) || ( Numb > maxNumb) ) // вне диапазона...
  {
@@ -1703,6 +1710,8 @@ INT __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op)
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
+////////////////////////////////////////////////////////////////////////////////
+//
  if( ( Numb < 1 ) || ( Numb > maxNumb ) ) // вне диапазона...
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
@@ -1717,7 +1726,7 @@ INT __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op)
     return Edges(1,iEdge) ;
   }
 //
- return 0 ; // если не нашли ни одной дуги...
+ return ERR_COMMON ; // если не нашли ни одной дуги...
 //
 } // --- конец c_GetNumbOutEdgeByOp --------------------------------------------
 
@@ -2670,7 +2679,7 @@ INT __fastcall c_GetCountCalcs()
  INT  n1,n2, nSum = 0,
       iStart = 0, iEnd,
       lS = strlen( sCalcs ); // длина строки sCalcs
-
+//
  if( !lS ) // если sCalcs пуста€...
   return 0 ;
 //
@@ -2770,241 +2779,6 @@ char* __fastcall c_GetNumbParamByOp(INT Numb, INT Op )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetCountOps()
-{ // возвращает число вершин »√ј без учЄта входных данных
-// // убираем повторы номеров операторов
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем общее число операторов nOps (имеем nEdges дуг графа)================
-////////////////////////////////////////////////////////////////////////////////
-//
- INT iEdges, jEdges,
-     nW; // nW помнит (текущую) вершину дуги iEdges
- nOps = 0; // число вершин без входных (глобальное)
-//
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   Mem_Edges[iEdges].flag_To = TRUE; // пометили  операторы ...To
-//
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем nEdges дугам начина€ с #1
-// обработка случа€ ¬џ’ќƒяў≈… (To) вершины дуги iEdges
-   if( Mem_Edges[iEdges].flag_To ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
-   {
-    nW = Edges(1,iEdges);
-    nOps ++ ; // счЄтчик вершин числа (¬’ќƒяў»’ по дугам)
-////////////////////////////////////////////////////////////////////////////////
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[jEdges].flag_To   = FALSE; // сн€ли метку с вершины "куда" (To)
-////////////////////////////////////////////////////////////////////////////////
-   } // конец if( Mem_Edges[iEdges].FlagFTo )
-//
- return nOps ;
-//
-} // --- конец c_GetCountOps ---------------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetNumbOpInput(INT Numb)
-{ // возвращает номер Numb оператора (только из ¬’ќƒЌџ’ операторов)
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем Numb-тый оператор (имеем nEdges дуг графа)==========================
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges,
-     iOps = 0 ; // счЄтчик числа вершин графа (операторов)
- bool flag;
-//
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   Edges_f(0,iEdges) =
-   Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   if( !Edges_f(0,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-   {
-    nW = Edges(0,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-    {
-     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
-     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++)
-    if( Edges_f(1,jEdges) && Edges(1,jEdges)==nW ) // помечено и равно nW
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
-    iOps ++ ;
-//
-   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
-    return nW ;
-//
-   } // конец if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
-//
-} // ------ конец c_GetNumbOpInput ---------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetNumbOpOutput(INT Numb)
-{ // возвращает номер Numb вершины (только из ¬џ’ќƒЌџ’ операторов)
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем число операторов (имеем nEdges дуг графа)===========================
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges,
-     iOps = 0 ; // счЄтчик числа вершин
- bool flag;
-//
- for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-  Edges_f(0,iEdges) =
-  Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин (операторов0
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   if( !Edges_f(1,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-   {
-    nW = Edges(1,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-    {
-     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
-     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++)
-    if( Edges_f(0,jEdges) && Edges(0,jEdges)==nW ) // помечено и равно nW
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
-    iOps ++ ;
-//
-   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
-     return nW ;
-//
-   } // конец if(!Edges_f(1,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
-//
-} // ------ конец c_GetNumbOpOutput --------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetCountOpsInput()
-{ // возвращает только ¬’ќƒЌџ≈ вершины (0-й €рус) в »√ј ------------------------
-//
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges;
- bool flag;
- nOpsInput = 0; // число входных операторов (0-й €рус; глобальное)
-//
- for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-  Edges_f(0,iEdges) =
-  Edges_f(1,iEdges) = FALSE; // "сн€ли метку" со всех вершин (операторов)
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по все дугам начина€ с #1
-   if( !Edges_f(0,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-   {
-    nW = Edges(0,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++) // по всем дугам начина€ с #1
-    {
-     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
-     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++)
-    if( Edges_f(1,jEdges) && Edges(1,jEdges)==nW ) // помечено и =nW
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
-    nOpsInput ++ ;
-//
-   } // if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
-//
- return nOpsInput ;
-//
-} // --- конец c_GetCountOpsInput-----------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetCountOpsOutput()
-{ // возвращает число вершин в »√ј (только выходные данные)
-//
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
-////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges;
- bool flag;
- nOpsOutput = 0; // число ¬џ’ќƒЌџ’ операторов (глобальное)
-//
- for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-  Edges_f(0,iEdges) =
-  Edges_f(1,iEdges) = FALSE; // сн€ли метку со всех вершин (операторов)
-//
-// === по всем дугам »√ј =======================================================
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   if( !Edges_f(1,iEdges) ) // запомнили »—’ќƒяў”ё вершину дуги iEdges
-   {
-    nW = Edges(1,iEdges);
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-    {
-     Edges_f(0,jEdges) = Edges(0,jEdges)==nW ? TRUE : Edges_f(0,jEdges) ; // пометили "From"
-     Edges_f(1,jEdges) = Edges(1,jEdges)==nW ? TRUE : Edges_f(1,jEdges) ; // пометили "To"
-    }
-//
-   flag = FALSE;
-   for(jEdges=1; jEdges<=nEdges; jEdges++)
-    if( Edges_f(0,jEdges) && Edges(0,jEdges)==nW ) // помечено и =nW
-     flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
-//
-   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
-    nOpsOutput ++ ;
-//
-   } // конец if(!Edges_f(1,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
-//
- return nOpsOutput ;
-//
-} // --- конец c_GetCountOpsOutput----------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 INT _fastcall c_FindSubString( char* sSrc, char* sDst, INT iStart, INT Rule)
 { // в строке sSrc начина€ с позиции iStart ищетс€ подстрока sDst --------------
 // --- возвращаетс€ конец позиции поиска в строке sSrc -------------------------
@@ -3015,19 +2789,19 @@ INT _fastcall c_FindSubString( char* sSrc, char* sDst, INT iStart, INT Rule)
 // --- где "-" любое количество любых символов, D(d) - лат.буква D в любом регистре
  register INT k,j,i;
  INT lenSrc = strlen( sSrc ); // длина строки sSrc
-
+//
  strNcpy( sDst, "\0" ); // очистим sDst
-
+//
  for( i=iStart; i<=lenSrc; i++ ) // вдоль по строке sSrc индексу i - ищем первое вхождение шаблона
-
+//
   if( ( ( Rule==0 && sSrc[i]=='=' ) && // Rule=0 и первый символ '=' (вход€ща€ последовательность)
         ( isdigit(sSrc[i+1]) || toupper(sSrc[i+1]=='D') ) // [цифра] или [D(d)]
       || // или дл€ Rule != 0
         ( Rule!=0 && sSrc[i]=='-' ) && // Rule!=1 и первый символ '-'
           isalpha(sSrc[i+1]) ) ) // шаблон [лат.буква]
-
+//
   for( j=i+1; j<=lenSrc; j++ ) // вдоль по строке sSrc по индексу j - ищем следующее вхождение шаблона
-
+//
   if(  j==lenSrc // если конец строки sSrc
      || // или дл€ Rule == 0
      ( ( Rule==0 && sSrc[j]=='=' ) && // Rule=0 и первый символ '=' (конечна€ последовательность)
@@ -3065,41 +2839,41 @@ INT _fastcall c_FindSubString( char* sSrc, char* sDst, INT iStart, INT Rule)
 bool __fastcall c_PutParamsAll()
 { // вывод строк параметров ¬џ„»—Ћ»“≈Ћ≈… и ќѕ≈–ј“ќ–ќ¬, метрик ƒ”√ » ¬≈–Ў»Ќ
  char str[_16384]; // рабоча€ строка
-
+//
  t_printf( "\n-I- ѕараметры ¬џ„»—Ћ»“≈Ћ≈… и ќѕ≈–ј“ќ–ќ¬, метрики ƒ”√ и ¬≈–Ў»Ќ -I-" ); // информационное сообщение
-
+//
  if( c_LoadFileNameParamsCalcs( FileNameParamsCalcs ) ) // если с файлом всЄ удачно...
  {
   t_printf( "=> ¬џ„»—Ћ»“≈Ћ»: файл |%s|", FileNameParamsCalcs ); // им€ файла параметров ¬џ„»—Ћ»“≈Ћ≈…
   t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sCalcs ); // скоректированна€ строка
  }
-
+//
  if( c_LoadFileNameParamsOps( FileNameParamsOps ) )
  {
   t_printf( "=> ќѕ≈–ј“ќ–џ: файл |%s|", FileNameParamsOps ); // им€ файла параметров ќѕ≈–ј“ќ–ќ¬
   t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sOps ); // скоректированна€ строка
  }
-
+//
  if( c_LoadFileNameParamsEdges( FileNameParamsEdges ) )
  {
   t_printf( "=> ћ≈“–» » ƒ”√: файл |%s|", FileNameParamsEdges ); // им€ файла метрик ƒ”√
   t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sEdg ); // скоректированна€ строка
  }
-
+//
  if( c_LoadFileNameParamsVertices( FileNameParamsVertices ) )
  {
   t_printf( "=> ћ≈“–» » ¬≈–Ў»Ќ: файл |%s|", FileNameParamsVertices ); // им€ файла метрик ¬≈–Ў»Ќ
   t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sVrt ); // скоректированна€ строка
  }
-
+//
  c_AddLineToTextFrame( "\n" );
-
+//
  return TRUE ;
-
+//
 } // --- конец c_PutParamsAll --------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3108,10 +2882,10 @@ char* __fastcall c_GetParamsByOp(INT Op)
 { // проcматривает строку sOps и возвращает подстроку всех параметров ќѕ≈–ј“ќ–ј Op
  char sN[_8192], sName[_128];
  INT  lOps, iStart=0, iEnd, n1, n2;
-
+//
  if( ! (lOps = strlen( sOps ) ) ) // если строка ќѕ≈–ј“ќ–ќ¬ пуста€...
   return "\0" ;
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 // --- начали искать sN среди подстрок типа '=n1/n2:'---------------------------
 
@@ -3119,9 +2893,9 @@ char* __fastcall c_GetParamsByOp(INT Op)
  {
   iEnd = c_FindSubString( sOps, sN, iStart, 0 );
 // --- начало обработки строки sOps списка параметров --------------------------
-
+///
 //  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-
+//
 //  if( !strncmp( sN, sDef, 5 ) ) // '=Def:' пока не нужна... уходим на do !
   if( cmp_def( sN ) ) // '=Def:' пока не нужна... уходим на do !
   {
@@ -3133,41 +2907,39 @@ char* __fastcall c_GetParamsByOp(INT Op)
  if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Op >= min(n1,n2) && Op <= max(n1,n2) ) // Op в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
   iStart = iEnd;
  } while( iEnd !=lOps ); // пока не конец строки sOps ( конец соотв. do )
 //
 ////////////////////////////////////////////////////////////////////////////////
 // --- начали искать sN среди подстрок типа '=Def:'-----------------------------
-
+//
  iStart = 0;
-
+//
  do // по подстрокам '=n1/n2:' или '=Def:'
  {
   iEnd = c_FindSubString( sOps, sN, iStart, 0 );
 // --- начало обработки строки sMess списка параметров -------------------------
-
 //  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-
 //  if( strncmp( sN, sDef, 5 ) ) // '=Def:' как раз нужна...
   if( ! cmp_def( sN ) ) // '=Def:' как раз нужна...
   {
    iStart = iEnd ;
    continue; // ...do
   }
-
+//
   if( sscanf( sN, "%s ", sName ) == 1 ) // правильное чтение
    return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
   iStart = iEnd;
  } while( iEnd !=lOps ); // пока не конец строки sOps ( конец соотв. do )
-
+//
 ////////////////////////////////////////////////////////////////////////////////
-
+//
  return "\0" ; // не найдено вообще ничего - возращаем (по умолчанию)
-
+//
 } // --- конец c_GetParamsByOp -------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3176,20 +2948,18 @@ char* __fastcall c_GetParamsByCalc(INT Calc)
 { // проcматривает строку sCalcs и возвращает подстроку всех параметров ¬џ„»—Ћ»“≈Ћя Op
  char sN[_8192], sName[_128];
  INT  lCalcs, iStart=0, iEnd, n1, n2;
-
+//
  if( ! (lCalcs = strlen( sCalcs ) ) ) // если строка ¬џ„»—Ћ»“≈Ћ≈… пуста€...
   return "\0" ;
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 // --- начали искать sN среди подстрок типа '=n1/n2:'---------------------------
-
+//
  do // по подстрокам '=n1/n2:' или '=Def:'
  {
   iEnd = c_FindSubString( sCalcs, sN, iStart, 0 );
 // --- начало обработки строки sOps списка параметров --------------------------
-
 //  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-
 //  if( !strncmp( sN, sDef, 5 ) ) // '=Def:' пока не нужна... уходим на do !
   if( cmp_def( sN ) ) // '=Def:' пока не нужна... уходим на do !
   {
@@ -3201,41 +2971,39 @@ char* __fastcall c_GetParamsByCalc(INT Calc)
  if( Test_n1n2 ) // правильное чтение "=n1/n2:^" из sN
    if( Calc >= min(n1,n2) && Calc<= max(n1,n2) ) // Calc в диапазоне n1-n2
     return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
   iStart = iEnd;
  } while( iEnd !=lCalcs ); // пока не конец строки sCalcs ( конец соотв. do )
 
 ////////////////////////////////////////////////////////////////////////////////
 // --- начали искать sN среди подстрок типа '=Def:'-----------------------------
-
+//
  iStart = 0;
-
+//
  do // по подстрокам '=n1/n2:' или '=Def:'
  {
   iEnd = c_FindSubString( sCalcs, sN, iStart, 0 );
 // --- начало обработки строки sMess списка параметров -------------------------
-
 //  DelSpacesTabsAround( sN ); // обрезаем внешние пробелы
-
 //  if( strncmp( sN, sDef, 5 ) ) // '=Def:' как раз нужна...
   if( ! cmp_def( sN ) ) // '=Def:' как раз нужна...
   {
    iStart = iEnd ;
    continue; // ...do
   }
-
+//
   if( sscanf( sN, "%s ", sName ) == 1 ) // правильное чтение
    return strchr( sN,':' ) + 2 ; // перескакиваем через ':' и 'пробел'
-
+//
 // --- конец обработки строки sN спиcка параметров -----------------------------
   iStart = iEnd;
  } while( iEnd !=lCalcs ); // пока не конец строки sCalcs ( конец соотв. do )
-
+//
 ////////////////////////////////////////////////////////////////////////////////
-
+//
  return "\0" ; // не найдено вообще ничего - возращаем (по умолчанию)
-
+//
 } // --- конец c_GetParamsByCalc -----------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3404,10 +3172,10 @@ char* __fastcall c_InputDialog( char *sCaption, char *sPrompt, char *sDefault )
 int __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT Pictogram )
 { // выдаЄт окно Windows c заголовком sCaption и строкой sText
  char flag[] = "0\0"; // символ Ќ≈добавлени€ (соответствущей) кнопки в набор на диалоговой форме
-
+//
  TMsgDlgButtons mb; // тип кнопок на форме
  TMsgDlgType mt; // тип пиктограммы на форме
-
+//
  if( strlen(Buttons) == 8 ) // только ровно 8 символов !!! иначе - mbYes !!!
  {
   if( Buttons[0] != flag[0] ) mb << mbYes; // выбор набора кнопок
@@ -3422,10 +3190,7 @@ int __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT 
  }
  else
   mb << mbYes; // умолчание (ошибка размера строки Buttons[]) - включена кнопка Yes
-
-// if( !strcmp(Buttons, "00000000\0") ) // если в Buttons[] все 0 - включена кнопка Yes
-//  mb << mbYes;
-
+//
  switch( Pictogram ) // выбор пиктограммы дл€ окна
  {
   case 0:  mt = mtConfirmation; break;
@@ -3453,7 +3218,7 @@ int __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_DrawDiagrTiers()
-{ // строит графическое изображение (диаграмму) 
+{ // строит графическое изображение (диаграмму)
  INT MinOpsOnTier, // минимум операторов на €русе
      MaxOpsOnTier, // максимум операторов на €русе
      OpsOnTier,
@@ -3477,8 +3242,8 @@ bool __fastcall c_DrawDiagrTiers()
  H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
  B_pix = TIM1->Width;
 //
- REAL dH_pix = 1.0 * H_pix / nTiers, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
-       dB_pix = 1.0 * B_pix / MaxOpsOnTier;
+ REAL dH_pix = (REAL)H_pix / nTiers, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
+      dB_pix = (REAL)B_pix / MaxOpsOnTier;
 //
  dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
 //
@@ -3526,7 +3291,7 @@ bool __fastcall c_DrawDiagrTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
 // ----- рисуем вертикальную линию - средее значение ширин €русов --------------
-  REAL b_average = 1.0 * c_GetCountOps() / c_GetCountTiers(); // средн€€ ширина яѕ‘
+  REAL b_average = (REAL)c_GetCountOps() / c_GetCountTiers(); // средн€€ ширина яѕ‘
 //
   TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по €русам; // цвет пера
   TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
@@ -4607,7 +4372,8 @@ bool __fastcall c_DrawDiagrTLD()
 // часть аналогична (с частичной избыточностью) блоку в c_PutParamsTiers() -----
 //
  INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘, m - число данных в этом промежутке
-     maxM=-1e10,minM=1e10, n1x,n2x, n1n,n2n; // max данных, min данных, диапазоны €русов выше и ниже
+     maxM = _minINT, minM = _maxINT, // max/min данных
+     n1x,n2x, n1n,n2n; // диапазоны €русов выше и ниже рассмматриваемого промежутка
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
 //
  c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // рассчитали информацию дл€ времени жизни данных по текущ. Tiers[][]
@@ -4783,14 +4549,14 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- REAL averWidth = ( 1.0 * nOps ) / nTiers, // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
+ REAL averWidth =  (REAL)nOps / nTiers, // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
       sumSqWidth = 0.0 , // суммирование квадратов нев€зок
       sumOps = 0.0 , // сумма операторов по €русам  яѕ‘
       sumICL = 0.0 , // сумма дл€ коэффициента неравномерности по кривой Ћоренца
       xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
  INT iTier, iOp ,
      nOpsOnTier, // число операторов на €русе
-     minOpsByTiers = 1000000, maxOpsByTiers = -minOpsByTiers , // минимум и максимум операторов по €русам яѕ‘
+     minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // min/max операторов по €русам яѕ‘
 //
      sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
      OpFrom, OpTo, nOutEdges, iOutEdge ; // ... то же ...
@@ -4904,8 +4670,8 @@ INT __fastcall c_PutParamsTiers()
 // === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
 //
  INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
-     maxM=-1e10,minM=-maxM, // max данных, min данных
-     n1x,n2x, n1n,n2n; //  диапазоны €русов выше и ниже
+     maxM = _minINT, minM = _maxINT, // max/min данных
+     n1x,n2x, n1n,n2n; //  диапазоны €русов выше и ниже рассматриваеиого промежутка
  REAL averTLD=0.0; // средне-арифметическое времени жизни данных между €русами яѕ‘ (≈ƒ¬)
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -5126,33 +4892,326 @@ INT __fastcall c_GetNumbOp(INT Numb)
 ////////////////////////////////////////////////////////////////////////////////
 // --- ищем число операторов (имеем nEdges дуг графа)===========================
 ////////////////////////////////////////////////////////////////////////////////
- INT nW, iEdges, jEdges,
+ INT nW, iEdge, jEdge, FromTo=1,
      iOps = 0; // счЄтчик числа вершин (глобальное)
-// bool flag;
 //
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем дугам начина€ с #1
-   Mem_Edges[iEdges].flag_To = TRUE; // пометили все операторы ...To
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+  Edges_f(1,iEdge) = TRUE ; // пометили как TRUE
 //
-  for(iEdges=1; iEdges<=nEdges; iEdges++) // по всем nEdges дугам начина€ с #1
+  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем nEdges дугам начина€ с #1
 // обработка случа€ ¬џ’ќƒяў≈… (To) вершины дуги iEdges
-   if( Mem_Edges[iEdges].flag_To ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
+   if( Edges_f(1,iEdge) ) // запомнили "пом≈ченную" ¬џ’ќƒяў”ё вершину дуги iEdges
    {
-    nW = Edges(1,iEdges);
+    nW = Edges(1,iEdge);
     iOps ++ ; // счЄтчик вершин числа (¬’ќƒяў»’ по дугам)
 //
-    if( iOps == Numb ) // это Numb-тое вхождение номера опратора
+    if( iOps == Numb ) // это Numb-тое вхождение номера оператора
      return nW ;
 //
-////////////////////////////////////////////////////////////////////////////////
-    for(jEdges=1; jEdges<=nEdges; jEdges++)
-     if( Edges(1,jEdges) == nW )
-      Mem_Edges[jEdges].flag_To = FALSE; // сн€ли метку с вершины "куда" (To)
-////////////////////////////////////////////////////////////////////////////////
+    for(jEdge=1; jEdge<=nEdges; jEdge++)
+     if( Edges(1,jEdge) == nW )
+       Edges_f(1,jEdge) = FALSE; // сн€ли метку с вершины "куда" (To)
+//
    } // конец if( Mem_Edges[iEdges].FlagFTo )
 //
 } // ------ конец c_GetNumbOp --------------------------------------------------
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT _fastcall c_GetMaxTiersByOpsOutputTLD( INT Op )
+{ // возвращает max номер €рус яѕ‘ дл€ оператора Op по выходным его данным
+//
+// минимальный номер €руса равен c_GetTierByOp( Op )
+//
+ INT maxTier = _minINT ; // min/max номера €русов существовани€ выходных данных оператора Op
+//
+// ---- ищем номер €руса  ќЌ÷ј жизни ¬џ’ќƒЌџ’ данных дл€ оператора Op
+//
+ for( INT iOutEdge=1; iOutEdge <= c_GetCountOutEdgesByOp( Op ); iOutEdge++ ) // по все ¬џ’ќƒяў»ћ из Op дугам
+  maxTier = max( maxTier, c_GetTierByOp( c_GetNumbOutEdgeByOp( iOutEdge, Op) ) ) ;
+//
+ return maxTier ;
+//
+} // ----- конец c_GetMMaxTiersByOpsOutputTLD ----------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall setFlagsAll( INT FromTo )
+{ // устанавливает в TRUE все флаги операторов массива дуг Edges[][]
+// обрабатываетс€ список "From" или "To" при From/To = 0/1 соответственно
+//
+ register INT iEdge; // попросим компил€тор..!
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+  Edges_f(FromTo,iEdge) = TRUE ; // пометили как TRUE
+//
+} // ----- конец setFlagsAll ---------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall clearFlagsAll( INT FromTo )
+{ // устанавливает в FALSE все флаги операторов массива дуг Edges[][]
+// обрабатываетс€ список "From" или "To" при From/To = 0/1 соответственно
+//
+ register INT iEdge; // попросим компил€тор..!
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+  Edges_f(FromTo,iEdge) = FALSE ; // пометили как FALSE
+//
+} // ----- конец clearFlagsAll -------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall clearFlagsDuplicateOps( INT FromTo,INT Op )
+{ // устанавливает в FALSE все флаги операторов со значение Op (кроме первого встретившегос€)
+// обрабатываетс€ список "From" или "To" при From/To = 0/1 соответственно
+//
+ register INT iEdge; // попросим компил€тор..!
+ register bool flagEq, flagOp = FALSE; // если Op встретилост в списке - TRUE !
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+///  for( jFromTo=0; jFromTo<=1; jFromTo++ ) // по операторам "From"/"To" ( 0/1 соответственно )
+  {
+   flagEq = Edges(FromTo,iEdge)==Op ? TRUE : FALSE ; // чтобы не сравнивать дважды...
+//
+   if( flagEq && flagOp )
+    Edges_f(FromTo,iEdge) = FALSE ; // после первого вхождени€ Op все остальные - FALSE
+// ----- последовательность if не мен€ть ! -------------------------------------
+   if( flagEq ) // встретили Op...
+    flagOp = TRUE;
+  }
+//
+} // ----- конец clearFlagsDuplicateOps ----------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetCountOps()
+{ // возвращает число вершин »√ј без учЄта входных данных
+// // убираем повторы номеров операторов
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем общее число операторов nOps (без входного €руса) ===================
+////////////////////////////////////////////////////////////////////////////////
+//
+ INT iEdge;
+ nOps = 0; // число вершин без входных (глобал)
+//
+ setFlagsAll( 0 ); // устанавливает в TRUE флаги "From" операторов массива дуг Edges[][]
+ setFlagsAll( 1 ); // устанавливает в TRUE флаги "To" операторов массива дуг Edges[][]
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+  clearFlagsDuplicateOps(1,Edges(1,iEdge) ) ; // ставим FALSE у дубликатов
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
+  if( Edges_f(1,iEdge) ) // если TRUE (у дубликатов - FALSE )
+    nOps ++ ;
+//
+ return nOps ;
+//
+} // --- конец c_GetCountOps ---------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetCountOpsInput()
+{ // возвращает только ¬’ќƒЌџ≈ вершины (0-й €рус) в »√ј ------------------------
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdge, jEdge;
+ bool flag;
+ nOpsInput = 0; // число входных операторов (0-й €рус; глобальное)
+//
+ clearFlagsAll( 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ clearFlagsAll( 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+//
+// === по всем дугам »√ј =======================================================
+  for(iEdge=1; iEdge<=nEdges; iEdge++) // по все дугам начина€ с #1
+   if( !Edges_f(0,iEdge) ) // запомнили »—’ќƒяў”ё вершину дуги iEdge
+   {
+    nW = Edges(0,iEdge);
+    for(jEdge=1; jEdge<=nEdges; jEdge++) // по всем дугам начина€ с #1
+    {
+     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
+     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
+    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+//
+   flag = FALSE;
+   for(jEdge=1; jEdge<=nEdges; jEdge++)
+    if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и =nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
+    nOpsInput ++ ;
+//
+   } // if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
+//
+ return nOpsInput ;
+//
+} // --- конец c_GetCountOpsInput-----------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetCountOpsOutput()
+{ // возвращает число вершин в »√ј (только выходные данные)
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем число nOpsInput ¬’ќƒЌџ’ операторов (имеем nEdges дуг графа)=========
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdge, jEdge;
+ bool flag;
+ nOpsOutput = 0; // число ¬џ’ќƒЌџ’ операторов (глобальное)
+//
+ clearFlagsAll( 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ clearFlagsAll( 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+//
+// === по всем дугам »√ј =======================================================
+  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начина€ с #1
+   if( !Edges_f(1,iEdge) ) // запомнили »—’ќƒяў”ё вершину дуги iEdge
+   {
+    nW = Edges(1,iEdge);
+    for(jEdge=1; jEdge<=nEdges; jEdge++)
+    {
+     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
+     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
+    }
+//
+   flag = FALSE;
+   for(jEdge=1; jEdge<=nEdges; jEdge++)
+    if( Edges_f(0,jEdge) && Edges(0,jEdge)==nW ) // помечено и =nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
+    nOpsOutput ++ ;
+//
+   } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
+//
+ return nOpsOutput ;
+//
+} // --- конец c_GetCountOpsOutput----------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetNumbOpInput(INT Numb)
+{ // возвращает номер Numb оператора (только из ¬’ќƒЌџ’ операторов)
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем Numb-тый оператор (имеем nEdges дуг графа)==========================
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdge, jEdge,
+     iOps = 0 ; // счЄтчик числа вершин графа (операторов)
+ bool flag;
+//
+ clearFlagsAll( 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ clearFlagsAll( 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+//
+// === по всем дугам »√ј =======================================================
+//
+  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начина€ с #1
+   if( !Edges_f(0,iEdge) ) // запомнили »—’ќƒяў”ё вершину дуги iEdge
+   {
+    nW = Edges(0,iEdge);
+    for(jEdge=1; jEdge<=nEdges; jEdge++)
+    {
+     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
+     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
+    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+//
+   flag = FALSE;
+   for(jEdge=1; jEdge<=nEdges; jEdge++)
+    if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и равно nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(1,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(1,*) - подходит!
+    iOps ++ ;
+//
+   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
+    return nW ;
+//
+   } // конец if(!Edges_f(0,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
+//
+} // ------ конец c_GetNumbOpInput ---------------------------------------------
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetNumbOpOutput(INT Numb)
+{ // возвращает номер Numb вершины (только из ¬џ’ќƒЌџ’ операторов)
+//
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем число операторов (имеем nEdges дуг графа)===========================
+////////////////////////////////////////////////////////////////////////////////
+ INT nW, iEdge, jEdge,
+     iOps = 0 ; // счЄтчик числа вершин
+ bool flag;
+//
+ clearFlagsAll( 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ clearFlagsAll( 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+//
+// === по всем дугам »√ј =======================================================
+//
+  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начина€ с #1
+   if( !Edges_f(1,iEdge) ) // запомнили »—’ќƒяў”ё вершину дуги iEdge
+   {
+    nW = Edges(1,iEdge);
+    for(jEdge=1; jEdge<=nEdges; jEdge++)
+    {
+     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
+     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
+    } // конец for(jEdge=1; jEdge<=nEdges; jEdge++)
+//
+   flag = FALSE;
+   for(jEdge=1; jEdge<=nEdges; jEdge++)
+    if( Edges_f(0,jEdge) && Edges(0,jEdge)==nW ) // помечено и равно nW
+     flag = TRUE ; // итак, nW встречаетс€ в Edges(0,*) ..!
+//
+   if( !flag ) // если nW Ќ≈ ¬—“–≈„ј≈“—я в Edges(0,*) - подходит!
+    iOps ++ ;
+//
+   if( iOps == Numb ) // нашли вхожд≈ние номер Numb
+     return nW ;
+//
+   } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdges<=nEdges; iEdge++)
+//
+} // ------ конец c_GetNumbOpOutput --------------------------------------------
 
 
 

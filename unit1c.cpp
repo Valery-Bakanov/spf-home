@@ -3,7 +3,6 @@
 //
 #define DEBUG 0 // вызов stackDump дл€ отладки, если DEBUG определена true
 #define HOOK_COUNT 3 // чило вызовов срабатывани€ luaHook
-//#define METHOD_OF_CALC_COUNT_OPS // по какому методу вычисл€ть число операторов (исключа€ входной €рус)
 //
 #include <vcl.h>
 #include <vcl/dstring.h> // дл€ работы с ANSI-строками
@@ -108,6 +107,9 @@ TStringList *TLD; // список строк дл€ обмена информацией о времени жизни данных 
 //
 #define ULI unsigned long int // длинное целое без знака (32 бит)
 #define UI  unsigned int // целое без знака (32 бит)
+//
+#define _minINT -1073741824 // минимум -(2^30) и максимум 2^30 int_32
+#define _maxINT  1073741824
 //
 #define _IN  " \xAB%d" // \xab=<< признак того, что у оператора нет ¬’ќƒ€ў»’  дуг (это исходные данные)
 #define _OUT " %d\xBB" // \xbb=>> признак того, что у оператора нет ¬џ’ќƒ€ў»’ дуг (это результат программы)
@@ -2030,7 +2032,9 @@ void __fastcall TF1::PutParamsByOp(TObject *Sender)
   return;
  }
 //
+////////////////////////////////////////////////////////////////////////////////
 retry:
+////////////////////////////////////////////////////////////////////////////////
 //
  strNcpy( str, IntToStr(c_GetOpByNumbOnTier(1,1)).c_str() ); // умолчание: 1-й оператор 1-го €руса
  AnsiString defStr = AnsiString( str ); // все входные параметры InputQuery суть типа AnsiString..!
