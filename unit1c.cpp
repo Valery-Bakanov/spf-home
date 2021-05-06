@@ -151,11 +151,11 @@ TStringList *TLD; // список строк для обмена информацией о времени жизни данных 
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" // Lua - исходные тексты на "чистом С"
 {
-#include "./lua/src/lua.h"
-#include "./lua/src/lauxlib.h"
-#include "./lua/src/lualib.h"
+#include "./lua_5-3-0/src/lua.h"
+#include "./lua_5-3-0/src/lauxlib.h"
+#include "./lua_5-3-0/src/lualib.h"
 }
-#include "./lua/src/lua_src.c" // все С-исходники Lua...
+#include "./lua_5-3-0/src/lua_src.c" // все С-исходники Lua...
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
 void  __fastcall stackDump (lua_State *L, char *s); // выдаёт содержимое стека Lua
