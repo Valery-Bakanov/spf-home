@@ -195,7 +195,8 @@ char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образо
 INT  __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
 INT  __fastcall c_GetMaxTiersByOpsOutputTLD( INT Op ); // возвращает max номер ярус ЯПФ для оператора Op по выходным его данным
 //
-void __fastcall tuneFlagAll( bool FLAG, INT FromTo ); // устанавливает Flag у операторов массива дуг From/To=0/1 списка Edges[][]
+void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
+void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в FALSE все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -4937,16 +4938,30 @@ INT _fastcall c_GetMaxTiersByOpsOutputTLD( INT Op )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall tuneFlagAll( bool Flag, INT FromTo )
-{ // устанавливает в Flag все флаги операторов массива дуг Edges[][]
+void __fastcall tuneFlagsAll( bool FLAG, INT FromTo )
+{ // устанавливает в FLAG все флаги операторов массива дуг Edges[][]
 // обрабатывается список "From" или "To" при From/To = 0/1 соответственно
 //
  register INT iEdge; // попросим компилятор..!
 //
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  Edges_f(FromTo,iEdge) = Flag ; // пометили как Flag
+  Edges_f(FromTo,iEdge) = FLAG ; // пометили как FLAG
 //
-} // ----- конец tuneFlagAll ---------------------------------------------------
+} // ----- конец tuneFlagsAll --------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value )
+{ // устанавливает в FLAG флаги операторов массива дуг Edges[][] , если значение массива value
+// обрабатывается список "From" или "To" при From/To = 0/1 соответственно
+//
+ register INT iEdge; // попросим компилятор..!
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
+  Edges_f(FromTo,iEdge) = Edges(FromTo,iEdge)==Value ? FLAG : Edges_f(FromTo,iEdge) ; // пометили...
+//
+} // ----- конец tuneFlagsAll --------------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4975,39 +4990,6 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo,INT Op )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetCountOps()
-{ // возвращает число вершин ИГА без учёта входных данных
-// // убираем повторы номеров операторов
- if( !isEdges ) // нет массива Mem_Edges[]
- {
-  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
-// --- ищем общее число операторов nOps (без входного яруса) ===================
-////////////////////////////////////////////////////////////////////////////////
-//
- register INT iEdge;
- nOps = 0; // число вершин без входных (глобал)
-//
- tuneFlagAll( TRUE, 0 ); // устанавливает в TRUE флаги "From" операторов массива дуг Edges[][]
- tuneFlagAll( TRUE, 1 ); // устанавливает в TRUE флаги "To" операторов массива дуг Edges[][]
-//
- for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  clearFlagsDuplicateOps(1,Edges(1,iEdge) ) ; // ставим FALSE у дубликатов
-//
- for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  if( Edges_f(1,iEdge) ) // если TRUE (у дубликатов - FALSE )
-    nOps ++ ;
-//
- return nOps ;
-//
-} // --- конец c_GetCountOps ---------------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountOpsInput()
 { // возвращает только ВХОДНЫЕ вершины (0-й ярус) в ИГА ------------------------
 //
@@ -5024,29 +5006,27 @@ INT __fastcall c_GetCountOpsInput()
  bool flag;
  nOpsInput = 0; // число входных операторов (0-й ярус; глобальное)
 //
- tuneFlagAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
-  for(iEdge=1; iEdge<=nEdges; iEdge++) // по все дугам начиная с #1
-   if( !Edges_f(0,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
-   {
-    nW = Edges(0,iEdge);
-    for(jEdge=1; jEdge<=nEdges; jEdge++) // по всем дугам начиная с #1
-    {
-     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
-     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+ for(iEdge=1; iEdge<=nEdges; iEdge++) // по все дугам начиная с #1
+  if( !Edges_f(0,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
+  {
+   nW = Edges(0,iEdge);
 //
-   flag = FALSE;
-   for(jEdge=1; jEdge<=nEdges; jEdge++)
-    if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и =nW
-     flag = TRUE ; // итак, nW встречается в Edges(1,*) ..!
+   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
 //
-   if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(1,*) - подходит!
-    nOpsInput ++ ;
+  flag = FALSE;
+  for(jEdge=1; jEdge<=nEdges; jEdge++)
+   if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и =nW
+    flag = TRUE ; // итак, nW встречается в Edges(1,*) ..!
 //
-   } // if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
+  if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(1,*) - подходит!
+   nOpsInput ++ ;
+//
+  } // if(!Edges_f(0,iEdges)) и for(iEdges=1; iEdges<=nEdges; iEdges++)
 //
  return nOpsInput ;
 //
@@ -5071,19 +5051,17 @@ INT __fastcall c_GetCountOpsOutput()
  bool flag;
  nOpsOutput = 0; // число ВЫХОДНЫХ операторов (глобальное)
 //
- tuneFlagAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
-  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
-   if( !Edges_f(1,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
-   {
-    nW = Edges(1,iEdge);
-    for(jEdge=1; jEdge<=nEdges; jEdge++)
-    {
-     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
-     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
-    }
+ for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
+  if( !Edges_f(1,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
+  {
+   nW = Edges(1,iEdge);
+//
+   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
 //
    flag = FALSE;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
@@ -5093,7 +5071,7 @@ INT __fastcall c_GetCountOpsOutput()
    if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(0,*) - подходит!
     nOpsOutput ++ ;
 //
-   } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
+  } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
 //
  return nOpsOutput ;
 //
@@ -5118,20 +5096,18 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
           INT iOps = 0 ; // счётчик числа вершин графа (операторов)
  bool flag;
 //
- tuneFlagAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
 //
-  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
-   if( !Edges_f(0,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
-   {
-    nW = Edges(0,iEdge);
-    for(jEdge=1; jEdge<=nEdges; jEdge++)
-    {
-     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
-     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
-    } // конец for(jEdges=1; jEdges<=nEdges; jEdges++)
+ for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
+  if( !Edges_f(0,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
+  {
+   nW = Edges(0,iEdge);
+//
+   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
 //
    flag = FALSE;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
@@ -5144,10 +5120,9 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
    if( iOps == Numb ) // нашли вхождЕние номер Numb
     return nW ;
 //
-   } // конец if(!Edges_f(0,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
+  } // конец if(!Edges_f(0,iEdge)) и for(iEdge=1; iEdge<=nEdges; iEdge++)
 //
 } // ------ конец c_GetNumbOpInput ---------------------------------------------
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5168,20 +5143,18 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
           INT iOps = 0 ; // счётчик числа вершин
  bool flag;
 //
- tuneFlagAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
 //
-  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
-   if( !Edges_f(1,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
-   {
-    nW = Edges(1,iEdge);
-    for(jEdge=1; jEdge<=nEdges; jEdge++)
-    {
-     Edges_f(0,jEdge) = Edges(0,jEdge)==nW ? TRUE : Edges_f(0,jEdge) ; // пометили "From"
-     Edges_f(1,jEdge) = Edges(1,jEdge)==nW ? TRUE : Edges_f(1,jEdge) ; // пометили "To"
-    } // конец for(jEdge=1; jEdge<=nEdges; jEdge++)
+ for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
+  if( !Edges_f(1,iEdge) ) // запомнили ИСХОДЯЩУЮ вершину дуги iEdge
+  {
+   nW = Edges(1,iEdge);
+//
+   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
 //
    flag = FALSE;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
@@ -5192,11 +5165,44 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
     iOps ++ ;
 //
    if( iOps == Numb ) // нашли вхождЕние номер Numb
-     return nW ;
+    return nW ;
 //
-   } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdges<=nEdges; iEdge++)
+  } // конец if(!Edges_f(1,iEdge)) и for(iEdge=1; iEdges<=nEdges; iEdge++)
 //
 } // ------ конец c_GetNumbOpOutput --------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetCountOps()
+{ // возвращает число вершин ИГА без учёта входных данных
+// // убираем повторы номеров операторов
+ if( !isEdges ) // нет массива Mem_Edges[]
+ {
+  DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+// --- ищем общее число операторов nOps (без входного яруса) ===================
+////////////////////////////////////////////////////////////////////////////////
+//
+ register INT iEdge;
+ nOps = 0; // число вершин без входных (глобал)
+//
+ tuneFlagsAll( TRUE, 0 ); // устанавливает в TRUE флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( TRUE, 1 ); // устанавливает в TRUE флаги "To" операторов массива дуг Edges[][]
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
+  clearFlagsDuplicateOps(1,Edges(1,iEdge) ) ; // ставим FALSE у дубликатов
+//
+ for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
+  if( Edges_f(1,iEdge) ) // если TRUE (у дубликатов - FALSE )
+    nOps ++ ;
+//
+ return nOps ;
+//
+} // --- конец c_GetCountOps ---------------------------------------------------
 
 
 
