@@ -158,7 +158,7 @@ https://ru.wikipedia.org/wiki/DOT_(%D1%8F%D0%B7%D1%8B%D0%BA).
 c_GetNumbXXX (включая функцию c_GetCountOps).
 
            
-* Размер выполняемого модуля 2833 кБайт 
+* Размер выполняемого модуля 2831 кБайт 
 (компиляция Release, Pentium, Word).
 
 

@@ -1,8 +1,10 @@
 --
 --выполнение программы на гетерогенном поле вычислителей
 --оптимизированный вариант 03 (апрель 2017)
+--   ]
+--projectName = "abc_r" -- имя проекта 
 --
---projectName = "squa_equ_2"  -- имя проекта 
+projectName = "squa_equ_2"  -- имя проекта 
 --projectName = "squa_equ_2.pred"
 --
 --projectName = "polinom_10-1"
@@ -22,7 +24,7 @@
 --
 --projectName = "m_matr_2"
 --projectName = "m_matr_3"
-projectName = "m_matr_5"
+--projectName = "m_matr_5"
 --projectName = "m_matr_7"
 --projectName = "m_matr_10"
 --
@@ -82,8 +84,8 @@ AddLineToTextFrame ( "Всего операторов= " .. GetCountOps() )
 --
 nCalcs = GetCountCalcs() -- всего ВЫЧИСЛИТЕЛЕЙ
 --
---CreateTiersByEdges( projectName .. ".gv" ) -- создать ЯПФ по ИГА
-CreateTiersByEdges_Bottom( projectName .. ".gv" ) -- создать ЯПФ по ИГА
+CreateTiersByEdges( projectName .. ".gv" ) -- создать ЯПФ по ИГА
+--CreateTiersByEdges_Bottom( projectName .. ".gv" ) -- создать ЯПФ по ИГА
 --
 PutTiersToTextFrame() -- вывести ЯПФ как текст
 ClearDiagrArea() -- очистить поле графики
@@ -118,12 +120,14 @@ if ( not TestCanExecAllOpsCalcs( 1 ) )  then -- проверка выполнИмости ОПЕРАТОРОВ
  AddLineToTextFrame ( "\n...Проблемы с выполнимостью ОПЕРАТОРОВ на ВЫЧИСЛИТЕЛЯХ..." )
 end
 --
+PutParamsTiers()
+--
 PutTLDToTextFrame() -- вывод диаграммы времени жизни данных в текстовое окно
 --
 ClearDiagrArea() -- очистить поле графики
 DrawDiagrTLD() -- вывод в графике
 --
-SaveTLD( "123.txt" ) -- вывод в файл
+SaveTLD( "123" ) -- вывод в файл (расширение по умолчанию *.tld)
 --
 SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
 --

@@ -159,7 +159,7 @@ __published:	// IDE-managed Components
 //        void __fastcall CopyToMSWord(TObject *Sender);
         void __fastcall StopLuaScript(TObject *Sender);
         void __fastcall SaveScriptToCurrentFile(TObject *Sender);
-        void __fastcall CreateUpperSpfBySelectedIgaFile(TObject *Sender);
+        void __fastcall CreateUpperSPFAndPutToTextFrame(TObject *Sender);
         void __fastcall GetWebPage(TObject *Sender);
         void __fastcall GetUserAPI(TObject *Sender);
         void __fastcall AboutLua(TObject *Sender);
@@ -213,8 +213,8 @@ __published:	// IDE-managed Components
         void __fastcall INC0_OnStatus(TObject *axSender,
                                       const TIdStatus axStatus, const AnsiString asStatusText);
         void __fastcall EndedUploadFile(TObject *Sender);
-        void __fastcall CreateBottomSPFClick(TObject *Sender);
-        void __fastcall PutTimeLiveDataToTextFrame_Menu(TObject *Sender);
+        void __fastcall CreateBottomSPFAndPutToTextFrame(TObject *Sender);
+        void __fastcall CreateTLDAndPutToTextFrame(TObject *Sender);
         void __fastcall ReadEdgesFileAndPutToTextFrame(TObject *Sender);
         void __fastcall PutParamsByOp(TObject *Sender);
 //        void __fastcall SelectPrintAction(TObject *Sender);

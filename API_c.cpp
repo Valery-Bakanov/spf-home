@@ -28,7 +28,7 @@ char Test_symb[]="=/: |";
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-INT  __fastcall c_CreateAndOutputTLDDiagrByTiers( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
+INT  __fastcall c_CalcParamsTLD( int Rule, char FileName[] ); // рассчитывает и выводит параметры ∆»«Ќ» ¬Ќ”“–≈ЌЌ»’ ƒјЌЌџ’ в яѕ‘
 INT  __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
 INT  __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
@@ -193,7 +193,6 @@ INT  __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua
 void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
 char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать им€ файла
 INT  __fastcall c_CalcParamsTiers(); // расчЄт статистики €русов яѕ‘
-INT  __fastcall c_GetMaxTiersByOpsOutputTLD( INT Op ); // возвращает max номер €рус яѕ‘ дл€ оператора Op по выходным его данным
 //
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
@@ -3628,138 +3627,19 @@ bool __fastcall c_IsOpContainOnTiers(INT Op)
 //
 } // ---- конец c_IsOpContainOnTiers -------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
-{ // выдаЄт оператор, информационно зависимый от заданного Op и наход€щийс€ на €русе
-// с максимальным номером (если таких оператор несколько - выдаЄтс€ последний по списку)
- register INT i;
- INT to_Op, Op_maxTier, to_Tier, maxTier = -134567,
-     nOut = c_GetCountOutEdgesByOp(Op); // число выходных дуг оператора Op
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
- if( !nOut ) // это ¬џ’ќƒЌќ… оператор...
-  return ERR_COMMON ; // сигнал, что это ¬џ’ќƒЌќ… оператор
-//
- for(i=1; i<=nOut; i++) // по всем ¬џ’ќƒяў»ћ дугам
- {
-  to_Op = c_GetNumbOutEdgeByOp( i, Op ); // i-тый комплементарный по дуге оператор относительно Op
-  to_Tier = c_GetTierByOp( to_Op ); // этот оператор находитс€ на €русе to_Tier
-//
-  if( to_Tier >= maxTier ) // ищем максимум
-  {
-   maxTier = to_Tier;
-   Op_maxTier = to_Op; // запоминаем to_Op...
-  }
-//
- } // конец цикла по ¬џ’ќƒяў»ћ дугам
-//
- return Op_maxTier;
-//
-} // --- конец  c_GetOpByMaxTierLowerPreset ------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CreateAndOutputDataLiveDiagrByTiers( int Rule, char FileName[] )
-{ // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
-// числа сообщений между €русами (полезно дл€ определени€ числа необходимых
-// дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
-// полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
-// при Rule = 0 вывод в текстовое окно, при Rule == 1 вывод в файл FileName
-// при Rule == 2 вывод в строку специального формата
- char sN[_8192], sS[_8192], sW[_128];
- INT i,j,k,l, from_Op,to_Op, to_Tier, max_to_Tier;
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  t_printf( "\n-W- ƒл€ построени€ диаграммы времени жизни данных создайте сначала яѕ‘..! -W-\n");
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
- TLD->Clear(); // очистим на вс€кий случай...
-//
- TLD->Add( IntToStr(nTiers+1) ); // всего строк в Tld
-//
- if( !Rule ) // вывод в текстовое окно
-  t_printf( "\n-=- —троитс€ диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов €русов яѕ‘ = %d )", nTiers+1 ); // строка с числом €русов
-//
- for(INT iBottom=1; iBottom<=nTiers+1; iBottom++) // iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘
- {
-  strNcpy( sN, "" ); // очистили строку параметров диапазона €русов с "дном" в виде €руса iBot
-  l = 0; // число параметров данной строки
-//
-  for(i=0; i<iBottom; i++) // по €русам яѕ‘, не бќльшим (включающим) iBot
-  {
-   for(j=1; j<=c_GetCountOpsOnTier(i); j++) // по операторам по €русе i
-   {
-//
-    APM // дать поработать Wimdows ---------------------------------------------
-//
-    from_Op = c_GetOpByNumbOnTier(j,i); // получили номер вершины, из которой ¬џ’ќƒя“ дуги
-    to_Op = c_GetOpByMaxTierLowerPreset( from_Op ); // если выходных дуг нет вообще - возвращаетс€ ERR_COMMON
-//
-    max_to_Tier = ( to_Op == ERR_COMMON ) ? nTiers + 1 : c_GetTierByOp( to_Op ); // соответствующий to_Op €рус суть выходной / не выходной
-//
-    if( max_to_Tier >= iBottom ) // €рус конца дуги более или равен €русу Ќ»«ј интервала
-    {
-     if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
-     {
-      if( !Rule ) snprintf( sW,sizeof(sW), " \xAB%d|%d->%d", from_Op, i, max_to_Tier ); // "\xAB" = "<<" ; "\x96\x9B" = "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d->%d",     from_Op, i, max_to_Tier ); // вывод в файл
-     }
-     else
-     if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
-     {
-      if( !Rule ) snprintf( sW,sizeof(sW), " %d\xBB|%d->$", from_Op, i ); // "\xBB" = ">>"; "x96\x9B"= "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d->$",     from_Op, i ); // вывод в файл
-
-     }
-     else
-      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
-//
-     strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
-//
-     l ++ ;
-    } // конец if( max_to_Tier >= iBottom )
-//
-   } // конец по j (номерам операторов на €русе i)
-//
-
-  } // конец цикла по i (по всем €русам яѕ‘)
-//
- if( iBottom == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
-  if( !Rule ) t_printf(      "%d/$|%d: %s",  iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
-  else      TLD->Add( Format("%d/$|%d: %s",  OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
- else // не последний (фиктивный) €рус
-  if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottom-1, iBottom,l, sN );
-  else      TLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
-//
- } // конец цикла по iBottom (iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
-//
- if( Rule == 1 ) // вывод в файл
-  TLD->SaveToFile( ReformFileName(FileName,extTld) );
-//
-} // ---- конец c_CreateAndOutputDataLiveDiagrByTiers --------------------------
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutTLDToTextFrame()
 { // выдать диаграмму времени жизни данных в текстовое окно
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "" );
+ c_CalcParamsTLD( 0, "" );
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
- c_CreateAndOutputDataLiveDiagrByTiers( 1, FileName ); // преобразование Filename - при непосредственном вызове
+ c_CalcParamsTLD( 1, FileName ); // преобразование Filename - при непосредственном вызове
 } // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4331,7 +4211,7 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutTimeLiveDataToTextFrame()
 { // построить и выдать в текстовое окно диаграмму жизни данных (аналог F6)
- c_CreateAndOutputDataLiveDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
+ c_CalcParamsTLD( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeve Tiers[][]
 } //----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4376,18 +4256,18 @@ bool __fastcall c_DrawDiagrTLD()
      n1x,n2x, n1n,n2n; // диапазоны €русов выше и ниже рассмматриваемого промежутка
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
 //
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // рассчитали информацию дл€ времени жизни данных по текущ. Tiers[][]
+ c_CalcParamsTLD( 2, "" ); // рассчитали информацию дл€ времени жизни данных по текущ. Tiers[][]
 //
- sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число меж-€русов в яѕ‘
+ sscanf( ParamsTLD->Strings[0].c_str(), "%d", &n ); // число меж-€русов в яѕ‘
 //
 // ищем экстремумы числа данных ------------------------------------------------
  for(INT i=1; i<=n; i++) // цикл по всем промежуткам €русов яѕ‘ дл€ поисков max/min
  {
   if( i < n ) // кроме последней строки с $
-   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -4416,10 +4296,10 @@ bool __fastcall c_DrawDiagrTLD()
  {
 //
   if( i < n ) // кроме последней строки с $
-   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/$|%d:", &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -4672,7 +4552,7 @@ INT __fastcall c_PutParamsTiers()
  INT n,n1,n2,m, // n1,n2 - номера промежутков между €русами яѕ‘
      maxM = _minINT, minM = _maxINT, // max/min данных
      n1x,n2x, n1n,n2n; //  диапазоны €русов выше и ниже рассматриваеиого промежутка
- REAL averTLD=0.0; // средне-арифметическое времени жизни данных между €русами яѕ‘ (≈ƒ¬)
+ REAL averTLD=0.0; // средне-арифметическое времени жизни данных между €русами яѕ‘ (ParamsTLD)
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -4682,24 +4562,24 @@ INT __fastcall c_PutParamsTiers()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- c_CreateAndOutputDataLiveDiagrByTiers( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
+ c_CalcParamsTLD( 2, "" ); // создать диаграмму времени жизни данных по текущ. Tiers[][]
 //
- sscanf( TLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
+ sscanf( ParamsTLD->Strings[0].c_str(), "%d", &n ); // число промежутков €русов в яѕ‘
 //
  for( INT i=1; i<=n; i++) // по числу промежутков между €русами яѕ‘
  {
   if( i < n ) // кроме последней строки с $
-   sscanf( TLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/%d|%d:", &n1,&n2,&m ); // верхний €рус / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( TLD->Strings[i].c_str(), "%d/$|%d:",  &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( ParamsTLD->Strings[i].c_str(), "%d/$|%d:",  &n1,&m ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
-  if( m >= maxM ) // ищем мах число TLD
+  if( m >= maxM ) // ищем мах число ParamsTLD
   { maxM = max(maxM,m); n1x=n1; n2x=n2; } // запомнили €рус выше | запомнили €рус ниже (избыточно вообще-то...)
 //
-  if( m < minM ) // ищем мin число TLD
+  if( m < minM ) // ищем мin число ParamsTLD
   { minM = min(minM,m); n1n=n1; } // запомнили €рус выше | запомнили €рус ниже (избыточно вообще-то...)
 //
   averTLD += (REAL)m; // средне-арифметическое времени жизни данных
@@ -4707,7 +4587,7 @@ INT __fastcall c_PutParamsTiers()
 //
 // дополнение строки информацией о времени жизни данных
 //
- char szStatTLD[_512], // строка данных о времени жизни локальных данных (TLD)
+ char szStatTLD[_512], // строка данных о времени жизни локальных данных (ParamsTLD)
       szTemp[_128] ;
 //
  if( n2n == n )
@@ -4759,7 +4639,7 @@ calc_data_live: //проще, чем разбиратьс€ в куче фигурных скобок ----------------
 //
  StatTiers.AAL, // среднеарифметическа€ длина дуги
 //
- szStatTLD ); // данные статистики времени жизни локальных данных (TLD)
+ szStatTLD ); // данные статистики времени жизни локальных данных (ParamsTLD)
 //
  F2->L_GP->Caption = szOut; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
@@ -4792,90 +4672,6 @@ calc_data_live: //проще, чем разбиратьс€ в куче фигурных скобок ----------------
  return TRUE ;
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall  c_CreateAndOutputTLDDiagrByTiers( int Rule, char FileName[] )
-{ // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
-// числа сообщений между €русами (полезно дл€ определени€ числа необходимых
-// дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
-// полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
-// при Rule = 0 вывод в текстовое окно, при Rule == 1 вывод в файл FileName
-// при Rule == 2 вывод в строку специального формата
- char sN[_8192], sS[_8192], sW[_128];
- INT i,j,k,l, from_Op,to_Op, to_Tier, max_to_Tier;
-//
- if( !isTiers ) // массива Tiers[][] не существует...
- {
-  t_printf( "\n-W- ƒл€ построени€ диаграммы времени жизни данных создайте сначала яѕ‘..! -W-\n");
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
- TLD->Clear(); // очистим на вс€кий случай...
-//
- TLD->Add( IntToStr(nTiers+1) ); // всего строк в Tld
-//
- if( !Rule ) // вывод в текстовое окно
-  t_printf( "\n-=- —троитс€ диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов €русов яѕ‘ = %d )", nTiers+1 ); // строка с числом €русов
-//
- for(INT iBottom=1; iBottom<=nTiers+1; iBottom++) // iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘
- {
-  strNcpy( sN, "" ); // очистили строку параметров диапазона €русов с "дном" в виде €руса iBot
-  l = 0; // число параметров данной строки
-//
-  for(i=0; i<iBottom; i++) // по €русам яѕ‘, не бќльшим (включающим) iBot
-  {
-   for(j=1; j<=c_GetCountOpsOnTier(i); j++) // по операторам по €русе i
-   {
-//
-    APM // дать поработать Wimdows ---------------------------------------------
-//
-    from_Op = c_GetOpByNumbOnTier(j,i); // получили номер вершины, из которой ¬џ’ќƒя“ дуги
-    to_Op = c_GetOpByMaxTierLowerPreset( from_Op ); // если выходных дуг нет вообще - возвращаетс€ ERR_COMMON
-//
-    max_to_Tier = ( to_Op == ERR_COMMON ) ? nTiers + 1 : c_GetTierByOp( to_Op ); // соответствующий to_Op €рус суть выходной / не выходной
-//
-    if( max_to_Tier >= iBottom ) // €рус конца дуги более или равен €русу Ќ»«ј интервала
-    {
-     if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
-     {
-      if( !Rule ) snprintf( sW,sizeof(sW), " \xAB%d|%d->%d", from_Op, i, max_to_Tier ); // "\xAB" = "<<" ; "\x96\x9B" = "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d->%d",     from_Op, i, max_to_Tier ); // вывод в файл
-     }
-     else
-     if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
-     {
-      if( !Rule ) snprintf( sW,sizeof(sW), " %d\xBB|%d->$", from_Op, i ); // "\xBB" = ">>"; "x96\x9B"= "->"
-      else        snprintf( sW,sizeof(sW), " %d|%d->$",     from_Op, i ); // вывод в файл
-
-     }
-     else
-      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
-//
-     strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
-//
-     l ++ ;
-    } // конец if( max_to_Tier >= iBottom )
-//
-   } // конец по j (номерам операторов на €русе i)
-//
-
-  } // конец цикла по i (по всем €русам яѕ‘)
-//
- if( iBottom == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
-  if( !Rule ) t_printf(      "%d/$|%d: %s",  iBottom-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
-  else      TLD->Add( Format("%d/$|%d: %s",  OPENARRAY(TVarRec, ((int(iBottom-1)),(int(l)),sN))) );
- else // не последний (фиктивный) €рус
-  if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottom-1, iBottom,l, sN );
-  else      TLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottom-1)),(int(iBottom)),(int(l)),sN))) );
-//
- } // конец цикла по iBottom (iBottom - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
-//
- if( Rule == 1 ) // вывод в файл
-  TLD->SaveToFile( ReformFileName(FileName,extTld) );
-//
-} // ---- конец  c_CreateAndOutputTLDDiagrByTiers --------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4915,25 +4711,6 @@ INT __fastcall c_GetNumbOp(INT Numb)
    } // конец if( Mem_Edges[iEdges].FlagFTo )
 //
 } // ------ конец c_GetNumbOp --------------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT _fastcall c_GetMaxTiersByOpsOutputTLD( INT Op )
-{ // возвращает max номер €рус яѕ‘ дл€ оператора Op по выходным его данным
-//
-// минимальный номер €руса равен c_GetTierByOp( Op )
-//
- INT maxTier = _minINT ; // min/max номера €русов существовани€ выходных данных оператора Op
-//
-// ---- ищем номер €руса  ќЌ÷ј жизни ¬џ’ќƒЌџ’ данных дл€ оператора Op
-//
- for( INT iOutEdge=1; iOutEdge <= c_GetCountOutEdgesByOp( Op ); iOutEdge++ ) // по все ¬џ’ќƒяў»ћ из Op дугам
-  maxTier = max( maxTier, c_GetTierByOp( c_GetNumbOutEdgeByOp( iOutEdge, Op) ) ) ;
-//
- return maxTier ;
-//
-} // ----- конец c_GetMMaxTiersByOpsOutputTLD ----------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5205,6 +4982,129 @@ INT __fastcall c_GetCountOps()
 } // --- конец c_GetCountOps ---------------------------------------------------
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
+{ // выдаЄт оператор, информационно зависимый от заданного Op и наход€щийс€ на €русе
+// с максимальным номером (если таких оператор несколько - выдаЄтс€ последний по списку)
+ register INT i;
+ INT to_Op, Op_maxTier, to_Tier, maxTier = -134567,
+     nOut = c_GetCountOutEdgesByOp(Op); // число выходных дуг оператора Op
+//
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ if( !nOut ) // это ¬џ’ќƒЌќ… оператор...
+  return ERR_COMMON ; // сигнал, что это ¬џ’ќƒЌќ… оператор
+//
+ for(i=1; i<=nOut; i++) // по всем ¬џ’ќƒяў»ћ дугам
+ {
+  to_Op   = c_GetNumbOutEdgeByOp( i, Op ); // i-тый комплементарный по дуге оператор относительно Op
+  to_Tier = c_GetTierByOp( to_Op ); // этот оператор находитс€ на €русе to_Tier
+//
+  if( to_Tier >= maxTier ) // ищем максимум
+  {
+   maxTier = to_Tier;
+   Op_maxTier = to_Op; // запоминаем to_Op...
+  }
+//
+ } // конец цикла по ¬џ’ќƒяў»ћ дугам
+//
+ return Op_maxTier;
+//
+} // --- конец  c_GetOpByMaxTierLowerPreset ------------------------------------
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall  c_CalcParamsTLD( int Rule, char FileName[] )
+{ // по массиву Tiers[][] строит и выводит в Tld информацию о времени жижни данных
+// числа сообщений между €русами (полезно дл€ определени€ числа необходимых
+// дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
+// полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
+// при Rule == 0 вывод в текстовое окно,
+// при Rule == 1 вывод в файл FileName,
+// при Rule == 2,3... вывод в строку специального формата (ParamsTLD)
+ char sN[_8192], sS[_8192], sW[_128];
+ INT i,j,k,l, from_Op,to_Op, to_Tier, max_to_Tier;
+//
+ if( !isTiers ) // массива Tiers[][] не существует...
+ {
+  t_printf( "\n-W- ƒл€ построени€ диаграммы времени жизни данных создайте сначала яѕ‘..! -W-\n");
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+ ParamsTLD->Clear(); // очистим на вс€кий случай...
+//
+ ParamsTLD->Add( IntToStr(nTiers+1) ); // всего строк в Tld
+//
+ if( !Rule ) // вывод в текстовое окно
+  t_printf( "\n-=- —троитс€ диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов €русов яѕ‘ = %d )", nTiers+1 ); // строка с числом €русов
+//
+// ---- начинаем цикл по ѕ–ќћ≈∆”“ јћ между €русами (Gap) яѕ‘ -------------------
+// ---- iBottomOfGap - Ќ»∆Ќяя граница промежутка определ€етс€ номером Ќ»∆Ќ≈√ќ €руса яѕ‘
+ for(INT iBottomOfGap=1; iBottomOfGap<=nTiers+1; iBottomOfGap++) // по iBottomOfGap - нижней границе »Ќ“≈–¬јЋј в яѕ‘
+ {
+  strNcpy( sN, "" ); // очистили строку параметров диапазона €русов с "дном" в виде €руса iBot
+  l = 0; // число параметров данной строки
+//
+  for(i=0; i<iBottomOfGap; i++) // по €русам яѕ‘, не бќльшим (включающим) iBot
+  {
+   for(j=1; j<=c_GetCountOpsOnTier(i); j++) // по операторам по €русе j
+   {
+//
+    APM // дать поработать Wimdows ---------------------------------------------
+//
+    from_Op = c_GetOpByNumbOnTier(j,i); // получили номер вершины, из которой ¬џ’ќƒя“ дуги
+    to_Op   = c_GetOpByMaxTierLowerPreset( from_Op ); // если выходных дуг нет вообще - возвращаетс€ ERR_COMMON
+//
+    max_to_Tier = ( to_Op == ERR_COMMON ) ? nTiers + 1 : c_GetTierByOp( to_Op ); // соответствующий to_Op €рус суть выходной / не выходной
+//
+    if( max_to_Tier >= iBottomOfGap ) // €рус конца дуги более или равен €русу Ќ»«ј интервала
+    {
+     if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
+      !Rule ? snprintf( sW,sizeof(sW), " \xAB%d|%d->%d", from_Op, i, max_to_Tier ) : // "\xAB" = "<<" ; "\x96\x9B" = "->"
+              snprintf( sW,sizeof(sW), " %d|%d->%d",     from_Op, i, max_to_Tier ); // вывод в файл
+//
+     else
+     if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
+      !Rule ? snprintf( sW,sizeof(sW), " %d\xBB|%d->$", from_Op, i ) : // "\xBB" = ">>"; "x96\x9B"= "->"
+              snprintf( sW,sizeof(sW), " %d|%d->$",     from_Op, i ) ; // вывод в файл
+//
+     else
+      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
+//
+     strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
+//
+     l ++ ;
+    } // конец if( max_to_Tier >= iBottomOfGap )
+//
+   } // конец по j (номерам операторов на €русе i)
+//
+
+  } // конец цикла по i (по всем €русам яѕ‘)
+//
+ if( iBottomOfGap == nTiers+1 ) // последний фиктивный €рус (рассчитанные данные)
+  if( !Rule ) t_printf(      "%d/$|%d: %s",  iBottomOfGap-1, l, sN ); // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBot
+  else        ParamsTLD->Add( Format("%d/$|%d: %s",  OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(l)),sN))) );
+//
+ else // не последний (фиктивный) €рус
+  if( !Rule ) t_printf(      "%d/%d|%d: %s", iBottomOfGap-1, iBottomOfGap,l, sN );
+  else        ParamsTLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(iBottomOfGap)),(int(l)),sN))) );
+//
+ } // конец цикла по iBottomOfGap (iBottomOfGap - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
+//
+ if( Rule == 1 ) // вывод в файл
+  ParamsTLD->SaveToFile( ReformFileName( FileName, extTld ) );
+//
+} // ---- конец  c_CalcParamsTLD -----------------------------------------------
 
 
 

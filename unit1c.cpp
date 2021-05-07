@@ -30,7 +30,6 @@
 #include <sysdefs.h>
 #include <sysopen.h>
 #include "windows.h"
-//#include <graphics.h>
 //
 #include <setjmp.h> // дл€ реализации нелокального перехода
 jmp_buf env_StopSessionLua; // в env_StopSessionLua сохран€етс€ состо€ние в точке вызова setjmp
@@ -97,8 +96,8 @@ using namespace std; // стандартное пространство имЄн
 //
 TF1 *F1;
 //
-TStringList *TLD; // список строк дл€ обмена информацией о времени жизни данных внутри яѕ‘
-// TLD - глобал; создаЄтс€ в TF1::TF1(), заполн€етс€ данными в c_CreateAndOutputDataLiveDiagrByTiers()
+TStringList *ParamsTLD; // список строк - параметров дл€ обмена информацией о времени жизни данных внутри яѕ‘ (≈ƒ¬)
+// ParamsTLD - глобал; создаЄтс€ в TF1::TF1(), заполн€етс€ данными в c_CreateAndOutputDataLiveDiagrByTiers()
 //
 //#include "pcre.h" // библиотека регул€рных выражений от Borland C++ RTL
 //
@@ -160,6 +159,7 @@ lua_State *L = NULL; // глобјльный указатель - указывает на экземпл€р Lua !!!!!!
 //
 void  __fastcall stackDump (lua_State *L, char *s); // выдаЄт содержимое стека Lua
 int   __fastcall lua_pcall_Debug( lua_State* L, int args, int results ); // начало исполнени€ Lua с отладкой
+//
 static void LuaHook( lua_State *L, lua_Debug *ar); // функци€ перехватчик выполнени€ строк Lua
 static int  errorHandler( lua_State* L ); // функци€ - обработчик ошибок
 static int  luaPanic( lua_State* L ); // функци€ паники Lua
@@ -460,7 +460,7 @@ __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполн€етс€ в начале вс
 //
 // Copy_Stdout_To_Memo(); // копировать stdout на Memo
 //
- TLD = new TStringList; // набор строк дл€ сохранени€ информации по времени жизни данных
+ ParamsTLD = new TStringList; // набор строк дл€ сохранени€ информации по времени жизни данных (≈ƒ¬)
 //
 } // --- конец TF1 -------------------------------------------------------------
 
@@ -1660,7 +1660,7 @@ void __fastcall TF1::EndedUploadFile(TObject *Sender)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::CreateUpperSpfBySelectedIgaFile(TObject *Sender)
+void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
 { // построить первичную яѕ‘ по диалогом выбранному файлу
  OD_Edg->InitialDir = ExtractFilePath ( Application->ExeName ); // считываем из текущего каталога
 //
@@ -1699,7 +1699,7 @@ void __fastcall TF1::CreateUpperSpfBySelectedIgaFile(TObject *Sender)
 
  ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::CreateBottomSPFClick(TObject *Sender)
+void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
 { // построить первичную яѕ‘ по диалогом выбранному файлу
  OD_Edg->InitialDir = ExtractFilePath ( Application->ExeName ); // считываем из текущего каталога
 //
@@ -2628,9 +2628,9 @@ void Set_FileNames_All_Protocols()
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::PutTimeLiveDataToTextFrame_Menu(TObject *Sender)
-{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных ------------
- c_CreateAndOutputTLDDiagrByTiers( 0, "" ); // создать и выдать в текстовое окно диаграмму времени жизни данных по текущeму Tiers[][]
+void __fastcall TF1::CreateTLDAndPutToTextFrame(TObject *Sender)
+{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных -----------
+ c_CalcParamsTLD( 0, "" );
 } //----------------------------------------------------------------------------
 
 

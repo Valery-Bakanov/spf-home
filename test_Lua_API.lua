@@ -72,7 +72,6 @@ PutTiersToTextFrame()
 PutEdgesToTextFrame()
 PutParamsTiers() 
 ClearDiagrArea() 
-PutParamsTiers() 
 DrawDiagrTiers()
 --
 DelayMS( -1 )
