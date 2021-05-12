@@ -214,7 +214,7 @@ __published:	// IDE-managed Components
                                       const TIdStatus axStatus, const AnsiString asStatusText);
         void __fastcall EndedUploadFile(TObject *Sender);
         void __fastcall CreateBottomSPFAndPutToTextFrame(TObject *Sender);
-        void __fastcall CreateTLDAndPutToTextFrame(TObject *Sender);
+        void __fastcall PutTLDToTextFrameAndDiagr(TObject *Sender);
         void __fastcall ReadEdgesFileAndPutToTextFrame(TObject *Sender);
         void __fastcall PutParamsByOp(TObject *Sender);
 //        void __fastcall SelectPrintAction(TObject *Sender);

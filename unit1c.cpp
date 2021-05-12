@@ -96,8 +96,8 @@ using namespace std; // стандартное пространство имён
 //
 TF1 *F1;
 //
-TStringList *ParamsTLD; // список строк - параметров для обмена информацией о времени жизни данных внутри ЯПФ (ЕДВ)
-// ParamsTLD - глобал; создаётся в TF1::TF1(), заполняется данными в c_CreateAndOutputDataLiveDiagrByTiers()
+TStringList *paramsTLD = new( TStringList ) ;
+// paramsTLD - глобал; заполняется данными в c_CalcParamsTLD() -----------------
 //
 //#include "pcre.h" // библиотека регулярных выражений от Borland C++ RTL
 //
@@ -198,7 +198,6 @@ long color_BackGround = clWhite; // цвет фона окна редактирования
 // ----- цвета для отрисовки диаграммы распр. операторов по ярусам ЯПФ ( DrawDiagrSPF, DrawDiagrTLD )
 long brush_draw_color_TIERS = clBlack, // цвет кисти обычный для графика ЯПФ (чёрный)
      brush_draw_color_TLD   = RGB(0,64,0), // цвет кисти для вывода времени жизни данных (тёмно-зелёный)
-//     brush_draw_color_TLD   = clBlack, // цвет кисти для вывода времени жизни данных (тёмно-зелёный)
      brush_draw_color_MIN   = clRed, // цвет кисти МИНИМУМ
      brush_draw_color_MAX   = clFuchsia, // цвет кисти МАКСИМУМ
      pen_draw_b_average     = clWhite, // цвет линии среднего числа
@@ -368,6 +367,8 @@ char* __fastcall ReplaceManySpacesOne( char *pszStr ); // заменяет кратные пробе
 void  __fastcall DeleteSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
 void  __fastcall DeleteAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
 void  __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
+void  __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке ыек
+//
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
 bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
@@ -415,6 +416,12 @@ bool luaExecute = FALSE; // флаг времени выполнения Lua (при выполнеЕнии TRUE, и
 char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n", // начальная строка для Lua
      first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel.on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
 //
+// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.линия \246 \x00A6
+char SS_01[]=" \246 " , // разделитель блоков при выводе в с_PutParamsTiers() // Special Sequence
+     SS_02='$' , // символ фиктивного яруса ниже с максимальным номером
+     SS_03='\xBB' , // "\xBB" = ">>" ; "x96\x9B"= "->"
+     SS_04='\xAB' ; // "\xAB" = "<<"
+//
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
 #include "API_lua.cpp" // описание на С вызовов Lua
 #include "LMD_c.cpp" // описание на С пакетов LMD
@@ -460,7 +467,7 @@ __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале вс
 //
 // Copy_Stdout_To_Memo(); // копировать stdout на Memo
 //
- ParamsTLD = new TStringList; // набор строк для сохранения информации по времени жизни данных (ЕДВ)
+ paramsTLD->Clear(); // очистим на всякий случай
 //
 } // --- конец TF1 -------------------------------------------------------------
 
@@ -628,20 +635,20 @@ void __fastcall DeleteAllSpaces(char *str)
 // str = ( AnsiReplaceStr( str, " ", "" ) ).c_str(); // удаление всех пробелов
 //
 // нижеприведённое взято с http://www.quizful.net/interview/cpp/VbW07kq70NCY
- for (int i=0,j=0; str[i]; (str[j++]=str[i]!=' '?str[i]:(j--,str[j]),i++,(!str[i]?(str[j]=0):0)));
+ for ( register INT i=0,j=0; str[i]; (str[j++]=str[i]!=' '?str[i]:(j--,str[j]),i++,(!str[i]?(str[j]=0):0)) );
 //
 } // ------ конец DeleteAllSpaces ----------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall DeleteSpacesTabsAround(char *str)
+void __fastcall DeleteSpacesTabsAround( char *str )
 { // удаляет пробелы и Tabs слева и справа строки str
 // Trim, TrimLeft, TrimRight работают только с AnsiString
 // strNcpy(str, Trim(AnsiString(str)).c_str());
 //
 // удаляем пробелы и Tabs с начала строки
- int i=0, j;
+ register INT i=0, j;
 //
  while((str[i] == ' ') || (str[i] == '\t'))
   i++;
@@ -661,6 +668,7 @@ void __fastcall DeleteSpacesTabsAround(char *str)
   str[i+1]='\0';
 //
 } // --- конец функции DeleteSpacesTabsAround ----------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -683,6 +691,7 @@ char* __fastcall ReplaceManySpacesOne( char *pszStr )
    return pszOld;
 } // --- конец функции ReplaceManySpacesOne ------------------------------------
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring )
@@ -701,6 +710,22 @@ void __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, c
  while( p ) ;
 //
 } // --- конец функции ReplaceEqualLegthSubstring ------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall DeleteSymbolAll( char str[], char symb )
+{ // удаляет все вхождения заданного символа
+ register INT i, j;
+//
+ for ( i=j=0; str[i]!='\0'; i++ )
+  if (str[i] != symb )
+   str[j++] = str[i];
+//
+ str[j] = '\0';
+//
+} // ----- конец DeleteSymbolAll -----------------------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2626,12 +2651,26 @@ void Set_FileNames_All_Protocols()
 //
 } // --- конец Set_FileNames_All_Protocols -------------------------------------
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::CreateTLDAndPutToTextFrame(TObject *Sender)
-{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных -----------
- c_CalcParamsTLD( 0, "" );
-} //----------------------------------------------------------------------------
+void __fastcall TF1::PutTLDToTextFrameAndDiagr(TObject *Sender)
+{ // F6 - построить и выдать в текстовое окно диаграмму жизни данных (TLD) -----
+//
+ c_CalcParamsTLD() ; // подготовили TLD-данные в ParamsTLD
+//
+ c_PutTLDToTextFrame() ; // вывод в текстовый фрейм
+//
+ c_ClearDiagrArea() ; // очищаем место под линейчатый график
+//
+ c_DrawDiagrTLD() ; // выводим TLD-данные в форме линейчатого графика
+//
+} // ----- TF1::PutTLDToTextFrameAndDiagr --------------------------------------
+
+
+
+
+
 
 
 
