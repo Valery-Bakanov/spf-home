@@ -137,7 +137,7 @@ static int DrawDiagrTLD(lua_State *L) // описываем функцию DrawDiagrTLD на С
 static int PutParamsTiers(lua_State *L) // описываем функцию PutParamsTiers на С
 {
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call PutParamsTiers()");
+ sp_printf(" Lua call c_PutParamsTiers()");
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
  lua_pushinteger(L, c_PutParamsTiers()); // вызовем PutParamsTiers и результат -> стек
@@ -916,7 +916,7 @@ static int GetOpByMaxTierLowerPreset(lua_State *L) // описываем функцию GetOpByM
 static int PutTLDToTextFrame(lua_State *L) // описываем функцию PutTLDToTextFrame на С
 {
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call PutTLDToTextFrame()");
+ sp_printf(" Lua call c_PutTLDToTextFrame()");
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
  lua_pushnumber(L, c_PutTLDToTextFrame()); // вызовем с_PutTLDToTextFrame и результат -> стек
@@ -1063,25 +1063,25 @@ void __fastcall RegisterFunctions(lua_State *L)
   { "GetMinTierMaybeOp", GetMinTierMaybeOp },
   { "MoveOpTierToTier",  MoveOpTierToTier },
 ////////////////////////////////////////////////////////////////////////////////
-  { "SwapOpsTierToTier", SwapOpsTierToTier },
+  { "SwapOpsTierToTier",   SwapOpsTierToTier },
   { "PutTiersToTextFrame", PutTiersToTextFrame },
   { "PutEdgesToTextFrame", PutEdgesToTextFrame },
-  { "ClearTextFrame", ClearTextFrame },
-  { "DrawDiagrTiers",  DrawDiagrTiers },
+  { "ClearTextFrame",      ClearTextFrame },
+  { "DrawDiagrTiers",      DrawDiagrTiers },
 ////////////////////////////////////////////////////////////////////////////////
-  { "DrawDiagrTLD",    DrawDiagrTLD },
-  { "ClearDiagrArea",  ClearDiagrArea },
-  { "DelayMS", DelayMS },
+  { "DrawDiagrTLD",       DrawDiagrTLD },
+  { "ClearDiagrArea",     ClearDiagrArea },
+  { "DelayMS",            DelayMS } ,
   { "AddLineToTextFrame", AddLineToTextFrame },
-  { "GetCountTiers", GetCountTiers },
+  { "GetCountTiers",      GetCountTiers },
 ////////////////////////////////////////////////////////////////////////////////
-  { "GetCountOpsOnTier", GetCountOpsOnTier },
-  { "GetOpByNumbOnTier", GetOpByNumbOnTier },
-  { "SoundPlay", SoundPlay },
-  { "CreateTiersByEdges", CreateTiersByEdges },
+  { "GetCountOpsOnTier",         GetCountOpsOnTier },
+  { "GetOpByNumbOnTier",         GetOpByNumbOnTier },
+  { "SoundPlay",                 SoundPlay },
+  { "CreateTiersByEdges",        CreateTiersByEdges },
   { "CreateTiersByEdges_Bottom", CreateTiersByEdges_Bottom },
 ////////////////////////////////////////////////////////////////////////////////
-  { "GetOpsMoves", GetOpsMoves },
+  { "GetOpsMoves",        GetOpsMoves },
   { "CountMovesZeroing",  CountMovesZeroing },
   { "GetTierFirstMinOps", GetTierFirstMinOps },
   { "GetTierLastMinOps",  GetTierLastMinOps },
@@ -1129,14 +1129,14 @@ void __fastcall RegisterFunctions(lua_State *L)
   { "LoadFileNameParamsVertices", LoadFileNameParamsVertices },
 // -----------------------------------------------------------------------------
   { "GetCountCalcs", GetCountCalcs },
-  { "GetCountOps", GetCountOps },
-  { "GetNumbOp",   GetNumbOp },
+  { "GetCountOps",   GetCountOps },
+  { "GetNumbOp",     GetNumbOp },
 ////////////////////////////////////////////////////////////////////////////////
-  { "GetCountOpsInput", GetCountOpsInput },
-  { "GetNumbOpInput",   GetNumbOpInput },
+  { "GetCountOpsInput",  GetCountOpsInput },
+  { "GetNumbOpInput",    GetNumbOpInput },
   { "GetCountOpsOutput", GetCountOpsOutput },
   { "GetNumbOpOutput",   GetNumbOpOutput },
-  { "PutParamsAll",           PutParamsAll },
+  { "PutParamsAll",      PutParamsAll },
 ////////////////////////////////////////////////////////////////////////////////
   { "TestCanExecAllOpsCalcs", TestCanExecAllOpsCalcs },
   { "InputDialog",   InputDialog }, // окна ввода / вывода (Windows)

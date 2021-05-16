@@ -158,8 +158,8 @@ INT   __fastcall c_GetCountParamsInString(char* str); // число параметров в стро
 char* __fastcall c_GetNumbParamInString(INT Numb, char* str); // параметр Numb в строке str
 char* __fastcall c_GetNameNumbParamInString(INT Numb, char* str); // имя параметра Numb в строке str
 ////////////////////////////////////////////////////////////////////////////////
-bool  __fastcall c_IsCorrectParamCalc(char* str); // TRUE при корректности распознавания параметра вычислителя
-bool  __fastcall c_IsCorrectParamOpVertEdg(char* str); // TRUE при корректности распознавания параметра оператора
+bool  __fastcall c_IsCorrectParamCalc(char* str); // true при корректности распознавания параметра вычислителя
+bool  __fastcall c_IsCorrectParamOpVertEdg(char* str); // true при корректности распознавания параметра оператора
 ////////////////////////////////////////////////////////////////////////////////
 INT  __fastcall  c_FindSubString( char* sSrc, char* sDst, INT iStart , INT Rule);
 INT  __fastcall  c_GetCountCalcs(); // общее число вычислителей
@@ -177,7 +177,7 @@ bool  __fastcall c_DrawDiagrTLD(); // строит графическое изображение (диаграмму)
 bool  __fastcall c_ClearDiagrArea(); // затирает графическое изображение (диаграмму)
 INT   __fastcall c_PutParamsTiers(); // вывод основных параметров ИГА и ЯПФ в нижнюю часть текстового фрейма (F2)
 //
-bool  __fastcall c_IsOpContainOnTiers(INT Op); // если оператор Op присутствует в Tiers[][], возращается TRUE, иначе - FALSE
+bool  __fastcall c_IsOpContainOnTiers(INT Op); // если оператор Op присутствует в Tiers[][], возращается true, иначе - false
 INT   __fastcall c_GetOpByMaxTierLowerPreset(INT Op); // выдаёт оператор, информационно зависимый от заданного и находящийся на ярусе
 // с максимальным номером (если таких оператор несколько - выдаётся последний по списку)
 //
@@ -196,12 +196,12 @@ INT  __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
 //
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
-void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в FALSE все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
+void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в false все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall cmp_def( char *s )
-{ // сравнивает попарно 5 первых символов s и sDef; возвращает TRUE, если они все равны
+{ // сравнивает попарно 5 первых символов s и sDef; возвращает true, если они все равны
  return( toupper(s[0])==toupper(sDef[0]) &&
          toupper(s[1])==toupper(sDef[1]) &&
          toupper(s[2])==toupper(sDef[2]) &&
@@ -231,7 +231,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -244,7 +244,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -269,7 +269,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец SaveTiersVizu ---------------------------------------------------
 
@@ -279,7 +279,7 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
 { // вывод связей между операторами
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !isEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -292,7 +292,7 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ИГА -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -302,7 +302,7 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец SaveEdgesVizu ---------------------------------------------------
 
@@ -314,13 +314,13 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
  INT jOpOnTier, iOp, j, nIn,nOut;
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !isEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -333,7 +333,7 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
  {
   t_printf( "\n-E- Невозможно записать файл %s входящих и исходящих дуг по операторам -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -374,7 +374,7 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец SaveInOutOpVizu -------------------------------------------------------
 
@@ -384,7 +384,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
 { // вывод числа ВХОДЯЩИХ и ВЫХОДЯЩИХ для операторов
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !isEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -397,7 +397,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
  {
   t_printf( "\n-E- Невозможно сохранить файл %s числа входящих и выходящих дуг по операторам -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -413,7 +413,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец SaveParamsVizu -------------------------------------------------------
 
@@ -425,7 +425,7 @@ bool __fastcall c_SaveTiers(char FileName[])
  FILE *fptr = NULL; // рабочий указатель на файл
 //
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -438,7 +438,7 @@ bool __fastcall c_SaveTiers(char FileName[])
  {
   t_printf( "\n-E- Невозможно записать файл %s полного описания ИГА в ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -463,7 +463,7 @@ bool __fastcall c_SaveTiers(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец SaveTiers -------------------------------------------------------
 
@@ -484,8 +484,8 @@ bool __fastcall c_ReadTiers(char FileName[])
  {
   t_printf( "\n-E- Невозможно прочитать файл %s содержания ЯПФ -E-\n-W- вероятна некорректность при дальнейшей работе -W-",
                    FileName );
-  isTiers = FALSE;
-  return FALSE ;
+  flagExistsTiers = false;
+  return false ;
  }
 //
  nTiers = 0 ; // глобальное, число ярусов ЯПФ
@@ -494,8 +494,8 @@ bool __fastcall c_ReadTiers(char FileName[])
 // число ярусов (глобальное), max операторов на ярусе, на каком ярусе этот max
  if( sscanf(str, "%d %d %d", &nTiers, &MaxOpsOnTier, &TierWithMaxOps) == 0 ) // 0 = ошибка
  {
-  isTiers = FALSE;
-  return FALSE ;
+  flagExistsTiers = false;
+  return false ;
  }
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -514,58 +514,60 @@ bool __fastcall c_ReadTiers(char FileName[])
   snprintf(str,sizeof(str), "Нехватка памяти для размещения массива ЯРУСОВ (4). Затребовано %d x %d = %d элементов...",
                 (_maxTiers+1), (_maxOpsOnTier+1), (_maxTiers+1) * (_maxOpsOnTier+1));
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
-  isTiers = FALSE ; // массив Tiers[][] не создан...
-  return FALSE ;
+  flagExistsTiers = false ; // массив Tiers[][] не создан...
+  return false ;
  }
 //
   t_printf( "\n-I- Массив ЯРУСОВ (4) перераспределён на %d x %d = %d элементов -I-",
                    (_maxTiers+1), (_maxOpsOnTier+1), (_maxTiers+1) * (_maxOpsOnTier+1) );
 //
 cont: // не надо реаллокировать память...
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
+//
  for(INT iTier=0; iTier<=nTiers; iTier ++) // по ярусам ЯПФ графа
  {
   fgets(str, sizeof(str), fptr); // прочитали очередную строку файла
-
+//
   j = 0; // номер оператора на ярусе iTier
-
+//
   if( p = strtok( str, " " ) ) // выделяем первое число до пробела
   if( sscanf( p, "%d", &Tiers(iTier, ++j) ) != 1 ) // прочитали первый #оператора в Tiers[iTier][1]
    goto cont_1;  // при успехе sscanf возвращается число успешно прочитанных элементов
-
-  while( p ) // пока p = TRUE
+//
+  while( p ) // пока p = true
   {
    p = strtok( NULL, " "); // до следующего пробела..
    if( sscanf( p, "%d", &Tiers(iTier, ++j) ) != 1 ) // прочитали #операторов больше первого в Tiers[iTier][*]
     goto cont_1;
   } // конец while
-
+//
 cont_1: // все операторы на ярусе iTier запомнены в Tiers[][] ------------------
-
+//
   Tiers(iTier, 0) = j-1; // общее число операторов на ярусе iTier
-
+//
  } // конец цикла по iTiers
-
+//
  fclose(fptr); // закрыли файл
-
- isTiers = TRUE ; // all O'k...
-
+//
+ flagExistsTiers = true ; // all O'k...
+//
  t_printf( "-I- ЯПФ графа из файла %s успешно прочитана -I-", FileName );
-
- return TRUE ;
-
+//
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return true ;
+//
 } // --- конец с_ReadTiers -----------------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
-{ // TRUE - если наличествует дуга между операторами Op1 -> Op2
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с FALSE
+{ // true - если наличествует дуга между операторами Op1 -> Op2
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с false
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -573,9 +575,9 @@ INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
 //
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по общему списку дуг между операторами
   if ( (Op1 == Edges(0,iEdge)) && (Op2 == Edges(1,iEdge)) ) // такая дуга в списке имеется...
-   return ( TRUE );
+   return ( true );
 //
- return ( FALSE );
+ return ( false );
 // 
 } // --- конец c_IsOpsHaveEdge -------------------------------------------------
 
@@ -583,14 +585,14 @@ INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetTierByOp(INT Op)
 { // --- вернуть номер яруса для оператора Op ----------------------------------
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
 
  for(INT iTier=0; iTier<=nTiers; iTier++) // по всем ярусам
-  if( c_IsOpExistOnTier( Op, iTier ) == TRUE ) // оператор Op имеет честь присутствовать на ярусе iTier
+  if( c_IsOpExistOnTier( Op, iTier ) == true ) // оператор Op имеет честь присутствовать на ярусе iTier
    return iTier ;
 
  return ERR_COMMON ; // не удалось найти оператор Op...
@@ -609,7 +611,7 @@ INT __fastcall GetParamsGraph()
 
 // PG - глобальная ! -----------------------------------------------------------
 
- if( !isEdges && !isTiers ) // нет массивов Mem_Edges[] и Tiers[][]
+ if( !flagExistsEdges && !flagExistsTiers ) // нет массивов Mem_Edges[] и Tiers[][]
  {
   DisplayMessage( "E", __FUNC__, "массивы ДУГ и ЯРУСОВ не сформированы", ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -685,7 +687,7 @@ INT __fastcall GetParamsGraph()
  PG.AveIn  /= nOps - Tiers(1,0); // среднее число дуг, ВХОДЯЩИХ ( to ) в операторы графа
  PG.AveOut /= nOps - Tiers(nTiers,0); // среднее число дуг, ВЫХОДЯЩИХ ( from ) из операторов графа
 
- return TRUE ;
+ return true ;
 
 } // --- конец GetParamsGraph --------------------------------------------------
 
@@ -696,7 +698,7 @@ INT __fastcall GetOpByMinInOnTiers(INT minTier, INT maxTier)
  INT nEdgesInOp = nEdges,  // больше быть не может
      iOp,iOpMinIn, sumEdgesIn;
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -733,7 +735,7 @@ INT __fastcall GetOpByMinOutOnTiers(INT minTier, INT maxTier)
  INT nEdgesOutOp = nEdges,  // больше быть не может
      iOp,iOpMinOut, sumEdgesOut;
 
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -769,7 +771,7 @@ INT __fastcall AddEdge(INT fromOp, INT toOp)
 { // --- прибавляет дугу и проверяет, есть ли еще место в Mem_Edges[] ----------
  char str[_256];
 
- if( !isEdges ) // нет массива Mem_Edges[]...
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -791,8 +793,8 @@ INT __fastcall AddEdge(INT fromOp, INT toOp)
                              Max_Edges );
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
   MessageBeep(MB_OK); // звуковое предупреждение...
-  isEdges = FALSE ; // массив Mem_Edges[] не создан...
-  return FALSE ;
+  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
+  return false ;
  }
 //
  t_printf( "\n-I- Массив ДУГ (00) перераспределён на %d x %d = %d элементов -I-",
@@ -809,7 +811,7 @@ INT __fastcall AddEdge(INT fromOp, INT toOp)
  Edges(0,nEdges) = fromOp; // дуга "откуда"
  Edges(1,nEdges) = toOp;   // дуга "куда"
 //
- return TRUE; // дуга успешно добавлена
+ return true; // дуга успешно добавлена
 //
 } // --- конец AddEdge ---------------------------------------------------------
 
@@ -819,7 +821,7 @@ INT __fastcall GetFirstToOpFromOp(INT fromOp)
 { // --- вернуть ПЕРВЫЙ по счёту оператор toOp, являющийся ВЫХОДЯЩИМ
 // --- по дуге графа относительно fromOp
 //
- if( !isEdges ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -837,7 +839,7 @@ INT __fastcall GetFirstFromOpToOp(INT toOp)
 { // --- вернуть ПЕРВЫЙ по счёту оператор fromOp, являющийся ВХОДЯЩИМ
 // --- по дуге графа относительно toOp
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -857,7 +859,7 @@ INT __fastcall c_GetTierFirstMaxOps(INT Tier1, INT Tier2)
  INT TierMaxOp = - _maxOpsOnTier , // для поиска MAX
      Tier;
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -897,7 +899,7 @@ INT __fastcall c_GetTierLastMaxOps(INT Tier1, INT Tier2)
      Tier;
  char w[_256];
 
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -936,7 +938,7 @@ INT __fastcall c_GetTierFirstMinOps(INT Tier1, INT Tier2)
  INT TierMinOp = _maxOpsOnTier , // для поиска MIN
      Tier;
 
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -975,7 +977,7 @@ INT __fastcall c_GetTierLastMinOps(INT Tier1, INT Tier2)
  INT TierMinOp = _maxOpsOnTier , // для поиска MIN
      Tier;
 
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1009,20 +1011,20 @@ INT __fastcall c_GetTierLastMinOps(INT Tier1, INT Tier2)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsOpExistOnTier(INT Op, INT Tier)
-{ // возвращает TRUE только если оператор Op присутствует на ярусе Tier
+{ // возвращает true только если оператор Op присутствует на ярусе Tier
 
  for(INT jOpOnTier=1; jOpOnTier<=Tiers(Tier,0); jOpOnTier++) // по всем операторам яруса Tier
   if( Tiers(Tier,jOpOnTier) == Op ) // нашли искОмый оператор Op !..
-   return TRUE;
+   return true;
 
- return FALSE;
+ return false;
 
 } // --- конец  c_IsOpExistOnTier ------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsOpDependOnlyAboveTiers(INT toOp, INT Tier)
-{ // TRUE - только если оператор toOp зависит (ПО ВСЕМ свом In-дугам)
+{ // true - только если оператор toOp зависит (ПО ВСЕМ свом In-дугам)
 // - исключительно от from-операторов, находящихся на ярусах с 1 по Tier-1
 // - используется для тестирования принадлежности оператора toOp ярусу Tier
 // - используются вызовы IsOpExistOnTier(*,*) и GetInToOp(*)
@@ -1037,16 +1039,16 @@ bool __fastcall c_IsOpDependOnlyAboveTiers(INT toOp, INT Tier)
    fromOp = Edges(0,iEdge); // нашли fromOp, соответствующий заданному toOp
 // --- ищем fromOp среди операторов на ярусах с 1 по Tier-1 (т.е. ВЫШЕ данного Tier)
    for(iTier=0; iTier<=Tier-1; iTier++) // просмотр ярусов с 0 по Tier-1
-    if ( c_IsOpExistOnTier( fromOp, iTier ) == TRUE ) // оператор fromOp присутствует на ярусе iTier...
+    if ( c_IsOpExistOnTier( fromOp, iTier ) == true ) // оператор fromOp присутствует на ярусе iTier...
      sumIn ++ ; // суммируем число найденных fromOp на ярусах с 0 по Tier-1
   } // конец if ( Mem_Edges[1][iEdge] == toOp )
 //
  } // конец цикла по iEdge
 //
  if( sumIn == c_GetCountInEdgesByOp(toOp) ) // насчитали столько In, сколько есть у оператора toOp ?
-  return TRUE; // тогда все ВХОДЯЩИЕ в toOp оператор дуги находятся на ярусах от 0 до Tier-1
+  return true; // тогда все ВХОДЯЩИЕ в toOp оператор дуги находятся на ярусах от 0 до Tier-1
  else
-  return FALSE;
+  return false;
 //
 } // --- конец  c_IsOpDependOnlyAboveTiers -------------------------------------
 
@@ -1058,7 +1060,7 @@ INT __fastcall GetCountInOp(INT toOp, INT Numb)
 // ----- если неудача - возвращается -1
  INT nIn = 0;
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1085,7 +1087,7 @@ INT __fastcall GetCountOutOp(INT fromOp, INT Numb)
 // ----- если неудача - возвращается -1
  INT nOut = 0;
 //
- if( !isEdges ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1112,7 +1114,7 @@ INT __fastcall c_GetMaxTierMaybeOp(INT Op)
  INT toOp, toTier,
      retTier = nTiers;
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1159,7 +1161,7 @@ INT __fastcall c_GetMinTierMaybeOp(INT Op)
  INT fromOp, fromTier,
      retTier = 0;
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1193,9 +1195,9 @@ INT __fastcall c_GetMinTierMaybeOp(INT Op)
 INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 { // --- переносит оператор Op на ярус toTier с проверкой корректности действия
 // ----- ни ярус первоначального нахождения Op ни toTier не могут быть ярусами первым или последним
-// ----- если удалось благополучно перенести - возвращается TRUE и глобальная iMove
+// ----- если удалось благополучно перенести - возвращается true и глобальная iMove
 //
- if( !isTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1206,13 +1208,13 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
  if( ( fromTier < 1 ) || // с первого яруса оператор перенести можно, а с нулевого - нельзя!
      ( fromTier > nTiers ) ) // с последнего яруса оператор перести можно, а с более низкого - нельзя!
  {
-  DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
+  DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
 //
  if( fromTier == toTier ) // не желаем-с делать глупостев-с... НИКАКОГО ПЕРЕНОСА !!!
  {
-//  DisplayMessage( "E", __FUNC__, messParams2, FALSE ); // выдать сообщение
+//  DisplayMessage( "E", __FUNC__, messParams2, false ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
 //
@@ -1228,10 +1230,10 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( ( Tiers(toTier,0)+1 ) >= _maxOpsOnTier ) // не помещаемся в _maxOpsOnTier...
-  if( IncreaseOpsOnTier( toTier, _maxOpsOnTier * stockMem, 111 ) == FALSE ) // неудача перераспределения памяти
+  if( IncreaseOpsOnTier( toTier, _maxOpsOnTier * stockMem, 111 ) == false ) // неудача перераспределения памяти
   {
-   isTiers = FALSE ; // массив Tiers[][] не создан...
-   return FALSE ;
+   flagExistsTiers = false ; // массив Tiers[][] не создан...
+   return false ;
   }
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1254,7 +1256,10 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 //
    nMoves ++ ; // глобал для подсчёта числа успешных перемещений
 //
-   return TRUE ;
+   flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+   return true ;
+//
   } // конец if
 //
 } // --- конец c_MoveOpTierToTier ------------------------------------------------
@@ -1263,10 +1268,10 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_AddTier(INT Tier)
 { // --- создаёт (пустой) ярус НИЖЕ яруса Tier (кроме последнего)
-// ----- связи не меняются; возвращает TRUE, если удачно
+// ----- связи не меняются; возвращает true, если удачно
  char str[_2048];
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1296,7 +1301,7 @@ INT __fastcall c_AddTier(INT Tier)
     snprintf(str,sizeof(str), "%s(): нехватка памяти для размещения массива ЯРУСОВ (Prim0). Затребовано %d x %d = %d элементов...",
                  _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
     MessageBeep(MB_OK); // звуковое предупреждение...
-    isTiers = FALSE ; // массив Tiers[][] не создан...
+    flagExistsTiers = false ; // массив Tiers[][] не создан...
     DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
     return ERR_NOT_MASSIVE_TIERS ;
    } // конец if ( npTiers == NULL )
@@ -1307,31 +1312,33 @@ INT __fastcall c_AddTier(INT Tier)
   }  // конец if( nTiers+1 >= _maxTiers ) ...
 //
 // --- всё сделано - можно продолжать работать уже с новым pTiers --------------
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
+//
  nTiers ++ ; // увеличили число ярусов на 1
-
+//
 // --- сдвигаем ярусы с Tier по nTiers-1 вниз ----------------------------------
  for(INT iTier=nTiers; iTier>Tier; iTier--) // по ярусам снизу вверх
   for(INT j=0; j<=Tiers(iTier-1,0); j++) // цикл по "верхнему" из двух
    Tiers(iTier,j) = Tiers(iTier-1,j); // "верхний" переносим в "нижний"
-
+//
  Tiers( Tier+1,0 ) = 0; // вновь созданный ярус ПУСТ !
-
- return TRUE ; // успешно выполнено
-
+//
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return true ; // успешно выполнено
+//
 } // --- конец c_AddTier -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_DelTier(INT Tier)
 { // --- уничтожает (пустой) ярус Tier (кроме нулевого)
-// ----- связи не меняются; возвращает TRUE, если удачно
+// ----- связи не меняются; возвращает true, если удачно
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1349,11 +1356,13 @@ INT __fastcall c_DelTier(INT Tier)
  for(INT iTier=Tier; iTier<=nTiers; iTier++) // по ярусам сверху внизх
   for(INT j=0; j<=Tiers(iTier+1,0); j++) // цикл по "нижнему" из двух
    Tiers(iTier,j) = Tiers(iTier+1,j); // "нижний" переносим в "верхний"
-
+//
  nTiers -- ; // ярусов стало на 1 меньше...
-
- return TRUE ; // успешно выполнено
-
+//
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return true ; // успешно выполнено
+//
 } // --- конец c_DelTier -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1361,7 +1370,7 @@ INT __fastcall c_DelTier(INT Tier)
 INT __fastcall c_GetCountEdges()
 { // возвращает общее число дуг в информационном графе алгоритма (ИГА)
 //
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1376,7 +1385,7 @@ INT __fastcall c_GetCountEdges()
 INT __fastcall c_GetCountTiers()
 { // возвращает число ярусов в ЯПФ информационного графа алгоритма (ИГА) без входного (нулевого) яруса
 //
- if( !isTiers ) // нет массива Tiers[][]
+ if( !flagExistsTiers ) // нет массива Tiers[][]
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1463,7 +1472,7 @@ bool __fastcall c_AddLineToTextFrame(char *str)
 //
  } // конец по символам строки str
 //
- return TRUE ; // для Lua всегда надо что-то возвратить (void не допускается!)
+ return true ; // для Lua всегда надо что-то возвратить (void не допускается!)
 //
 } // --- конец c_AddLineToTextFrame --------------------------------------------
 
@@ -1472,7 +1481,7 @@ bool __fastcall c_AddLineToTextFrame(char *str)
 bool __fastcall c_ClearTextFrame()
 { // очищает окно  текстового представлЕния
  TM1->Clear(); // очистка M1
- return TRUE ; // для Lua всегда надо что-то возвратить (void не допускается!)
+ return true ; // для Lua всегда надо что-то возвратить (void не допускается!)
 } // --- конец ClearTextFrame --------------------------------------------------
 
 
@@ -1481,7 +1490,7 @@ bool __fastcall c_ClearTextFrame()
 bool __fastcall c_DelayMS(INT Sec)
 { // ждёт Sec секунд, давая при этом поработать Windows
  Delay ( Sec ); // ждать Sec секунд
- return TRUE ; // для Lua всегда надо что-то возвратить (void не допускается!)
+ return true ; // для Lua всегда надо что-то возвратить (void не допускается!)
 } // --- конец c_DelayMS -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1490,7 +1499,7 @@ INT __fastcall c_PutTiersToTextFrame()
 { // выдаёт ЯПФ (массив Tiers[][]) в окно для текстовой визуализации
  char str[_16384], tmp[_512];
 //
- if( !isTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // массив Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1521,7 +1530,7 @@ INT __fastcall c_PutTiersToTextFrame()
 //
  } // конец цикла по iTier (ярусам ЯПФ)
 //
- return TRUE ; // всё успешно сделано
+ return true ; // всё успешно сделано
 //
 } // --- конец c_PutTiersToTextFrame -------------------------------------------
 
@@ -1531,7 +1540,7 @@ INT __fastcall c_PutEdgesToTextFrame()
 { // выдаёт массив дуг Mem_Edges[] в окно для визуализации
  char str[_2048];
 //
- if( !isEdges ) // если массив Edges[][] пуст - выйти и вернуть FALSE
+ if( !flagExistsEdges ) // если массив Edges[][] пуст - выйти и вернуть false
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1543,7 +1552,7 @@ INT __fastcall c_PutEdgesToTextFrame()
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем выявленным дугам информационного графа алгоритма
   t_printf( "#%d: %d -> %d", iEdge, Edges(0,iEdge), Edges(1,iEdge) ); // готовим строку для дуги iEdge
 //
- return TRUE; // всё нормально - массив Mem_Edges[] выдан в текстовое окно
+ return true; // всё нормально - массив Mem_Edges[] выдан в текстовое окно
 //
 } // --- конец c_PutEdgesToTextFrame--------------------------------------------
 
@@ -1560,9 +1569,9 @@ INT __fastcall TestExistInOutAtAllOps()
 { // тестирует наличие хоть одной ВХОДНОЙ или ВЫХОДНОЙ дуги у каждого оператора
  INT Op; // номер оператора
  char str[_256];
- bool Err = FALSE; // возвращаемое значение
+ bool Err = false; // возвращаемое значение
 //
- if( !isTiers ) // нет массива Tiers[][]
+ if( !flagExistsTiers ) // нет массива Tiers[][]
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1577,14 +1586,14 @@ INT __fastcall TestExistInOutAtAllOps()
    if( !c_GetCountInEdgesByOp( Op ) && ( iTier != 1 ) ) // не на ПЕРВОМ ярусе "И" ВХОДЯЩИХ дуг нет
    {
     t_printf( "\n-W- Оператор %d не на ПЕРВОМ ярусе %d не имеет ВХОДЯЩИХ дуг -W-", Op, iTier );
-    Err = TRUE ;
+    Err = true ;
    }
 //
 // --- тест на наличие ВЫХОДЯЩИХ дуг -------------------------------------------
    if( !c_GetCountOutEdgesByOp( Op ) && ( iTier != nTiers ) ) // не на ПОСЛЕДНЕМ ярусе "И" ВЫХОДЯЩИХ дуг нет
    {
     t_printf( "\n-W- Оператор %d не на ПОСЛЕДНЕМ ярусе %d не имеет ВЫХОДЯШИХ дуг -W-", Op, iTier );
-    Err = TRUE ;
+    Err = true ;
    }
 //
   } // конец цикла по j
@@ -1606,7 +1615,7 @@ INT __fastcall c_GetCountInEdgesByOp(INT Op)
 { // --- вернуть число ВХОДЯЩИХ дуг для оператора Op ---------------------------
  INT nIn = 0, iEdge;
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1637,7 +1646,7 @@ INT __fastcall c_GetCountOutEdgesByOp(INT Op)
 { // --- вернуть число ВЫХОДЯЩИХ дуг для оператора Op --------------------------
  INT nOut = 0, iEdge;
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1668,7 +1677,7 @@ INT __fastcall c_GetNumbInEdgeByOp(INT Numb, INT Op)
  INT nIn = 0,
      maxNumb = c_GetCountInEdgesByOp( Op ); // общее число ВХОДЯЩИХ дуг оператора Op
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1701,7 +1710,7 @@ INT __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op)
  INT nOut = 0,
      maxNumb = c_GetCountOutEdgesByOp( Op ); // общее число ВЫХОДЯЩИХ дуг оператора Op;
 //
- if( !isEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1867,7 +1876,7 @@ bool  __fastcall c_LoadFileNameParamsCalcs( char FileName[] )
  {
   strNcpy( FileNameParamsCalcs, FileName ); // запомнили текущее имя файла параметров ВЫЧИСЛИТЕЛЕЙ
   c_ReadAndCorrectParamsCalcs( FileNameParamsCalcs ); // перечитываем и обрабатываем файл параметров ВЫЧИСЛИТЕЛЕЙ
-  return TRUE;
+  return true;
  } // всё нормально с заданным файлом... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1881,14 +1890,14 @@ bool  __fastcall c_LoadFileNameParamsCalcs( char FileName[] )
 //
   strNcpy( FileNameParamsCalcs, DefFileNameParamsCalcs );
   c_ReadAndCorrectParamsCalcs( FileNameParamsCalcs );
-  return TRUE;
+  return true;
 //
  } // всё нормально с файлом с именем по умолчанию... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
 // --- не удалось открыть ни заданный файл, ни файл с именем по умолчанию ------
  strNcpy( sCalcs, "\0" ); // очищаем строку-память параметров ВЫЧИСЛИТЕЛЕЙ
- return FALSE; // проблемы с файлом...
+ return false; // проблемы с файлом...
 //
 } // --- конец c_LoadFileNameParamsCalcs =======================================
 
@@ -1907,7 +1916,7 @@ bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
  {
   strNcpy( FileNameParamsOps, FileName ); // запомнили текущее имя файла параметров ОПЕРАТОРОВ
   c_ReadAndCorrectParamsOps( FileNameParamsOps ); // перечитываем и обрабатываем файл параметров ОПЕРАТОРОВ
-  return TRUE;
+  return true;
  } // всё нормально с заданным файлом... работаем дальше !
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1921,7 +1930,7 @@ bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
 
   strNcpy( FileNameParamsOps, DefFileNameParamsOps );
   c_ReadAndCorrectParamsOps( FileNameParamsOps );
-  return TRUE;
+  return true;
 //
  } // всё нормально с файлом с именем по умолчанию... работаем дальше !
 //
@@ -1929,7 +1938,7 @@ bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
 // --- не удалось открыть ни заданный файл, ни файл с именем по умолчанию ------
  strNcpy( sOps, "\0" ); // очищаем строку-память параметров ОПЕРАТОРОВ
 
- return FALSE; // проблемы с файлом...
+ return false; // проблемы с файлом...
 
 } // --- конец c_LoadFileNameParamsOps =========================================
 
@@ -1946,7 +1955,7 @@ bool  __fastcall c_LoadFileNameParamsEdges( char FileName[] )
  {
   strNcpy( FileNameParamsEdges, FileName ); // запомнили текущее имя файла параметров ДУГ
   c_ReadAndCorrectParamsEdges( FileNameParamsEdges ); // перечитываем и обрабатываем файл параметров ДУГ
-  return TRUE;
+  return true;
  } // всё нормально с заданным файлом... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1959,14 +1968,14 @@ bool  __fastcall c_LoadFileNameParamsEdges( char FileName[] )
                  AnsiUpperCase(DefFileNameParamsEdges) );
   strNcpy( FileNameParamsEdges, DefFileNameParamsEdges );
   c_ReadAndCorrectParamsEdges( FileNameParamsEdges );
-  return TRUE;
+  return true;
 //
  } // всё нормально с файлом с именем по умолчанию... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
 // --- не удалось открыть ни заданный файл, ни файл с именем по умолчанию ------
  strNcpy( sEdg, "" ); // очищаем строку-память параметров ДУГ
- return FALSE; // проблемы с файлом...
+ return false; // проблемы с файлом...
 //
 } // --- конец c_LoadFileNameParamsEdges =======================================
 
@@ -1983,7 +1992,7 @@ bool  __fastcall c_LoadFileNameParamsVertices( char FileName[] )
  {
   strNcpy( FileNameParamsVertices, FileName ); // запомнили текущее имя файла параметров ВЕРШИН
   c_ReadAndCorrectParamsVertices( FileNameParamsVertices ); // перечитываем и обрабатываем файл параметров ВЕРШИН
-  return TRUE;
+  return true;
  } // всё нормально с заданным файлом... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1997,14 +2006,14 @@ bool  __fastcall c_LoadFileNameParamsVertices( char FileName[] )
 
   strNcpy( FileNameParamsVertices, DefFileNameParamsVertices );
   c_ReadAndCorrectParamsVertices( FileNameParamsVertices );
-  return TRUE;
+  return true;
 //
  } // всё нормально с файлом с именем по умолчанию... работаем дальше !
 //
 ////////////////////////////////////////////////////////////////////////////////
 // --- не удалось открыть ни заданный файл, ни файл с именем по умолчанию ------
  strNcpy( sVrt, "\0" ); // очищаем строку-память параметров ВЕРШИН
- return FALSE; // проблемы с файлом...
+ return false; // проблемы с файлом...
 //
 } // --- конец c_LoadFileNameParamsVertices ====================================
 
@@ -2082,15 +2091,15 @@ char* __fastcall c_GetNameNumbParamInString(INT Numb, char* str)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsCorrectParamCalc(char* str)
-{ // если подстрока параметров вычислителя корректна, возвращается TRUE
- bool out = FALSE;
+{ // если подстрока параметров вычислителя корректна, возвращается true
+ bool out = false;
  char sName[_128]; // имя параметра (без '-' в начале)
  REAL minVal, maxVal; // численные значения параметров
 //
  if( sscanf( str, "-%s %g %g", sName, &minVal, &maxVal ) == 3 ) // если Ok - 3 распОзнанных параметров
  {
   snprintf( str,sizeof(str), "-%s %g %g", sName, min(minVal,maxVal), max(minVal,maxVal) ); // восстановим str по прочитанному
-  out = TRUE;
+  out = true;
  }
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2105,15 +2114,15 @@ bool __fastcall c_IsCorrectParamCalc(char* str)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsCorrectParamOpVertEdg(char* str)
-{ // если подстрока параметров оператора корректна, возвращается TRUE
- bool out = FALSE;
+{ // если подстрока параметров оператора корректна, возвращается true
+ bool out = false;
  char sName[_128]; // имя параметра (без '-' в начале)
  REAL Val; // численное значение параметра
 //
  if( sscanf( str, "-%s %g", sName, &Val ) == 2 ) // если Ok - 2 распОзнанных параметров
  {
   snprintf( str,sizeof(str), "-%s %g", sName, Val ); // восстановим str по прочитанному
-  out = TRUE;
+  out = true;
  }
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2139,7 +2148,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
  if( !ReadAndPrimWorkOpsCalcsVertEdgeFiles( FileNameParamsCalcs ) ) // читать в sWork с предварительной обработкой
   {
    strNcpy( sCalcs, "\0" );
-   return FALSE;
+   return false;
   }
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2260,7 +2269,7 @@ bool _fastcall c_ReadAndCorrectParamsCalcs( char FileNameParamsCalcs[] )
  c_AddLineToTextFrame( sCalcs ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 //
- return TRUE;
+ return true;
 //
 } // --- конец ReadAndCorrectParamsCalcs =======================================
 
@@ -2279,7 +2288,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
  if( !ReadAndPrimWorkOpsCalcsVertEdgeFiles( FileNameParamsOps ) ) // читать в sWork с предварительной обработкой
   {
    strNcpy( sOps, "\0" );
-   return FALSE;
+   return false;
   }
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2396,7 +2405,7 @@ bool _fastcall c_ReadAndCorrectParamsOps( char FileNameParamsOps[] )
  c_AddLineToTextFrame( sOps ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 //
- return TRUE;
+ return true;
 //
 } // --- конец ReadAndCorrectParamsOps =========================================
 
@@ -2415,7 +2424,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
  if( !ReadAndPrimWorkOpsCalcsVertEdgeFiles( FileNameParamsEdges ) ) // читать в sWork с предварительной обработкой
   {
    strNcpy( sEdg, "\0" );
-   return FALSE;
+   return false;
   }
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -2528,7 +2537,7 @@ bool _fastcall c_ReadAndCorrectParamsEdges( char FileNameParamsEdges[] )
  c_AddLineToTextFrame( sEdg ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 //
- return TRUE;
+ return true;
 //
 } // --- конец c_ReadAndCorrectParamsEdges =====================================
 
@@ -2547,7 +2556,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
  if( !ReadAndPrimWorkOpsCalcsVertEdgeFiles( FileNameParamsVertices ) ) // читать в sWork с предварительной обработкой
   {
    strNcpy( sVrt, "\0" );
-   return FALSE;
+   return false;
   }
 //
 #ifdef TEST_PRINT //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2664,7 +2673,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
  c_AddLineToTextFrame( sVrt ); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 //
- return TRUE;
+ return true;
 //
 } // --- конец c_ReadAndCorrectParamsVertices ==================================
 
@@ -2869,7 +2878,7 @@ bool __fastcall c_PutParamsAll()
 //
  c_AddLineToTextFrame( "\n" );
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец c_PutParamsAll --------------------------------------------------
 
@@ -3014,8 +3023,8 @@ INT __fastcall c_CanExecOpCalc(INT Op, INT Calc)
  INT countEq = 0, // число совпадений значений параметров ОПЕРАТОРОВ и ВЫЧИСЛИТЕЛЕЙ
      nOp   = c_GetCountParamsByOp( Op ), // число параметров оператора Op
      nCalc = c_GetCountParamsByCalc( Calc ); // число параметров вычислителя Сalc
- bool flagPoss = TRUE, // флаг ВОЗМОЖНОСТИ...
-      flagNameParam = FALSE; // есть ли совпадающие имена параметров
+ bool flagPoss = true, // флаг ВОЗМОЖНОСТИ...
+      flagNameParam = false; // есть ли совпадающие имена параметров
  REAL ValOp, minValCalc, maxValCalc; // значения параметров
  char NameParamOp[_512], NameParamCalc[_512]; // имя параметров ОПЕРАТОРА и ВЫЧИСЛИТЕЛЯ
 //
@@ -3042,7 +3051,7 @@ INT __fastcall c_CanExecOpCalc(INT Op, INT Calc)
 // --- совпадает ли имя параметра ОПЕРАТОРА и именем параметра ВЫЧИСЛИТЕЛЯ ? ---
    if( !strcmp( NameParamOp, NameParamCalc ) ) // совпадение = 0
    { // обрабатываем случай СОВПАДеНИЯ по имени параметра...
-//    flagNameParam = TRUE; // нашлось совпадение по параметрам
+//    flagNameParam = true; // нашлось совпадение по параметрам
     ValOp      = c_GetValNumbParamByOp( iOp, Op ); // значение параметра Op
     minValCalc = c_GetMinValNumbParamByCalc( iCalc, Calc ); // значение min параметра Calc
     maxValCalc = c_GetMaxValNumbParamByCalc( iCalc, Calc ); // значение max параметра Calc
@@ -3064,12 +3073,12 @@ INT __fastcall c_CanExecOpCalc(INT Op, INT Calc)
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_TestCanExecAllOpsCalcs( INT  Rule )
 { // проверка ВОЗМОЖНОСТИ выполнения ВСЕХ операторов на всех вычислителях
-// при Rule==0 возвращается TRUE при выполнИмости и FALSE при обратном
+// при Rule==0 возвращается true при выполнИмости и false при обратном
 // при Rule!=0 выдаётся список ОПЕРАТОРОВ, которые могут быть выполнены на конкретном ВЫЧИСЛИТЕЛЕ
 INT  iOp,Op,Calc, numbCalcsByOp,
      countOps, countCalcs,
      countAll, countOut, countDone=0;
-bool canAllExec = TRUE ;
+bool canAllExec = true ;
 char str[_4096], w[_256], sOut[_128], sSave[_128];;
 //
  strNcpy( sSave, F2->L_OM->Caption.c_str() ); // сохранили текст мз F2->L_OM->Caption
@@ -3084,7 +3093,7 @@ char str[_4096], w[_256], sOut[_128], sSave[_128];;
  if( countOps <= 0 ) // проблемы! Скорее всего массива Mem_Edges[] не существует (соответсвующий файл не был загружен)
  {
   t_printf( "\n-W- Число ОПЕРАТОРОВ не определено. Возможно, файл данных графа не был загружен... -W-\n" );
-  return FALSE ;
+  return false ;
  }
 //
 // --- работаем с параметрами ВЫЧИСЛИТЕЛЕЙ -------------------------------------
@@ -3092,7 +3101,7 @@ char str[_4096], w[_256], sOut[_128], sSave[_128];;
  if( countCalcs <= 0 ) // проблемы! Скорее всего файл параметров ВЫЧИСЛИТЕЛЕЙ не был загружен
  {
   t_printf( "\n-W- Число ВЫЧИСЛИТЕЛЕЙ не определено. Возможно, файл параметров ВЫЧИСЛИТЕЛЕЙ не был загружен... -W-\n" );
-  return TRUE ;
+  return true ;
  }
 //
 // --- всё нормально - начинаем ШТАТНЫЙ вывод данных ---------------------------
@@ -3133,7 +3142,7 @@ char str[_4096], w[_256], sOut[_128], sSave[_128];;
   } // конец по ВЫЧИСЛИТЕЛЯМ ---------------------------------------------------
 //
  if( !numbCalcsByOp ) // если имеется "хоть один" ОПЕРАТОР (ОПЕРАТОРЫ), для которых нет ВЫЧИСЛИТЕЛЯ...
-  canAllExec = FALSE ;
+  canAllExec = false ;
 //
  if( Rule ) // вывод строк "ОПЕРАТОР= ВЫЧИСЛИТЕЛИ:"
   c_AddLineToTextFrame( str );
@@ -3223,7 +3232,7 @@ bool __fastcall c_DrawDiagrTiers()
      B_rect, // ширина горизонтальной полоски в пикселах
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
 //
- if( !isTiers ) // массива Tiers[][] ещё нет...
+ if( !flagExistsTiers ) // массива Tiers[][] ещё нет...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -3309,7 +3318,7 @@ bool __fastcall c_DrawDiagrTiers()
 //
 //  TIM1->Repaint(); // принудительно перерисовали
 //
-  return TRUE; // всё успешно сделано
+  return true; // всё успешно сделано
 //
 } // --- конец с_DrawDiagrTiers ------------------------------------------------
 
@@ -3324,7 +3333,7 @@ bool __fastcall c_ClearDiagrArea()
  TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
  TIM1->Canvas->FillRect( TRect( TIM1->Left-2, TIM1->Top-1, // прямоугольник кистью Brush
                                 TIM1->Left +  TIM1->Width, TIM1->Top + TIM1->Height ));
- return TRUE; // всё нормально
+ return true; // всё нормально
 //
 } // --- конец с_ClearDiagrArea ------------------------------------------------
 
@@ -3607,11 +3616,11 @@ REAL __fastcall c_GetMetricEdgeByName(INT from_Op, INT to_Op, char* nameMetric)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsOpContainOnTiers(INT Op)
-{ // если оператор Op присутствует в Tiers[][], возращается TRUE, иначе - FALSE
- bool out = FALSE;
+{ // если оператор Op присутствует в Tiers[][], возращается true, иначе - false
+ bool out = false;
  register INT i;
 //
- if( !isEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -3619,7 +3628,7 @@ bool __fastcall c_IsOpContainOnTiers(INT Op)
 //
  for(i=1; i<=c_GetCountOps(); i++) // по всем операторам
   if( c_GetNumbOp( i ) == Op )
-   return TRUE;
+   return true;
 //
  return out;
 //
@@ -3633,7 +3642,10 @@ INT __fastcall c_PutTLDToTextFrame()
 //
  t_printf( "\n-=- Диаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов ярусов ЯПФ = %d )", nTiers+1 ); // строка с числом ярусов
 //
- c_CalcParamsTLD(); // вычисляем параметры TLD
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+ else
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
 //
  for( INT i=1; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
   t_printf( "%s", paramsTLD->Strings[i] ) ;
@@ -3655,12 +3667,15 @@ INT __fastcall c_SaveTLD( char FileName[] )
  {
   t_printf( "\n-E- Невозможно записать файл %s времени жизни внутренних данных -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
- c_CalcParamsTLD(); // вычисляем параметры TLD
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+ else
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
 //
  for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
  {
@@ -3705,7 +3720,7 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
 //           REALTIME/HIGH/NORMAL/IDLE соответственно (для 16-бит не используется)
 //          (все другие значения Priority соответствуют IDLE)
 //-----------------------------------------------------------------------
-//  При RuleMessage=TRUE выдается сообщение об ошибках }
+//  При RuleMessage=true выдается сообщение об ошибках }
 {
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
@@ -3730,10 +3745,10 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
            dwCreationFlag=IDLE_PRIORITY_CLASS;
   }
 //
-  out = CreateProcess(NULL,CommandLine,NULL,NULL,FALSE,
+  out = CreateProcess(NULL,CommandLine,NULL,NULL,false,
                       dwCreationFlag,NULL,NULL,&si,&pi);
 //
-  if (!out) // если старт неудачен... out=FALSE
+  if (!out) // если старт неудачен... out=false
   {
    if (RuleMessage)  // если задан режим выдачи сообщений об ошибках
     MessageDlg("Извините, выполнение\n\r\n\r" +
@@ -3742,10 +3757,10 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
                 IntToStr(GetLastError()) + ")",
                 mtError,
                 TMsgDlgButtons() << mbYes, 0);
-   return FALSE ;
-  } // конец IF out = FALSE
+   return false ;
+  } // конец IF out = false
 //
-  if (out) // если старт удачен... out = TRUE
+  if (out) // если старт удачен... out = true
   {
    if (RuleParent == 0) // если родитель должен ждать окончания работы потомка
    {
@@ -3766,23 +3781,23 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
    } // конец IF RuleParent = 0
 //
    if (RuleParent == 1) // родитель не должен ждать окончания работы потомка
-    return FALSE ; // выход - ничего не делая
+    return false ; // выход - ничего не делая
 //
    if ((RuleParent != 0) && // родитель завершается
        (RuleParent != 1))
     Application->Terminate(); // закончить родительский процесс
 //
- } // конец IF out=TRUE
+ } // конец IF out=true
 //
 } // ----- конец c_CreateProcess -----------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CreateProsess( char *cmdLine, byte RuleParent, byte Priority, bool RuleMessage )
-{ // выполнить системный вызов CreateProsess -----------------------------------
- tp_printf( "\n->%s %d %d %d\n", cmdLine, RuleParent, Priority, RuleMessage );
- c_CreateProcess( cmdLine, RuleParent, Priority, RuleMessage );
-} // ----- конец c_CreateProcess -----------------------------------------------
+//INT __fastcall c_CreateProsess( char *cmdLine, byte RuleParent, byte Priority, bool RuleMessage )
+//{ // выполнить системный вызов CreateProsess -----------------------------------
+// tp_printf( "\n->%s %d %d %d\n", cmdLine, RuleParent, Priority, RuleMessage );
+// c_CreateProcess( cmdLine, RuleParent, Priority, RuleMessage );
+//} // ----- конец c_CreateProcess -----------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -3797,7 +3812,7 @@ bool __fastcall c_SaveEdges(char FileName[])
  {
   t_printf( "\n-E- Невозможно сохранить файл %s списка дуг (комплементарных вершин) ИГА -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return FALSE ;
+  return false ;
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -3815,7 +3830,7 @@ bool __fastcall c_SaveEdges(char FileName[])
 //
  fclose( fptr); // закрыли файл
 //
- return TRUE ;
+ return true ;
 //
 } // --- конец c_SaveEdges -----------------------------------------------------
 
@@ -3824,11 +3839,11 @@ bool __fastcall c_SaveEdges(char FileName[])
 bool __fastcall c_ReadEdges(char FileName[])
 { // читает из файла FileName данные о графе (массив Mem_Edges[] связей вершин
 // - и список операторов на уровне Tier = 0 - входные данные ); Mem_Edges[]
-// - и Tiers[][] - глобальные; при ошибке открытия файла FileName возращается FALSE
+// - и Tiers[][] - глобальные; при ошибке открытия файла FileName возращается false
  char str[_2048*4];
  FILE *fptr = NULL; // указатель на файл
- bool flagEdges = FALSE, // флаг начала описания дуг в ИГA
-      flagMLC   = FALSE; // флаг многострочного комментария (Many Lines Comment)
+ bool flagEdges = false, // флаг начала описания дуг в ИГA
+      flagMLC   = false; // флаг многострочного комментария (Many Lines Comment)
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,extGv) ); // преобразованное имя файла
@@ -3837,9 +3852,9 @@ bool __fastcall c_ReadEdges(char FileName[])
  {
   t_printf( "\n-E- Невозможно прочитать файл %s описания ИГА -E-\n-W- вероятна некорректность при дальнейшей работе -W-",
                    NewFileName );
-  isEdges = FALSE ; // массив Mem_Edges[] не создан...
-  isTiers = FALSE;
-  return FALSE ;
+  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
+  flagExistsTiers = false;
+  return false ;
  }
 //
  strNcpy( FileNameEdges, NewFileName ); // запомнили текущее имя файла описания ИГА
@@ -3863,24 +3878,24 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
   if( str[0] == '/' && str[1] == '*' ) // начало многострочного комментария
   {
-   flagMLC = TRUE; // начало многострочного комментария
+   flagMLC = true; // начало многострочного комментария
    continue; // эту строку пропускаем
   }
   if( str[0] == '*' && str[1] == '/' ) // конец многострочного комментария
   {
-   flagMLC = FALSE; // начало многострочного комментария
+   flagMLC = false; // начало многострочного комментария
    continue; // эту строку пропускаем
   }
 //
   if( sscanf( str, "digraph %s {", GraphName ) == 1 ) // ровно одно поле прочитано...
-   flagEdges = TRUE; // начало описания дуг ИГА
+   flagEdges = true; // начало описания дуг ИГА
   if( str[0] == '}' )
-   flagEdges = FALSE; // конец описания дуг ИГА
+   flagEdges = false; // конец описания дуг ИГА
 //
 //  if( flagEdges && !flagMLC )
   if( flagEdges )
    if ( !ParseStringAndAddEdges( str ) ) // оптравляем строку str на рвзборку для пополнения массива дуг
-    return FALSE;
+    return false;
 //
 ////////////////////////////////////////////////////////////////////////////////
  } // конец while( 1) ----------------------------------------------------------
@@ -3892,7 +3907,7 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
  t_printf( "\n-I- Файл %s описания графа успешно прочитан -I-", FileNameEdges );
 //
- isEdges = TRUE ; // всё нормально - массив Mem_Edges[] создан
+ flagExistsEdges = true ; // всё нормально - массив Mem_Edges[] создан
 //
  c_GetCountOps(); // подсчёт числа операторов (вершин графа) БЕЗ ВХОДНЫХ
 //
@@ -3906,9 +3921,9 @@ bool __fastcall c_ReadEdges(char FileName[])
  F2->L_TMM->Repaint();
 ////////////////////////////////////////////////////////////////////////////////
 //
- isTiers = FALSE; // массив Tiers[][] не создан
+ flagExistsTiers = false; // массив Tiers[][] не создан
 //
- return TRUE ;
+ return true ;
 //
 } // ------ конец c_ReadEdges --------------------------------------------------
 
@@ -3916,10 +3931,10 @@ bool __fastcall c_ReadEdges(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
 { // тестирует необходимость увеличения массива дуг Mem_Edges[] и при
-// необходимости увеличивает его в stockMem раз. При успехе возращает TRUE...
+// необходимости увеличивает его в stockMem раз. При успехе возращает true...
 //
  if( nEdges < Max_Edges ) // памяти для массива Mem_Edges[] достаточно...
-  return TRUE;
+  return true;
 //
 // ===== памяти не хватает =====================================================
 //
@@ -3933,13 +3948,13 @@ bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
                              Max_Edges );
   MessageBeep(MB_OK); // звуковое предупреждение...
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
-  isEdges = FALSE ; // массив Mem_Edges[] не создан...
-  return FALSE ;
+  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
+  return false ;
  } // конец  if( Mem_Edges == NULL )
  else
  {
   t_printf( "\n-I- Массив ДУГ (Input) перераспределён на %d элементов -I-",  Max_Edges );
-  return TRUE;
+  return true;
  }
 //
 } // ---- конец TestAndAddMemoryForEdges ---------------------------------------
@@ -3950,7 +3965,7 @@ bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
 bool __fastcall ParseStringAndAddEdges( char *str )
 { // разбирает строку str, выделяет составляющих дуги номера вершин и добавляет их в массив дуг
 // общий формат строки: a -> b -> c -> -> d ; где a,b,c,d - целые числа
-// при ошибки аллокирования памяти при расширении массива дуг возращает FALSE
+// при ошибки аллокирования памяти при расширении массива дуг возращает false
 //
  INT i,j,k=0;
 //
@@ -3980,10 +3995,10 @@ bool __fastcall ParseStringAndAddEdges( char *str )
   {
    nEdges ++ ;
    if( !TestAndAddMemoryForEdges( nEdges ) ) // надо ли добавлять память для Mem_Edges[] ?
-    return FALSE;
+    return false;
   } // конец  if( sscanf( str, "%d -> %d",
  else // ровно 2 поля прочитать на удалось..!
-  return TRUE;
+  return true;
 //
  for( i=0; i<strlen( str ); i++ ) // по строке str...
  {
@@ -3999,7 +4014,7 @@ bool __fastcall ParseStringAndAddEdges( char *str )
  DeleteSpacesTabsAround( str ); // удаляем пробелы в НАЧАЛЕ и конце строки
 //
  if( strstr( str, "->" ) == NULL ) // более в str нет подстроки "->"...
-  return TRUE;
+  return true;
 //
  } // конец while ( 1 )
 //
@@ -4014,7 +4029,7 @@ bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] )
  char buff[_4096]; // максимальная длина строки файла
 //
  if( !(fptr = fopen(FileName, "r")) ) // удалось открыть?..
-  return FALSE ; // не удалось открыть...
+  return false ; // не удалось открыть...
 //
  strNcpy( sWork, "\0" ); // очистили строку (sWork - глобальная)
 //
@@ -4042,7 +4057,7 @@ bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] )
  DeleteSpacesTabsAround ( sWork ); // удаляем внешние пробелы
  ReplaceManySpacesOne( sWork ); // удаляем повторы пробелов внутри
 //
- return TRUE;
+ return true;
 } // ----- конец ReadAndPrimWorkOpsCalcsVertEdgeFiles --------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4053,12 +4068,12 @@ INT __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks )
  if( d_Ticks <= 0 )
   return -1 ;
 //
- bool flag = FALSE; // если в строке не только пробелы...
+ bool flag = false; // если в строке не только пробелы...
  for( int i=0; i<strlen(CommandLine); i++) // цикл по символам в строке CommandLine
  {
   if( CommandLine[i] != ' ')
   {
-   flag = TRUE; // есть хотя бы один не-пробел..!
+   flag = true; // есть хотя бы один не-пробел..!
    break;
   }
  } // конец по символам в строке
@@ -4102,7 +4117,7 @@ void __fastcall TF1::On_Master_Timer(TObject *Sender)
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if( flag_Busy == TRUE ) // не окончен предыдущий вызов CallLuaThread...
+  if( flag_Busy == true ) // не окончен предыдущий вызов CallLuaThread...
   {
    tpe_printf( "\n-W- Вызов %s пропущен из-за неокончания предыдущего вызова %s... -W-",
                Mem_EV[i].CommandLine, busy_CommandLine );
@@ -4114,7 +4129,7 @@ void __fastcall TF1::On_Master_Timer(TObject *Sender)
 */
  if( !L ) // если основное состояние L уже прекращено, ничего делать не надо - возврат...
  {
-  Master_Timer->Enabled = FALSE; // остановили Master_Timer
+  Master_Timer->Enabled = false; // остановили Master_Timer
   return;
  }
 ////////////////////////////////////////////////////////////////////////////////
@@ -4142,7 +4157,7 @@ void __fastcall CallLuaThread( char *CommandLine )
  int error1, error2;
  lua_State *L1;
 //
- flag_Busy = TRUE; // выполнение CallLuaThread нАчато..!
+ flag_Busy = true; // выполнение CallLuaThread нАчато..!
 //
  strNcpy( busy_CommandLine, CommandLine ); // сохраним имя выполняющейся Lua-команды...
 //
@@ -4181,7 +4196,7 @@ void __fastcall CallLuaThread( char *CommandLine )
  if( error1 || error2 )
   t_printf( "\n%s: Ошибка времени выполнения Lua: %s\n", __FUNC__, lua_tostring (L1,-1) );
 //
-ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
+ended: flag_Busy = false; // выполнение CallLuaThread закончено...
 //
 } // ----- конец CallLuaThread -------------------------------------------------
 
@@ -4190,9 +4205,9 @@ ended: flag_Busy = FALSE; // выполнение CallLuaThread закончено...
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
 { // --- меняет местами операторы Op1 и Op2, находящиеся на РАЗНЫХ ярусах
-// ----- если удалось благополучно перенести - возвращается TRUE и глобальная iMove
+// ----- если удалось благополучно перенести - возвращается true и глобальная iMove
 //
- if( !isTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
+ if( !flagExistsTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -4204,22 +4219,22 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
  if( Op1 == Op2 ||  // не желаем-с делать глупостев-с... НИКАКОГО ПЕРЕНОСА !!!
      Tier1 == Tier2 )
  {
-//  DisplayMessage( "E", __FUNC__, messParams2, FALSE ); // выдать сообщение
-  return TRUE ;
+//  DisplayMessage( "E", __FUNC__, messParams2, false ); // выдать сообщение
+  return true ;
  }
 //
  if( Tier1 == ERR_COMMON || // проверка на корректность определения Tier1
      Tier2 == ERR_COMMON ) // ...tier2
  {
-  DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
-  return FALSE ;
+  DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
+  return false ;
  }
 //
  if( ( Tier1 < 1 && Tier1 > nTiers ) || // с нулевого и с яруса ниже последнего перенести нельзя...
      ( Tier2 < 1 && Tier2 > nTiers ) )  // то же...
  {
-  DisplayMessage( "E", __FUNC__, messParams1, FALSE ); // выдать сообщение
-  return FALSE ;
+  DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
+  return false ;
  }
 //
  if( ( Tier1 < c_GetMinTierMaybeOp( Op1 ) ) || // проверка допустИмости переноса оператора Op1
@@ -4231,11 +4246,13 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
   return ERR_RANGE_IN ;
  }
 //
- if( c_MoveOpTierToTier( Op1, Tier2 ) == TRUE ) // успешный перенос Оp1 на ярус нахождения Op2
-  if( c_MoveOpTierToTier( Op2, Tier1 ) == TRUE ) // успешен перенос Оp2 на ярус нахождения Op1
-   return TRUE ;
+ if( c_MoveOpTierToTier( Op1, Tier2 ) == true ) // успешный перенос Оp1 на ярус нахождения Op2
+  if( c_MoveOpTierToTier( Op2, Tier1 ) == true ) // успешен перенос Оp2 на ярус нахождения Op1
+   return true ;
 //
- return FALSE ;
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return false ;
 //
 } // ----- конец c_SwapOpsTierToTier -------------------------------------------
 
@@ -4307,7 +4324,7 @@ cont:
 INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯПФ
 {
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -4385,7 +4402,7 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 INT __fastcall c_GetNumbOp(INT Numb)
 { // возвращает номер Numb оператора (исключая входные) по мере вхождения в файл дуг
 // убираем повторы номеров операторов
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4398,7 +4415,7 @@ INT __fastcall c_GetNumbOp(INT Numb)
      iOps = 0; // счётчик числа вершин (глобальное)
 //
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  Edges_f(1,iEdge) = TRUE ; // пометили как TRUE
+  Edges_f(1,iEdge) = true ; // пометили как true
 //
   for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем nEdges дугам начиная с #1
 // обработка случая ВЫХОДЯЩЕЙ (To) вершины дуги iEdges
@@ -4412,7 +4429,7 @@ INT __fastcall c_GetNumbOp(INT Numb)
 //
     for(jEdge=1; jEdge<=nEdges; jEdge++)
      if( Edges(1,jEdge) == nW )
-       Edges_f(1,jEdge) = FALSE; // сняли метку с вершины "куда" (To)
+       Edges_f(1,jEdge) = false; // сняли метку с вершины "куда" (To)
 //
    } // конец if( Mem_Edges[iEdges].FlagFTo )
 //
@@ -4450,22 +4467,22 @@ void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value )
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall clearFlagsDuplicateOps( INT FromTo,INT Op )
-{ // устанавливает в FALSE все флаги операторов со значение Op (кроме первого встретившегося)
+{ // устанавливает в false все флаги операторов со значение Op (кроме первого встретившегося)
 // обрабатывается список "From" или "To" при From/To = 0/1 соответственно
 //
  register INT iEdge; // попросим компилятор..!
- register bool flagEq, flagOp = FALSE; // если Op встретилост в списке - TRUE !
+ register bool flagEq, flagOp = false; // если Op встретилост в списке - true !
 //
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
 ///  for( jFromTo=0; jFromTo<=1; jFromTo++ ) // по операторам "From"/"To" ( 0/1 соответственно )
   {
-   flagEq = Edges(FromTo,iEdge)==Op ? TRUE : FALSE ; // чтобы не сравнивать дважды...
+   flagEq = Edges(FromTo,iEdge)==Op ? true : false ; // чтобы не сравнивать дважды...
 //
    if( flagEq && flagOp )
-    Edges_f(FromTo,iEdge) = FALSE ; // после первого вхождения Op все остальные - FALSE
+    Edges_f(FromTo,iEdge) = false ; // после первого вхождения Op все остальные - false
 // ----- последовательность if не менять ! -------------------------------------
    if( flagEq ) // встретили Op...
-    flagOp = TRUE;
+    flagOp = true;
   }
 //
 } // ----- конец clearFlagsDuplicateOps ----------------------------------------
@@ -4476,7 +4493,7 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo,INT Op )
 INT __fastcall c_GetCountOpsInput()
 { // возвращает только ВХОДНЫЕ вершины (0-й ярус) в ИГА ------------------------
 //
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4489,8 +4506,8 @@ INT __fastcall c_GetCountOpsInput()
  bool flag;
  nOpsInput = 0; // число входных операторов (0-й ярус; глобальное)
 //
- tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 0 ); // устанавливает в false флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 1 ); // устанавливает в false флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
  for(iEdge=1; iEdge<=nEdges; iEdge++) // по все дугам начиная с #1
@@ -4498,13 +4515,13 @@ INT __fastcall c_GetCountOpsInput()
   {
    nW = Edges(0,iEdge);
 //
-   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
-   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
+   tuneFlagsIfEqual( true, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( true, 1, nW ) ; // пометили "To"
 //
-  flag = FALSE;
+  flag = false;
   for(jEdge=1; jEdge<=nEdges; jEdge++)
    if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и =nW
-    flag = TRUE ; // итак, nW встречается в Edges(1,*) ..!
+    flag = true ; // итак, nW встречается в Edges(1,*) ..!
 //
   if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(1,*) - подходит!
    nOpsInput ++ ;
@@ -4521,7 +4538,7 @@ INT __fastcall c_GetCountOpsInput()
 INT __fastcall c_GetCountOpsOutput()
 { // возвращает число вершин в ИГА (только выходные данные)
 //
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4534,8 +4551,8 @@ INT __fastcall c_GetCountOpsOutput()
  bool flag;
  nOpsOutput = 0; // число ВЫХОДНЫХ операторов (глобальное)
 //
- tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 0 ); // устанавливает в false флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 1 ); // устанавливает в false флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
  for(iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам начиная с #1
@@ -4543,13 +4560,13 @@ INT __fastcall c_GetCountOpsOutput()
   {
    nW = Edges(1,iEdge);
 //
-   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
-   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
+   tuneFlagsIfEqual( true, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( true, 1, nW ) ; // пометили "To"
 //
-   flag = FALSE;
+   flag = false;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
     if( Edges_f(0,jEdge) && Edges(0,jEdge)==nW ) // помечено и =nW
-     flag = TRUE ; // итак, nW встречается в Edges(0,*) ..!
+     flag = true ; // итак, nW встречается в Edges(0,*) ..!
 //
    if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(0,*) - подходит!
     nOpsOutput ++ ;
@@ -4566,7 +4583,7 @@ INT __fastcall c_GetCountOpsOutput()
 INT __fastcall c_GetNumbOpInput(INT Numb)
 { // возвращает номер Numb оператора (только из ВХОДНЫХ операторов)
 //
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4579,8 +4596,8 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
           INT iOps = 0 ; // счётчик числа вершин графа (операторов)
  bool flag;
 //
- tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 0 ); // устанавливает в false флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 1 ); // устанавливает в false флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
 //
@@ -4589,13 +4606,13 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
   {
    nW = Edges(0,iEdge);
 //
-   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
-   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
+   tuneFlagsIfEqual( true, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( true, 1, nW ) ; // пометили "To"
 //
-   flag = FALSE;
+   flag = false;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
     if( Edges_f(1,jEdge) && Edges(1,jEdge)==nW ) // помечено и равно nW
-     flag = TRUE ; // итак, nW встречается в Edges(1,*) ..!
+     flag = true ; // итак, nW встречается в Edges(1,*) ..!
 //
    if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(1,*) - подходит!
     iOps ++ ;
@@ -4613,7 +4630,7 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
 INT __fastcall c_GetNumbOpOutput(INT Numb)
 { // возвращает номер Numb вершины (только из ВЫХОДНЫХ операторов)
 //
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4626,8 +4643,8 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
           INT iOps = 0 ; // счётчик числа вершин
  bool flag;
 //
- tuneFlagsAll( FALSE, 0 ); // устанавливает в FALSE флаги "From" операторов массива дуг Edges[][]
- tuneFlagsAll( FALSE, 1 ); // устанавливает в FALSE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 0 ); // устанавливает в false флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( false, 1 ); // устанавливает в false флаги "To" операторов массива дуг Edges[][]
 //
 // === по всем дугам ИГА =======================================================
 //
@@ -4636,13 +4653,13 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
   {
    nW = Edges(1,iEdge);
 //
-   tuneFlagsIfEqual( TRUE, 0, nW ) ; // пометили "From"
-   tuneFlagsIfEqual( TRUE, 1, nW ) ; // пометили "To"
+   tuneFlagsIfEqual( true, 0, nW ) ; // пометили "From"
+   tuneFlagsIfEqual( true, 1, nW ) ; // пометили "To"
 //
-   flag = FALSE;
+   flag = false;
    for(jEdge=1; jEdge<=nEdges; jEdge++)
     if( Edges_f(0,jEdge) && Edges(0,jEdge)==nW ) // помечено и равно nW
-     flag = TRUE ; // итак, nW встречается в Edges(0,*) ..!
+     flag = true ; // итак, nW встречается в Edges(0,*) ..!
 //
    if( !flag ) // если nW НЕ ВСТРЕЧАЕТСЯ в Edges(0,*) - подходит!
     iOps ++ ;
@@ -4660,7 +4677,7 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
 INT __fastcall c_GetCountOps()
 { // возвращает число вершин ИГА без учёта входных данных
 // // убираем повторы номеров операторов
- if( !isEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4673,14 +4690,14 @@ INT __fastcall c_GetCountOps()
  register INT iEdge;
  nOps = 0; // число вершин без входных (глобал)
 //
- tuneFlagsAll( TRUE, 0 ); // устанавливает в TRUE флаги "From" операторов массива дуг Edges[][]
- tuneFlagsAll( TRUE, 1 ); // устанавливает в TRUE флаги "To" операторов массива дуг Edges[][]
+ tuneFlagsAll( true, 0 ); // устанавливает в true флаги "From" операторов массива дуг Edges[][]
+ tuneFlagsAll( true, 1 ); // устанавливает в true флаги "To" операторов массива дуг Edges[][]
 //
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  clearFlagsDuplicateOps(1,Edges(1,iEdge) ) ; // ставим FALSE у дубликатов
+  clearFlagsDuplicateOps(1,Edges(1,iEdge) ) ; // ставим false у дубликатов
 //
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начиная с #1
-  if( Edges_f(1,iEdge) ) // если TRUE (у дубликатов - FALSE )
+  if( Edges_f(1,iEdge) ) // если true (у дубликатов - false )
     nOps ++ ;
 //
  return nOps ;
@@ -4697,7 +4714,7 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
  INT to_Op, Op_maxTier, to_Tier, maxTier = -134567,
      nOut = c_GetCountOutEdgesByOp(Op); // число выходных дуг оператора Op
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -4734,7 +4751,7 @@ bool __fastcall c_DrawDiagrTLD()
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
  char str[_256];
 //
- if( !isTiers ) // массива Tiers[][] ещё нет...
+ if( !flagExistsTiers ) // массива Tiers[][] ещё нет...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -4767,7 +4784,10 @@ bool __fastcall c_DrawDiagrTLD()
      iGap, nGaps ;
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
 //
-// ----- данные (paramsTLD) для дальнейше обработки готовятся c_CalcParamsTLD()
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+ else
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
 //
  sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число межярусных промежутков в ЯПФ
 //
@@ -4862,7 +4882,7 @@ bool __fastcall c_DrawDiagrTLD()
 //
 //  TIM1->Repaint(); // принудительно перерисовали
 //
-  return TRUE; // всё успешно сделано
+  return true; // всё успешно сделано
 //
 } // --- конец с_DrawDiagrTLD --------------------------------------------------
 
@@ -4879,7 +4899,7 @@ INT __fastcall  c_CalcParamsTLD()
  INT k,l, from_Op,to_Op, to_Tier, max_to_Tier;
  register INT i,j;
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   t_printf( "\n-W- Для построения диаграммы времени жизни данных создайте сначала ЯПФ..! -W-\n");
@@ -4949,7 +4969,7 @@ INT __fastcall c_PutParamsTiers()
  INT  iOp, nOp,     iTier,     nTierMin,    nTierMax,
       Op,  dTiers,  sdOps = 0, sdTiers = 0;
 //
- if( !isTiers ) // массива Tiers[][] не существует...
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -4999,12 +5019,15 @@ INT __fastcall c_PutParamsTiers()
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
-  goto calc_data_live; // ...да простит меня Эдсгер Вибе Дейкстра! -------------
+  goto calc_TLD ; // ...да простит меня Эдсгер Вибе Дейкстра! -------------
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+ else
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
 //
  sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число промежутков (Gap) ярусов в ЯПФ
 //
@@ -5044,7 +5067,7 @@ INT __fastcall c_PutParamsTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
+calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -5092,7 +5115,7 @@ calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
 // ===== вывод рассчитанных данных в протокол расчёта (файл) ===================
 //
 ////////////////////////////////////////////////////////////////////////////////
- ReplaceEqualLengthSubstring( szOut, SS_01, "  \n" ) ; // заменяем SS_01 на "^^\n"
+ ReplaceEqualLengthSubstring( szOut, Delimeter, "  \n" ) ; // заменяем SS_01 на "^^\n"
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
@@ -5107,7 +5130,7 @@ calc_data_live: //проще, чем разбираться в куче фигурных скобок ----------------
  F2->L_OM->Caption = szOut; // вывод максимума операторов на ярусе по всему ЯПФ
  F2->L_OM->Repaint(); // принудительно перерисовываем
 //
- return TRUE ;
+ return true ;
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
 

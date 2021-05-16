@@ -50,26 +50,26 @@ short i_env_StopSessionLua = -1; // что возвращает setjmp (вызов longjmp коррект
 using namespace std; // стандартное пространство имён
 //
 #define do_tStart_fStop \
-{ F1->SB_StopScript->Enabled  = FALSE;  /* ДЕактивировали кнопку StopScript */ \
-  F1->SB_StartScript->Enabled = TRUE; } /* активировали кнопку StartScript */
+{ F1->SB_StopScript->Enabled  = false;  /* ДЕактивировали кнопку StopScript */ \
+  F1->SB_StartScript->Enabled = true; } /* активировали кнопку StartScript */
 //
 #define do_fStart_tStop \
-{ F1->SB_StopScript->Enabled  = TRUE;    /* активировали кнопку StopScript */ \
-  F1->SB_StartScript->Enabled = FALSE; } /* ДEактивировали кнопку StartScript */
+{ F1->SB_StopScript->Enabled  = true;    /* активировали кнопку StopScript */ \
+  F1->SB_StartScript->Enabled = false; } /* ДEактивировали кнопку StartScript */
 //
 #define do_HandRule_Enabled \
-{ F1->LoadAndPutIGA->Enabled  = TRUE;    /* активировать варианты "ручного управления" в главном меню */ \
-  F1->CreateUpperSPF->Enabled = TRUE; \
-  F1->CreateLowerSPF->Enabled = TRUE; \
-  F1->CreateTimeLiveData->Enabled = TRUE; \
-  F1->CreateParamsByOp->Enabled = TRUE; }
+{ F1->LoadAndPutIGA->Enabled  = true;    /* активировать варианты "ручного управления" в главном меню */ \
+  F1->CreateUpperSPF->Enabled = true; \
+  F1->CreateLowerSPF->Enabled = true; \
+  F1->CreateTimeLiveData->Enabled = true; \
+  F1->CreateParamsByOp->Enabled = true; }
 //
 #define do_HandRule_Disabled \
-{ F1->LoadAndPutIGA->Enabled  = FALSE; /* деактивировать варианты "ручного управления" в главном меню */ \
-  F1->CreateUpperSPF->Enabled = FALSE; \
-  F1->CreateLowerSPF->Enabled = FALSE; \
-  F1->CreateTimeLiveData->Enabled = FALSE; \
-  F1->CreateParamsByOp->Enabled = FALSE; }
+{ F1->LoadAndPutIGA->Enabled  = false; /* деактивировать варианты "ручного управления" в главном меню */ \
+  F1->CreateUpperSPF->Enabled = false; \
+  F1->CreateLowerSPF->Enabled = false; \
+  F1->CreateTimeLiveData->Enabled = false; \
+  F1->CreateParamsByOp->Enabled = false; }
 //
 #pragma hdrstop
 //
@@ -287,8 +287,9 @@ INT nEdges, // всего число дуг в графе
     nTiers, // действительное число ярусов в ЯПФ графа
     nMoves = 0; // глобальная переменная для подсчёта успешных перемещений операторов между ярусами
 ////////////////////////////////////////////////////////////////////////////////
-bool isTiers = false, // сформирован ли массив Tiers[][] (после каждого считывания ИГА - FALSE)
-     isEdges = false; // сформирован ли Mem_Edges[]
+bool flagExistsTiers = false , // сформирован ли массив Tiers[][] (после каждого считывания ИГА - false)
+     flagExistsEdges = false , // сформирован ли Mem_Edges[]
+     flagCalcTLD = false ; // вычислен ли paramsTLD по Tiers[][]
 char messNotTiers[] = "массив ЯРУСОВ не сформирован", // сообщения об ошибках
      messNotEdges[] = "массив ДУГ не сформирован",
      messParams1[]  = "некорректен диапазон параметров(1)",
@@ -346,13 +347,13 @@ FILE *fptr_stdout, *fptr_stderr, *fptr_protocol; // соответствующие файловые стр
 #define DELAY_PUT_PROTOCOL 0 // ждать миллисекунд при выдаче протокола
 char uniqueStr[_512] = "\0"; // уникальная строка для имен файлов ( дата + время до мсек )
 ////////////////////////////////////////////////////////////////////////////////
-bool flagCommandLine = FALSE; // если THUE - запуск в режиме командной строки
+bool flagCommandLine = false; // если THUE - запуск в режиме командной строки
 ////////////////////////////////////////////////////////////////////////////////
-bool flagHook = FALSE; // флаг срабатывания "ловушки" (Hook)
+bool flagHook = false; // флаг срабатывания "ловушки" (Hook)
 //
 INT ticks = 0; // глобальный счётчик тиков
 //
-bool flag_Busy = FALSE; // если TRUE - вызов Lua по Events невозможен
+bool flag_Busy = false; // если true - вызов Lua по Events невозможен
 char busy_CommandLine[_256]; // выполняющаяся в данный момент Lua-строка
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -405,11 +406,11 @@ WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" для компон
            ActiveSyntaxScheme = "defSyntaxScheme";
 char extSchemes[] = "xml"; // расширение файлов схем цветов и синтаксиса ( БЕЗ ТОЧКИ )
 ////////////////////////////////////////////////////////////////////////////////
-bool PutParamsTiersOnTextFrame = FALSE, // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
-     PutParamsDataLiveOnTextFrame = FALSE; // выводить ли данные о времени жиэни в окно F2
-// при TRUE выводится в текстовое окно то же самое, что в нижней части текстового окна вывода
+bool PutParamsTiersOnTextFrame = false, // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
+     PutParamsDataLiveOnTextFrame = false; // выводить ли данные о времени жиэни в окно F2
+// при true выводится в текстовое окно то же самое, что в нижней части текстового окна вывода
 ////////////////////////////////////////////////////////////////////////////////
-bool luaExecute = FALSE; // флаг времени выполнения Lua (при выполнеЕнии TRUE, иначе FALSE)
+bool luaExecute = false; // флаг времени выполнения Lua (при выполнеЕнии true, иначе false)
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest))-strlen(dest)-5) // безопасное добавление src к dest
 //
@@ -841,7 +842,7 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
   {
    snprintf(str,sizeof(str), "нехватка памяти для размещения массива Tiers[][] (2). Затребовано %d x %d = %d элементов...",
                 _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
-   isTiers = FALSE ; // массив Tiers[][] не создан...
+   flagExistsTiers = false ; // массив Tiers[][] не создан...
    DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
    MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
    MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
@@ -861,7 +862,7 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
  pTiers = npTiers; // теперь pTiers указывает на "новый" массив (бывший npTiers)
  npTiers = NULL;
 //
- return ( TRUE ); // УРА - УДАЛоСЬ сделать ПРОСиМОЕ..!
+ return ( true ); // УРА - УДАЛоСЬ сделать ПРОСиМОЕ..!
 //
 } //---- конец IncreaseOpsOnTier------------------------------------------------
 
@@ -1337,7 +1338,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
    MessageBeep( MB_OK ); // звуковое предупреждение...
    Delay( -1 ); // ждём 1 сек
 //
-   return FALSE;
+   return false;
   }
 //
  for( int i=0; i<6; i++ ) // по всем 6 строкам FileNameProject
@@ -1370,7 +1371,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
  {
   tp_printf( "\n-E- Заданного в проекте файла |%s| не существует -E-\n",
               ScriptFileName );
-  return FALSE;
+  return false;
  }
 //
 // --- читаем файл дуг исходного графа -----------------------------------------
@@ -1380,7 +1381,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
  {
   tp_printf( "\n-E- Заданного в проекте файла |%s| не существует -E-\n",
                FileNameEdges  );
-  return FALSE;
+  return false;
  }
 //
  c_ReadEdges( FileNameEdges ); // пытаемся загрузить файл ИГА
@@ -1403,7 +1404,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
 //
  fclose( fptr_protocol ); // закрыли файл протокола... потом снова откроем!...
 //
- return TRUE;
+ return true;
 //
 } //--- конец StartByCommandLine -----------------------------------------------
 
@@ -1426,7 +1427,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
  {
   flagCommandLine = StartByCommandLine( str ); //  обрабатываем файл по умолчанию str
 //
-//  flag = TRUE; // автоматически стартовать Lua-скрипт
+//  flag = true; // автоматически стартовать Lua-скрипт
 //
   if( FileExists( ScriptFileName ) ) // если файл скрипта существует...
   {
@@ -1693,19 +1694,19 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
 //
  if( !OD_Edg->Execute() ) // если выбор файла не был сделан...
  {
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return; // ...плохо!
  }
  else
   strNcpy( FileNameEdges, OD_Edg->FileName.c_str() ); // новое имя файла описания информационного графа
 //
- if ( c_ReadEdges( FileNameEdges ) == FALSE ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[]...
+ if ( c_ReadEdges( FileNameEdges ) == false ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[]...
  {
   t_printf( "\n-!- %s(): файл описания информационного графа %s прочитать не удалось -!-", UpperCase(FileNameEdges), __FUNC__ );
   MessageBeep( MB_OK ); // звуковое предупреждение...
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return ;
  }
 //
@@ -1718,8 +1719,8 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
   c_PutTiersToTextFrame(); // вывод ЯПФ в "верхней" канонической форме в окно текстовых данных
   c_PutParamsTiers(); // вывод параметров графа и его ЯПФ на главную форму и в файл протокола
 //
-  isEdges = TRUE;
-  isTiers = TRUE;
+  flagExistsEdges = true;
+  flagExistsTiers = true;
 } //---конец CreateUpperSpfBySelectedIgaFile -----------------------------------
 
  ////////////////////////////////////////////////////////////////////////////////
@@ -1732,19 +1733,19 @@ void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
 //
  if( !OD_Edg->Execute() ) // если выбор файла не был сделан...
  {
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return; // ...плохо!
  }
  else
   strNcpy( FileNameEdges, OD_Edg->FileName.c_str() ); // новое имя файла описания информационного графа
 //
- if ( c_ReadEdges( FileNameEdges ) == FALSE ) // если не удалось прочитать данные информационного графа в массив Edges[][]...
+ if ( c_ReadEdges( FileNameEdges ) == false ) // если не удалось прочитать данные информационного графа в массив Edges[][]...
  {
   t_printf( "\n-!- %s(): файл описания информационного графа %s прочитать не удалось -!-", UpperCase(FileNameEdges), __FUNC__ );
   MessageBeep( MB_OK ); // звуковое предупреждение...
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return ;
  }
 //
@@ -1764,8 +1765,8 @@ void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
   c_PutTiersToTextFrame(); // вывод ЯПФ в "нижней" канонической форме в окно текстовых данных
   c_PutParamsTiers(); // вывод параметров графа и его ЯПФ на главную форму и в файл протокола
 //
-  isEdges = TRUE;
-  isTiers = TRUE;
+  flagExistsEdges = true;
+  flagExistsTiers = true;
 //
 } //---конец CreateLowerSpfBySelectedIgaFile -----------------------------------
 
@@ -1779,8 +1780,8 @@ void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
 //
  if( !OD_Edg->Execute() ) // если выбор файла не был сделан...
  {
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return; // ...плохо!
  }
  else
@@ -1790,15 +1791,15 @@ void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
  {
   t_printf( "\n-!- %s(): файл описания информационного графа %s прочитать не удалось -!-", UpperCase(FileNameEdges), __FUNC__ );
   MessageBeep( MB_OK ); // звуковое предупреждение...
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
   return ;
  }
 //
  c_PutEdgesToTextFrame(); // вывести ИГА в текстовое окно ----------------------
 //
- isEdges = TRUE;
- isTiers = FALSE;
+ flagExistsEdges = true;
+ flagExistsTiers = false;
 } //----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1812,8 +1813,8 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
  if( !c_ReadEdges( FileName ) ) // читаем ИГА-файл в массив Mem_Edges[]
  {
-  isEdges = FALSE;
-  isTiers = FALSE;
+  flagExistsEdges = false;
+  flagExistsTiers = false;
 //
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1832,7 +1833,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  {
   snprintf(str,sizeof(str), "нехватка памяти для размещения массива Tiers[][] (Prim). Затребовано %d x %d = %d элементов...",
                 _maxTiersPrim+1, _maxOpsOnTierPrim+1, (_maxTiersPrim+1) * (_maxOpsOnTierPrim+1));
-  isTiers = FALSE ; // массив Tiers[][] не создан...
+  flagExistsTiers = false ; // массив Tiers[][] не создан...
   DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
@@ -1864,9 +1865,9 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( ( Tiers(0,0) + 3 ) >= _maxOpsOnTier ) // то же, но с БоЛЬШИМ запасом
-  if( IncreaseOpsOnTier( 0, _maxOpsOnTier * stockMem, 1 ) == FALSE ) // неудача перераспределения памяти
+  if( IncreaseOpsOnTier( 0, _maxOpsOnTier * stockMem, 1 ) == false ) // неудача перераспределения памяти
   {
-   isTiers = FALSE ; // массив Tiers[][] не создан...
+   flagExistsTiers = false ; // массив Tiers[][] не создан...
    DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
    return ERR_NOT_MASSIVE_TIERS ;
   }
@@ -1911,9 +1912,9 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( ( Tiers(iTier,0)+1 ) >= _maxOpsOnTier ) // не помещаемся в _maxOpsOnTier...
-  if( IncreaseOpsOnTier( iTier, _maxOpsOnTier * stockMem, 11 ) == FALSE ) // неудача перераспределения памяти
+  if( IncreaseOpsOnTier( iTier, _maxOpsOnTier * stockMem, 11 ) == false ) // неудача перераспределения памяти
   {
-   isTiers = FALSE ; // массив Tiers[][] не создан...
+   flagExistsTiers = false ; // массив Tiers[][] не создан...
    DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
    return ERR_NOT_MASSIVE_TIERS ;
   }
@@ -1949,7 +1950,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
    {
     snprintf(str,sizeof(str), "Нехватка памяти для размещения массива Tiers[][] (2). Затребовано %d x %d = %d элементов...",
                  _maxTiers+1, _maxOpsOnTier+1, (_maxTiers+1) * (_maxOpsOnTier+1));
-    isTiers = FALSE ; // массив Tiers[][] не создан...
+    flagExistsTiers = false ; // массив Tiers[][] не создан...
     DisplayMessage( "E", __FUNC__, str, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
     MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
     MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
@@ -1984,7 +1985,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
- isTiers = TRUE ; // признак того, что ЯПФ построена
+ flagExistsTiers = true ; // признак того, что ЯПФ построена
 //
  TestExistInOutAtAllOps(); // тестирование входов и выходов
 //
@@ -1993,9 +1994,11 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
  t_printf( "\n-I- %s(): ЯПФ графа в \"верхней\" канонической форме по файлу %s успешно построена -I-", __FUNC__, FileNameEdges );
 //
- isTiers = TRUE ; // массив Tiers[][] сформирован..!
+ flagExistsTiers = true ; // массив Tiers[][] сформирован..!
 //
- return TRUE ; // всё нормально - массив Tiers[][] в "верхней" канонической форме построен
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return true ; // всё нормально - массив Tiers[][] в "верхней" канонической форме построен
 //
 } // --- конец c_CreateTiersByEdges---------------------------------------------
 
@@ -2011,7 +2014,7 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( !c_CreateTiersByEdges( FileName ) ) // читает ИГА-файл и создаёт ЯПФ в "верхней" канонической форме
-  return FALSE ; // не удалось..!
+  return false ; // не удалось..!
 //
  for( iTier=nTiers; iTier>=1; iTier-- ) // по ярусам ЯПФ снизу вверх
   for( jOp=Tiers( iTier,0 ); jOp>=1; jOp--) // по операторам на ярусе iTier справа налево
@@ -2037,9 +2040,11 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
  else // что-то не то..!
   t_printf( "\n-E- %s(): ЯПФ графа в \"нижней\" форме не прошла верифицикацию [%d] -E-", __FUNC__ , errCount );
 //
- isTiers = TRUE ; // массив Tiers[][] сформирован..!
+ flagExistsTiers = true ; // массив Tiers[][] сформирован..!
 //
- return TRUE ; // всё нормально - массив Tiers[][] в "нижней" канонической форме построен
+ flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
+//
+ return true ; // всё нормально - массив Tiers[][] в "нижней" канонической форме построен
 //
 } // --- конец c_CreateTiersByEdges_Bottom--------------------------------------
 
@@ -2051,7 +2056,7 @@ void __fastcall TF1::PutParamsByOp(TObject *Sender)
  INT Op, i, Tier;
  bool flag;
 //
- if( !isTiers ) // нет массива Tiers[][]
+ if( !flagExistsTiers ) // нет массива Tiers[][]
  {
   MessageBeep( MB_ICONASTERISK );
   return;
@@ -2144,15 +2149,15 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
  max_Events = _128; // начальный размер массива Mem_EV
  Mem_EV = (ev*) realloc( Mem_EV, max_Events*sizeof(ev) ); // массив событий
  i_Events = -1; // занято элементов в массиве событий (первый инкремент будет ПЕРЕД добавлением данных в массив Mem_EV[])
- Master_Timer-> Enabled = TRUE; // запустили Master_Timer
- flag_Busy = FALSE; // вызов Lua по таймеру разрешён
+ Master_Timer-> Enabled = true; // запустили Master_Timer
+ flag_Busy = false; // вызов Lua по таймеру разрешён
 //
  Write_Config(); // сохранить файл конфигурации
 //
  if( luaExecute ) // Lua в данный момент уже выполняется !!!!!!!!!!!!!!!!!!!!!!!
   return;
 //
- luaExecute = TRUE; // теперь Lua выполняется !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ luaExecute = true; // теперь Lua выполняется !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
  c_ClearTextFrame(); // очистить текстовый фрейм
  c_ClearDiagrArea(); // очистить графику
@@ -2164,7 +2169,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
  MessageBeep( MB_ICONASTERISK );
 //
 // =============================================================================
- flagHook = FALSE; // "ловушка" отключена
+ flagHook = false; // "ловушка" отключена
 ////////////////////////////////////////////////////////////////////////////////
 //*
  RunLuaScript(); // запуск Lua-скрипта на выполнение в основном потоке
@@ -2185,7 +2190,7 @@ void __fastcall TF1::StopLuaScript(TObject *Sender)
   return;
  else
  {
-  flagHook = TRUE; // "взвелИ" флаг для для срабатывания ловушки
+  flagHook = true; // "взвелИ" флаг для для срабатывания ловушки
 //  t_printf( "\n--->%d %d [%d] (%s)", luaExecute, flagHook, lua_gethookcount(L), __FUNc__);
  }
 //
@@ -2222,7 +2227,7 @@ static void LuaHook( lua_State *L, lua_Debug *ar )
  do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
  do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
 //
- flagHook = FALSE;
+ flagHook = false;
 //
  return;
 ////////////////////////////////////////////////////////////////////////////////
@@ -2270,7 +2275,7 @@ static void LuaHook( lua_State *L, lua_Debug *ar )
   t_printf( "\nLua: останов в вызове %s(): строка: %s: тип функции: |%s| |%s|",
                     ar->name, ar->short_src, ar->namewhat, ar->what );
 //
-  flagHook = FALSE; // выключили "ловушку" -------------------------------------
+  flagHook = false; // выключили "ловушку" -------------------------------------
 //
 //  FinishLuaSession(); // закрываем Lua-сессию после выполнения -----------------
 //
@@ -2304,7 +2309,7 @@ bool __fastcall RunLuaScript()
 //
  lua_gc( L, LUA_GCCOLLECT, 0 ); // уборщик мусора
 //
- luaExecute = TRUE; // теперь Lua выполняется...
+ luaExecute = true; // теперь Lua выполняется...
 //
  F1->actBreakDeleteAllExecute( 0 ); // сбросить все точки Breakpoints
 //
@@ -2379,7 +2384,7 @@ bool __fastcall RunLuaScript()
  stackDump( L , "\nstackDump (раскрУтка стека 2): " );
 ////////////////////////////////////////////////////////////////////////////////
 //
- luaExecute = FALSE; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
+ luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
 //
  stackDump( L , "\nstackDump (раскрУтка стека 3): " );
 // ----- пожалуй, следующий блок НИКОГДА НЕ ВЫПОЛНИТСЯ, ибо перехват всех
@@ -2400,9 +2405,9 @@ bool __fastcall RunLuaScript()
 //
 label_StopSessionLua: // сюда переходим по longjmp --------------------------------
 //
- F1->Master_Timer->Enabled = FALSE; // остановили Master_Timer
+ F1->Master_Timer->Enabled = false; // остановили Master_Timer
 ////////////////////////////////////////////////////////////////////////////////
- luaExecute = FALSE; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
+ luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
 ////////////////////////////////////////////////////////////////////////////////
  lua_sethook( L, LuaHook, 0, 0 ); // отключили hook
 ////////////////////////////////////////////////////////////////////////////////
@@ -2469,7 +2474,7 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
  L = NULL; // HOOK-ловушка более не срабатывает !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //
 ////////////////////////////////////////////////////////////////////////////////
- return TRUE ; // всё нормально...
+ return true ; // всё нормально...
 //
 } //===== конец RunLuaScript ===================================================
 
