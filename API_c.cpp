@@ -3643,9 +3643,10 @@ INT __fastcall c_PutTLDToTextFrame()
  t_printf( "\n-=- ƒиаграмма времени жизни внутренних данных -=-\n     (интервалов диапазонов €русов яѕ‘ = %d )", nTiers+1 ); // строка с числом €русов
 //
  if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
   c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
- else
   flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
 //
  for( INT i=1; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
   t_printf( "%s", paramsTLD->Strings[i] ) ;
@@ -3673,9 +3674,10 @@ INT __fastcall c_SaveTLD( char FileName[] )
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
  if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
   c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
- else
   flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
 //
  for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
  {
@@ -4785,9 +4787,10 @@ bool __fastcall c_DrawDiagrTLD()
  REAL averTLD=0.0; // средне-арифметическое времени жижниданных между €русами яѕ‘
 //
  if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
   c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
- else
   flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
 //
  sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число меж€русных промежутков в яѕ‘
 //
@@ -5025,9 +5028,10 @@ INT __fastcall c_PutParamsTiers()
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
   c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
- else
   flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
 //
  sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число промежутков (Gap) €русов в яѕ‘
 //
