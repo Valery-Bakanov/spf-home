@@ -71,7 +71,7 @@ AutoIncBuild=1
 MajorVer=3
 MinorVer=9
 Release=9
-Build=31
+Build=32
 Debug=0
 PreRelease=0
 Special=0
@@ -83,7 +83,7 @@ CodePage=1251
 [Version Info Keys]
 CompanyName=Bakanov (http://vbakanov.ru/left_1.htm)
 FileDescription=SPF@home
-FileVersion=4.4.0
+FileVersion=3.9.9.32
 InternalName=2015-2021
 LegalCopyright=
 LegalTrademarks=SPF@home

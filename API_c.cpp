@@ -3681,8 +3681,8 @@ INT __fastcall c_SaveTLD( char FileName[] )
 //
  for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
  {
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), '\xBB' ) ; // уничтожили символ ">>" в встроке
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), '\xAB' ) ; // уничтожили символ ">>" в строке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), SS_03 ) ; // уничтожили символ SS_03 = ">>" в встроке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), SS_04 ) ; // уничтожили символ SS_04 = "<<" в строке
 //
   fprintf( fptr, "%s\n", paramsTLD->Strings[i] ); // печать в файл
  }
@@ -4801,7 +4801,7 @@ bool __fastcall c_DrawDiagrTLD()
    sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний €рус / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/$|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -4833,7 +4833,7 @@ bool __fastcall c_DrawDiagrTLD()
    sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний €рус / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/$|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -4936,12 +4936,12 @@ INT __fastcall  c_CalcParamsTLD()
     if( max_to_Tier >= iBottomOfGap ) // €рус конца дуги более или равен €русу Ќ»«ј интервала
     {
      if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
-      snprintf( sW,sizeof(sW), " \xAB%d|%d->%d", from_Op, i, max_to_Tier ) ; // "\xAB" = "<<" ; "\x96\x9B" = "->"
+      snprintf( sW,sizeof(sW), " %c%d|%d->%d", SS_04, from_Op, i, max_to_Tier ) ; // SS_04 = "\xAB" = "<<"
      else
      if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
-       snprintf( sW,sizeof(sW), " %d\xBB|%d->$", from_Op, i ) ; // "\xBB" = ">>"; "x96\x9B"= "->"
+       snprintf( sW,sizeof(sW), " %d%c|%d->"  SS_02 "", from_Op, SS_03, i ) ; // SS_03 = "\xBB" = ">>"
      else
-      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier ); // "x96\x9" = "->"
+      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier );
 //
      strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
 //
@@ -4952,8 +4952,8 @@ INT __fastcall  c_CalcParamsTLD()
 //
   } // конец цикла по i (по всем €русам яѕ‘)
 //
- iBottomOfGap == nTiers+1 ?
-  paramsTLD->Add( Format("%d/$|%d: %s",  OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(l)),sN))) ) : // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBottomOfGap
+ iBottomOfGap == nTiers+1 ? // SS_02 = "$"
+  paramsTLD->Add( Format("%d/" SS_02 "|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(l)),sN))) ) : // выводим строку параметров »Ќ“≈–¬јЋј c нижним €русом iBottomOfGap
   paramsTLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(iBottomOfGap)),(int(l)),sN))) );
 //
  } // конец цикла по iBottomOfGap (iBottomOfGap - нижн€€ граница »Ќ“≈–¬јЋј в яѕ‘)
@@ -4964,8 +4964,7 @@ INT __fastcall  c_CalcParamsTLD()
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char szOut[_4096], // строка дл€ выдачи интегрированных данных
-      Delimeter[]=" \246 "; // разделитель блоков при выводе в с_PutParamsTiers() // Special Sequence
+ char szOut[_4096]; // строка дл€ выдачи интегрированных данных
  REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
@@ -5041,7 +5040,7 @@ INT __fastcall c_PutParamsTiers()
    sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний / нижний €рус / число данных в этом промежутке
   else // последн€€ строка формата "n/$|m"
   {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/$|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -5059,10 +5058,10 @@ INT __fastcall c_PutParamsTiers()
  char szStatTLD[_512], // строка данных о времени жизни локальных данных (ParamsTLD)
       szTemp[_128] ;
 //
- n2n==nGaps ? sprintf( szStatTLD,"%sTLD: min=%d(%d/%c), ", Delimeter, minCountTLD,n1n, '$' ) :
-              sprintf( szStatTLD,"%sTLD: min=%d(%d/%d), ", Delimeter, minCountTLD,n1n, n2n ) ;
+ n2n==nGaps ? sprintf( szStatTLD,"" SS_01 "TLD: min=%d(%d/" SS_02 "), ", minCountTLD,n1n ) :
+              sprintf( szStatTLD,"" SS_01 "TLD: min=%d(%d/%d), ",        minCountTLD,n1n, n2n ) ;
 //
- n2x==nGaps ? sprintf( szTemp, "max=%d(%d/%c), ср.арифм.=%.4g", maxCountTLD,n1x, '$', averTLD / nGaps ) :
+ n2x==nGaps ? sprintf( szTemp, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g", maxCountTLD,n1x, averTLD / nGaps ) :
               sprintf( szTemp, "max=%d(%d/%d), ср.арифм.=%.4g", maxCountTLD,n1x, n2x,   averTLD / nGaps ) ;
 //
  strcat( szStatTLD, szTemp ); // подготовили строку дл€ вывода на F2
@@ -5088,19 +5087,19 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
  snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
 //
  nOps, nEdges, nTiers,
- Delimeter,
+ SS_01,
 //
  szStatTiers, // данные статистики €русов яѕ‘
- Delimeter,
+ SS_01,
 //
  Tiers(c_GetTierFirstMinOps(1,nTiers),0), c_GetTierFirstMinOps(1,nTiers),
  Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
- Delimeter,
+ SS_01,
 //
  (REAL)sdOps / nOps, // Vo
  (REAL)sdTiers / nOps, // Vt
  (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
- Delimeter,
+ SS_01,
 //
  StatTiers.AAL, // среднеарифметическа€ длина дуги
 //
@@ -5119,7 +5118,7 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
 // ===== вывод рассчитанных данных в протокол расчЄта (файл) ===================
 //
 ////////////////////////////////////////////////////////////////////////////////
- ReplaceEqualLengthSubstring( szOut, Delimeter, "  \n" ) ; // замен€ем SS_01 на "^^\n"
+ ReplaceEqualLengthSubstring( szOut, SS_01, "  \n" ) ; // замен€ем SS_01 на "^^\n"
 ////////////////////////////////////////////////////////////////////////////////
 //
  if( PutParamsTiersOnTextFrame ) // если трудно обдумать быстро бегущие данные (задаЄтс€ в INI-файле)
