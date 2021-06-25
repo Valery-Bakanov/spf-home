@@ -1,7 +1,7 @@
 //
 // настройка Advanced Compiler: - Pentium, Word
 //
-#define DEBUG 0 // вызов stackDump для отладки, если DEBUG определена true
+#define DEBUG 0 // вызов stackDump для отладки, если DEBUG # 0
 #define HOOK_COUNT 3 // чило вызовов срабатывания luaHook
 //
 #include <vcl.h>
@@ -157,7 +157,7 @@ extern "C" // Lua - исходные тексты на "чистом С"
 #include "./lua_5-3-0/src/lua_src.c" // все С-исходники Lua...
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
-void  __fastcall stackDump (lua_State *L, char *s); // выдаёт содержимое стека Lua
+void  __fastcall stackDump( lua_State *L, char *s ); // выдаёт содержимое стека Lua
 int   __fastcall lua_pcall_Debug( lua_State* L, int args, int results ); // начало исполнения Lua с отладкой
 //
 static void LuaHook( lua_State *L, lua_Debug *ar); // функция перехватчик выполнения строк Lua
@@ -357,7 +357,8 @@ bool flag_Busy = false; // если true - вызов Lua по Events невозможен
 char busy_CommandLine[_256]; // выполняющаяся в данный момент Lua-строка
 //
 ////////////////////////////////////////////////////////////////////////////////
-bool  __fastcall RunLuaScript(); // выполняет Lua-скрипты
+bool  __fastcall RunLuaScript(); // выполняет Lua-скрипты в 'rptvgkzht Lua ( L, глобал )
+bool  __fastcall Lua_Init(); // насртаивает новый экземпляр Lua ( L, глобал )
 bool  __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag); // увеличивает #операторов на ярусах Tiers[][] до newSize
 char* __fastcall PutDateTimeToString(INT flag); // выдача текущих даты и времени в строку с форматированием
 bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное имя файла протокола
@@ -377,10 +378,14 @@ bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаёт (на основе И
 bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаёт (на основе ИГа из файла FileName ЯПФ в "нижней" канонической форме
 void  __fastcall GetFileFromServer( char FileName[] ); // получить файл с сервера
 void  __fastcall Copy_Stdout_To_Memo(); // для вывода stdout в M0_stdout
+void  __fastcall SaveLuaScript( char *FileName ); // сохранить скрипт в файл без вопросов
 //
 void  __fastcall ShowBreakpoint( char *str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
 //
 void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
+//
+void  __fastcall CopyStdoutToTextProtocol(); // копировать stdout текстовое подокно TM0_stdout и в файл протокола
+void  __fastcall CopyStderrToProtocol(); // копировать stderr в файл протокола
 //
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (для Out!Data)
 ////////////////////////////////////////////////////////////////////////////////
@@ -416,12 +421,6 @@ bool luaExecute = false; // флаг времени выполнения Lua (при выполнеЕнии true, и
 //
 char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n", // начальная строка для Lua
      first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel.on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
-//
-// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.линия \246 \x00A6
-#define SS_01 " \246 " // строка-разделитель блоков при выводе в с_PutParamsTiers() // Special Sequence
-#define SS_02 "$" // строка-символ фиктивного яруса ниже с максимальным номером
-#define SS_03 '\xBB' // символ "\xBB" = ">>" ; "x96\x9B"= "->"
-#define SS_04 '\xAB' // символ"\xAB" = "<<"
 //
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
 #include "API_lua.cpp" // описание на С вызовов Lua
@@ -728,70 +727,6 @@ void __fastcall DeleteSymbolAll( char str[], char symb )
 } // ----- конец DeleteSymbolAll -----------------------------------------------
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall stackDump (lua_State *L, char *s)
-{ // выдаёт содержимое Lua-стека экземпляра L (с предваряющей строкой s)
-//
- if( !DEBUG ) // ничего не делаем...
-  return;
-//
- char str[_512];
- const char *w;
- size_t l;
- int top = lua_gettop(L); // глубина стэка
-//
- t_printf( "\n%s глубина стека %d", s, top );
-//
- if( !top ) // глубина стека 0... нЕчего  выводить!..
-  return;
-//
- for (int i = 1; i <= top; i++) // повторять для каждого уровня стэка
- {
-//
-  int len, tp = lua_type(L,i); // взять тип данного на уровне i стэка
-  switch (tp)
-  {
-   case LUA_TSTRING:  // если это строка...
-        w = lua_tolstring( L, tp, &l ); // ???????????????????????????????????
-        t_printf( "%s %d (из %d) -> %s %s [%d]", s,i,top,lua_typename(L,tp), w, strlen(w) );
-        break;
-   case LUA_TBOOLEAN:  // если это булева переменная
-        t_printf( "%s %d (из %d) -> %s %s", s,i,top,lua_typename(L,tp), lua_toboolean(L,tp) ? "true" : "false" );
-        break;
-   case LUA_TNUMBER:  // если это число...
-        t_printf( "%s %d (из %d) -> %d %f", s,i,top,lua_typename(L,tp), lua_tonumber(L,tp) ) ;
-        break;
-   case LUA_TNONE: // пустая ячейка
-        t_printf( "%s %d (из %d) -> %s 'none'", s,i,top,lua_typename(L,tp) ) ;
-        break;
-   case LUA_TNIL: // ничего
-        t_printf( "%s %d (из %d) -> %s 'nil'", s,i,top,lua_typename(L,tp) ) ;
-        break;
-   case LUA_TTABLE: // таблица
-        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_topointer(L,tp) ) ;
-        break;
-   case LUA_TFUNCTION: // функция
-        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_topointer(L,tp) ) ;
-        break;
-   case LUA_TUSERDATA: // пользовательские данные
-        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_touserdata(L,tp) ) ;
-        break;
-   case LUA_TLIGHTUSERDATA: // лёгкие пользовательские данные
-        t_printf( "%s %d (из %d) -> %s %s", s,i,top,lua_typename(L,tp), lua_touserdata(L,tp) ) ;
-        break;
-   case LUA_TTHREAD: // поток
-        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_tothread(L,tp) ) ;
-        break;
-//
-   default:  // что-то иное...
-        t_printf( "%s %d (из %d) -> %s", s,i,top,lua_typename(L,tp) );
-        break;
-  } // конец switch
-//
- } // конец for
-//
-} // --- конец stackDump -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -870,7 +805,7 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::SaveScriptToCurrentFile(TObject *Sender)
 { // сохранить скрипт в текущий файл без вопросов
- TED0->SaveToFile( ScriptFileName );
+ SaveLuaScript( ScriptFileName );
  Write_Config(); // сохранить файл конфигурации
 } //-------SaveScriptDirect-----------------------------------------------------
 
@@ -912,7 +847,7 @@ void __fastcall TF1::CreateNewScript(TObject *Sender)
               SD0->InitialDir = ExtractFilePath ( Application->ExeName ); // сохраняем в текущий каталог
               if( SD0->Execute() ) // если что-то выбрали...
                {
-                TED0->SaveToFile( SD0->FileName ); // сохранили файл
+                SaveLuaScript( SD0->FileName.c_str() ); // сохранили d файл
 // устарело..!  TMS->HistoryList->Add( SD1->FileName ); // запомнили имя файла в списке
                }
               break;
@@ -921,9 +856,10 @@ void __fastcall TF1::CreateNewScript(TObject *Sender)
    } //конец блока SWITCH
   } // конец if
 //
- TED0->Clear(); // очистить R0               snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка Lua
- TED0->Lines->Add( str ); // добавить строку (в RichEdit работает '\n')
-
+ TED0->Clear(); // очистить TED0
+ snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка Lua !!!!!
+ TED0->Lines->Add( str ); // добавить строку
+//
  IndicateColRowNumberOfEV0(); // выводим номер строки и столбца под курсором
 //
 } //----конец CreaneNewScript --------------------------------------------------
@@ -936,7 +872,7 @@ void __fastcall TF1::SaveScriptToFile(TObject *Sender)
 //
  if( SD0->Execute() ) // если что-то выбрали...
  {
-  TED0->SaveToFile( SD0->FileName ); // сохранили содержимое TED0
+  SaveLuaScript( SD0->FileName.c_str() ); // сохранили в файл содержимой TED0
   strNcpy( ScriptFileName, SD0->FileName.c_str() ); // запомнили имя файла
   PutScriptFileName(); // вывод на форму
  }
@@ -1020,7 +956,7 @@ void __fastcall TF1::CopyToNotepad(TObject *Sender)
  char FileName[_256];
  strNcpy( FileName, ChangeFileExt( ScriptFileName, ".txt" ).c_str() );
 //
- TED0->SaveToFile( FileName ); // выдать все строки из ED0 в файл FileName
+ SaveLuaScript( FileName ); // сохранили в файл содержимой TED0
  ShellExecute( F1->Handle, NULL, FileName, NULL, NULL, SW_SHOWNORMAL ); // открыть файл FileName
 } //----------------------------------------------------------------------------
 
@@ -2135,6 +2071,8 @@ retry:
 //
 } // ----- PutPatamsByOp -------------------------------------------------------
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::StartLuaScript(TObject *Sender)
@@ -2142,7 +2080,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 //
  Set_FileNames_All_Protocols(); // подготовили имена всех файлов протоколов (для Out!Data)
 //
- TED0->SaveToFile(ScriptFileName); // сохранить скрипт в текущий файл без вопросов (без полного пути...)
+ SaveLuaScript( ScriptFileName ); // сохранили в файл содержимой TED0
 //
  ticks = 0; // обнуляем глобальный счётчик тиков
 //
@@ -2196,360 +2134,6 @@ void __fastcall TF1::StopLuaScript(TObject *Sender)
 //
 } //----конец StopLuaScript-----------------------------------------------------
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-static void LuaHook( lua_State *L, lua_Debug *ar )
-{ // функция перехвата управления в Lua
-//
-// F1->L_RC->Font->Color = clNavy;
-// F1->L_RC->Repaint();
-// Delay( 1 );
-// F1->L_RC->Font->Color = clBlack;
-// t_printf( "\n===>%d %d [%d] (%s)", luaExecute, flagHook, lua_gethookcount(L), __FUNc__);
-// F2->L_OM->Caption = "|";
-// F2->L_OM->Repaint();
-// F2->L_OM->Caption = "=";
-// F2->L_OM->Repaint();
-//
- if( !luaExecute || !flagHook ) // Lua не выполняется ИЛИ флаг Hook сбрОшен....
-  return;
-//
- char str[_512];
- snprintf( str,sizeof(str), "\n%s: - Выдан запрос на останов выполнения скрипта (%s) -",
-                PutDateTimeToString(0), __FUNC__ );
- tp_printf( str ); // выдать строку в текстовое окно и в файл протокола
-//
-// ---- вброс luaL_error не приводит к мгновенному останову выполнения Lua-скрипта,
-// ---- вброс фиксируется кодом 2 возврата из pcall после окончания выполнения скрипта
- luaL_error( L, "Выполнение Lua остановлено пользователем..." ); // вброс ошибки...
-//
- do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
- do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
-//
- flagHook = false;
-//
- return;
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-/* ----- НЕ УНИЧТОЖАТЬ ПОКА ----------------------------------------------------
-  tp_printf( "\n-!- Выполнение Lua остановлено пользователем (%s) -!-\n", __FUNC__ );
-//
-////////////////////////////////////////////////////////////////////////////////
-  t_printf( "event = %d\n", ar->event );
-//
-  switch( ar->event )
-  {
-   case LUA_HOOKCALL: // если маска установлена на ВЫЗОВ функции
-   case LUA_HOOKRET:
-   case LUA_HOOKLINE:
-   case LUA_HOOKCOUNT:
-//
-        lua_getinfo( L, "n", ar );
-        t_printf( "name: |%s|", ar->name );
-        t_printf( "namewhat: |%s|", ar->namewhat );
-//
-        lua_getinfo( L, ">S", ar );
-        t_printf( "what: |%s|", ar->what );
-        t_printf( "source: |%s|", ar->source );
-        t_printf( "linedefined: |%d|", ar->linedefined );
-        t_printf( "lastlinedefined: |%d|", ar->lastlinedefined );
-        t_printf( "short_src: |%s|", ar->short_src );
-//
-        lua_getinfo( L, "l", ar );
-        t_printf( "currentline: |%d|", ar->currentline );
-//
-        lua_getinfo( L, "u", ar );
-        t_printf( "nups: |%d|", ar->nups );
-        t_printf( "nparams: |%d|", ar->nparams );
-        t_printf( "isvararg: |%d|", ar->isvararg );
-//
-        lua_getinfo( L, "t", ar );
-        t_printf( "istailcall: |%d|", ar->istailcall );
-//
-        break;
-
-   default: break;
-  } // конец switch
-//
-  t_printf( "\nLua: останов в вызове %s(): строка: %s: тип функции: |%s| |%s|",
-                    ar->name, ar->short_src, ar->namewhat, ar->what );
-//
-  flagHook = false; // выключили "ловушку" -------------------------------------
-//
-//  FinishLuaSession(); // закрываем Lua-сессию после выполнения -----------------
-//
-  do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
-  do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
-//
-  MessageBeep( MB_ICONASTERISK );
-//
-  return;
-*/
-} // ------ конец LuaHook-функции ----------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-bool __fastcall RunLuaScript()
-{ // выполняет Lua-скрипты -----------------------------------------------------
- char *sf = "\nПроблемы с %s. Выполнение текущего скрипта Lua остановлено... (%s)\nПроверьте корректность файла исходного текста Lua...";
- char str[_512], sError[_512];
- int error1=0, error2=0;
-//
- if( !L ) // если глобального экземпляра Lua ещё не создано...
- {
-  if( !(L = luaL_newstate() ) ) // неудача создания экземпляра Lua
-  {
-   tpe_printf( sf, "luaL_newstate()", __FUNC__ );
-   goto label_StopSessionLua;
-  }
-  luaL_openlibs( L ); // открывает стандартные библиотеки
-  RegisterFunctions( L ); // регистрируем С-функции в Lua в экземпляре L
- }
-//
- lua_gc( L, LUA_GCCOLLECT, 0 ); // уборщик мусора
-//
- luaExecute = true; // теперь Lua выполняется...
-//
- F1->actBreakDeleteAllExecute( 0 ); // сбросить все точки Breakpoints
-//
-// lua_atpanic( L, luaPanic ); // установим luaPanic как функцию паники для стейта L
-// t_printf( "-->%d", out ); // добавили в файл протокола
-// lua_sethook( L, LuaHook, 0, 0 ); // сброс функции-"ловушки"
- lua_sethook( L, LuaHook, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT, HOOK_COUNT ); // установим функцию-"ловушку" на hookCount события выполнения Lua
-//
- do_fStart_tStop // деактивировать кнопку Start, активировать кнонку Stop
- do_HandRule_Disabled // деактивировать варианты "ручного управления" в главном меню
-//
-////////////////////////////////////////////////////////////////////////////////
- F1->M0_stdout->Lines->Clear(); // очистили TM0_Bot
-//==============================================================================
- fptr_protocol = fopen( FileNameProtocol, "wt" ); // открываем в режиме СОЗДАНИЕ, ЗАПИСЬ, ТЕКСТ
-// if( fptr_protocol )
-//  setbuf( fptr_protocol, NULL ); // отмена буфферизации
-//
- fptr_stdout = fopen( stdoutFileName, "wt" ); // stdout буфферизируется построчно (_IOLBF)
-// if( fptr_stdout )
-//  setbuf( fptr_stdout, NULL );
-//
- fptr_stderr = fopen( stderrFileName, "wt" ); // stderr никогда не буфферизируется (_IONBF)
-// if( fptr_stderr )
-//  setbuf( fptr_stderr, NULL );
-//
- freopen( stdoutFileName, "wt", stdout ); // перенаправили stdout в файл stdoutFileName
- freopen( stderrFileName, "wt", stderr ); // перенаправили stderr в файл stderrFileName
-//==============================================================================
-// --- выведем строки из редактора Lua в файл stdinFileName --------------------
- TED0->SaveToFile( stdinFileName );
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
- i_env_StopSessionLua = setjmp( env_StopSessionLua ); // установили точку перехода !!!!!!!!!!!
- if( i_env_StopSessionLua ) // не ноль - значит, сюда был прыжок !!!!!!!!!!!!!!!!!!!!!!
-  goto label_StopSessionLua;
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
-// LuaStackGuard stackGuard( L );
-//
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// error1 = luaL_loadfile( L, stdinFileName ); // загружаем Lua-файл в интерпретатор
- try
- {
-  error1 = luaL_loadfile( L, ScriptFileName ); // загружаем Lua-файл в интерпретатор
- } // конец try
- catch( ... )
- {
-  tpe_printf( sf, "luaL_loadfile()", __FUNC__ );
-  goto label_StopSessionLua;
- } // конец cath( ... )
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
- stackDump( L , "\nstackDump (раскрУтка стека 1): " );
-//==============================================================================
- try
- {
-  error2 = lua_pcall_Debug( L, 0, 0 ); // lua_pcall + debug
- } // конец try
- catch( ... ) // ловим любое исключение
- {
-  tpe_printf( sf, "lua_pcall_Debug()", __FUNC__ );
-  goto label_StopSessionLua;
- } // конец cath( ... )
-//==============================================================================
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
- stackDump( L , "\nstackDump (раскрУтка стека 2): " );
-////////////////////////////////////////////////////////////////////////////////
-//
- luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
-//
- stackDump( L , "\nstackDump (раскрУтка стека 3): " );
-// ----- пожалуй, следующий блок НИКОГДА НЕ ВЫПОЛНИТСЯ, ибо перехват всех
-// ----- ошибок теперь происходит внутри pcall (используем lua_pcall_Debug)
- if( error1 || error2 ) // макрос luaL_dofile(L,InLuaFileName) = lua_loadfile + lua_pcall
- {
-  strNcpy( sError, lua_tostring(L,-1) ); // скопировали текст ошибки со стека Lua
-  lua_pop( L, 1 ); // снимаем сообщение об ошибке со стека
-//
-  snprintf( str,sizeof(str), "\n%s: Выполнение Lua-скрипта остановлено [err: %d|%d] (%s):\n",
-                 PutDateTimeToString(0), error1, error2, __FUNC__ );
-//
-  tpe_printf( str ); // выводим в текстовое окно, в файл протокола и stderr
-//
-  MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
-//
- } // конец обработки if error1 || error2 ======================================
-//
-label_StopSessionLua: // сюда переходим по longjmp --------------------------------
-//
- F1->Master_Timer->Enabled = false; // остановили Master_Timer
-////////////////////////////////////////////////////////////////////////////////
- luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
-////////////////////////////////////////////////////////////////////////////////
- lua_sethook( L, LuaHook, 0, 0 ); // отключили hook
-////////////////////////////////////////////////////////////////////////////////
-//
- do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
- do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
-//
-////////////////////////////////////////////////////////////////////////////////
-//
- fclose( fptr_stdout ); // закрыли stdout
- fclose( fptr_stderr ); // закрыли stderr
-//
-// --- строки stdout - в текстовое окно и в файл протокола ---------------------
- p_printf( "\n===> начало stdout выполнения скрипта %s ===>\n", ScriptFileName ); // добавили в файл протокола
-//------------------------------------------------------------------------------
-//
- TM0_stdout->Clear(); // очистили TM0_stdout
-//
-// stdoutToMemo();
-//
- fptr_stdout = fopen( stdoutFileName, "rt" ); // открыли для чтения...
-//
- TM0_stdout->Lines->BeginUpdate(); // начали изменение (Update) TM0_stdout без визуализации
-//
- while( 1 ) // ...читать до последней строки...
- {
-  if( fgets( str, sizeof(str), fptr_stdout ) != NULL ) // пока есть ещё строки в stdout
-  {
-   TM0_stdout->Lines->Add( str ); // добавили в окно stdout (компонент TM0_stdout)
-   p_printf( str ); // добавили в файл протокола
-  }
-  else
-   break;
- } // конец while( 1 )
-//
- TM0_stdout->Lines->EndUpdate(); // закончили режим изменения (Update) TM0_stdout без визуализации
- SendMessage(TM0_stdout->Handle,EM_LINESCROLL,0,TM0_stdout->Lines->Count); // установить курсор на последнюю строку
-//
- fclose( fptr_stdout ); // закрыли файл stdout
-//
- p_printf( "<=== конец  stdout выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
-//------------------------------------------------------------------------------
- p_printf( "\n===> начало stderr выполнения скрипта %s ===>\n", ScriptFileName ); // добавили в файл протокола
-//------------------------------------------------------------------------------
-//
- fptr_stderr = fopen( stderrFileName, "rt" ); // открыли для чтения...
- while( 1 ) // ...читать до последней строки...
- {
-  if( fgets( str, sizeof(str), fptr_stderr ) != NULL ) // пока есть ещё строки в stderr
-   p_printf( str ); // добавили в файл протокола
-  else
-   break;
- } // конец while( 1 )
- fclose( fptr_stderr ); // закрыли файл stdout
-//
- p_printf( "<=== конец  stderr выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
-////////////////////////////////////////////////////////////////////////////////
-//
- CloseAndRenameFileProtocol(); // окончательное имя файла протокола
-//
-////////////////////////////////////////////////////////////////////////////////
-//
- lua_close( L ); // если не закрывать, после 1-го срабатывания errorHandler
- L = NULL; // HOOK-ловушка более не срабатывает !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//
-////////////////////////////////////////////////////////////////////////////////
- return true ; // всё нормально...
-//
-} //===== конец RunLuaScript ===================================================
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-static int errorHandler(lua_State* L)
-{ // функция - обработчик ошибок методом вызова debug.traceback
-  char str[_1024];
-//
-  lua_getglobal(L, "debug"); // stack: err, debug
-  lua_getfield(L, -1, "traceback"); // stack: err, debug, debug.traceback
-//
-  if( lua_pcall(L, 0, 1, 0) ) // debug.traceback() возвращает одно значение
-   snprintf( str,sizeof(str), "\n%s: (%s):\nError in debug.traceback() call: %s\n",
-            PutDateTimeToString(0), __FUNC__, lua_tostring(L, -1) );
-  else // нормальная трассировка стэка
-   snprintf( str,sizeof(str), "\n%s: (%s):\nC++ stack traceback: %s\n",
-            PutDateTimeToString(0), __FUNC__, lua_tostring(L, -1) );
-//
-  tp_printf( str ); // добавили в текстовое окно и в протокол
-//
-// покАз точки останОва в текстовом редакторе Lua !! не перенОсить (str пОртится!) !!
-  ShowBreakpoint( str );
-//
-  longjmp( env_StopSessionLua, 1 ); // нелокальный переход к точке setjmp !!!!!!!!!!!!!!
-//
-// ----- при RETURN выполнение Lua продолжается --------------------------------
-//
-} // --- конец errorHandler ----------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-int __fastcall lua_pcall_Debug( lua_State* L, int args, int results )
-{ // выполнение скрипта Lua ( args - число входных параметров, results - выходных )
-// in start: stack: func, arg1, arg2, ,,, argn (func помещено на стек luaL_loadfile)
-  lua_pushcfunction( L, errorHandler ); // stack: func, arg1, arg2, ,,, argn, errorHandler
-//
-  int errorHandlerIndex = - ( args + 2 );
-//
-  lua_insert( L, errorHandlerIndex ); // stack: errorHandler, func, arg1, arg2, ,,, argn
-//
-  stackDump( L , "\nstackDump (раскрУтка стека 3): " );
-//
-  int res = lua_pcall( L, args, results, errorHandlerIndex );
-//
-  if( res )
-   results = 1; // if error, only one result is placed on stack (instead of N results)
-//
-  lua_remove( L, -results - 1 ); // remove function errorHandler from stack
-//
-  return res ;
-//
-} // ----- конец pcall_lua_Debug -----------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall ShowBreakpoint( char *err )
-{ // показать точку проверки (Breakpoint) в текстовом редакторе Lua
- int line = -13;
-//
- char *p = strstr( err, ScriptFileName ); // в str ищем первое вхождение ScriptFileName
- if( p ) // если нашли вхождение ScriptFileName...
- {
-  *p = NULL; // указывает на нулевой символ
-  p += strlen( ScriptFileName ); // теперь p указывает на первый символ в stackTrace после вхождения ScriptFileName
-  if( sscanf( p, ":%d:", &line ) == 1 ) // если удалось корректно прочитать номер строки...
-  {
-   F1->LMD_EV0->GotoPhysLine( line-1 ); // переход к строке по её номеру (нумерация с 0 или 1)
-   IndicateColRowNumberOfEV0(); // индицировать положение курсора в верхней части окна редактирования скриптов
-   F1->actBreakSetExecute( 0 ); // в текстовом окне покажем точку проверки (BreakPoint)
-   Beep();
-  } // конец if( sscanf...
-//
- } // конец if( p )
-} // ----- конец ShowBreakpoint ------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2674,9 +2258,439 @@ void __fastcall TF1::PutTLDToTextFrameAndDiagr(TObject *Sender)
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall SaveLuaScript( char *FileName ) // сохраняем файл Lua-скрипта в файл без вопросов
+{
+//
+ try // обработка возможной ошибки при вызове TED0->SaveToFile( FileName )
+ {
+  TED0->SaveToFile( FileName ); // сохранить скрипт в текущий файл без вопросов (без полного пути...)
+ } // конец try
+ catch( ... )
+ {
+  char str[_256];
+  sprintf( str, "Проблемы с сохранением Lua-программы в файл %s (функция %s())", FileName, __FUNC__ );
+  MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
+  tpe_printf( "\n-W- %s -W-\n", str );
+  MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
+//
+  longjmp( env_StopSessionLua, 1 ); // нелокальный переход к точке setjmp !!!!!!
+//
+ } // конец cath( ... )
+//
+} // ----- конец SaveLuaScript ------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall stackDump(lua_State *L, char *s)
+{ // выдаёт содержимое Lua-стека экземпляра L (с предварЯющей строкой s)
+//
+ if( !DEBUG ) // ничего не делаем...
+  return;
+//
+ char str[_512];
+ const char *w;
+ size_t l;
+ int top = lua_gettop(L); // глубина стэка
+//
+ t_printf( "\n%s(): %s глубина стека= %d", __FUNC__, s, top );
+//
+ if( !top ) // глубина стека 0... нЕчего  выводить!..
+  return;
+//
+ for (int i=1; i<=top; i++) // повторять для каждого уровня стэка
+ {
+//
+  int tp=lua_type(L,i);
+  t_printf( "------ %d %d %d", i,top,tp );
+//
+  switch( tp )  // взять тип данного на уровне i стэка
+  {
+   case LUA_TSTRING:  // если это строка...
+        w = lua_tolstring( L, tp, &l );
+        t_printf( "%s %d (из %d) -> %s %s [%d]", s,i,top,lua_typename(L,tp), w, strlen(w) );
+        break;
+   case LUA_TBOOLEAN:  // если это булева переменная
+        t_printf( "%s %d (из %d) -> %s %s", s,i,top,lua_typename(L,tp), lua_toboolean(L,tp) ? "true" : "false" );
+        break;
+   case LUA_TNUMBER:  // если это число...
+        t_printf( "%s %d (из %d) -> %d %f", s,i,top,lua_typename(L,tp), lua_tonumber(L,tp) ) ;
+        break;
+   case LUA_TNONE: // пустая ячейка
+        t_printf( "%s %d (из %d) -> %s 'none'", s,i,top,lua_typename(L,tp) ) ;
+        break;
+   case LUA_TNIL: // ничего
+        t_printf( "%s %d (из %d) -> %s 'nil'", s,i,top,lua_typename(L,tp) ) ;
+        break;
+   case LUA_TTABLE: // таблица
+        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_topointer(L,tp) ) ;
+        break;
+   case LUA_TFUNCTION: // функция
+        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_topointer(L,tp) ) ;
+        break;
+   case LUA_TUSERDATA: // пользовательские данные
+        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_touserdata(L,tp) ) ;
+        break;
+   case LUA_TLIGHTUSERDATA: // лёгкие пользовательские данные
+        t_printf( "%s %d (из %d) -> %s %s", s,i,top,lua_typename(L,tp), lua_touserdata(L,tp) ) ;
+        break;
+   case LUA_TTHREAD: // поток
+        t_printf( "%s %d (из %d) -> %s %x", s,i,top,lua_typename(L,tp), lua_tothread(L,tp) ) ;
+        break;
+   default: // что-то иное...
+        t_printf( "%s %d (из %d) -> %s", s,i,top,lua_typename(L,tp) );
+        break;
+  } // конец switch
+//
+ }
+
+  t_printf( "\n-I- Содержимое стека показано... -I-\n" );
+//
+} // --- конец stackDump -------------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+static void LuaHook( lua_State *L, lua_Debug *ar )
+{ // функция перехвата управления в Lua
+//
+ if( !luaExecute || !flagHook ) // Lua не выполняется ИЛИ флаг Hook сбрОшен....
+  return;
+//
+ char str[_512];
+ snprintf( str,sizeof(str), "\n%s: - Выдан запрос на останов выполнения скрипта (%s) -",
+                PutDateTimeToString(0), __FUNC__ );
+ tp_printf( str ); // выдать строку в текстовое окно и в файл протокола
+//
+// ---- вброс luaL_error не приводит к мгновенному останову выполнения Lua-скрипта,
+// ---- вброс фиксируется кодом 2 возврата из pcall после окончания выполнения скрипта
+ luaL_error( L, "Выполнение Lua остановлено пользователем..." ); // вброс ошибки...
+//
+ do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
+ do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
+//
+ flagHook = false;
+//
+ return;
+//
+} // ------ конец LuaHook-функции ----------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall CopyStdoutToTextProtocol()
+{ // добавляет stdout в текстовое подокно (ТМ0_stdout) окно и файл протокола
+ char str[_1024]; // строка для временных данных
+//
+// --- строки stdout - в текстовое окно и в файл протокола ---------------------
+ p_printf( "\n===> начало stdout выполнения скрипта %s ===>\n", ScriptFileName ); // добавили в файл протокола
+//------------------------------------------------------------------------------
+//
+ TM0_stdout->Clear(); // очистили TM0_stdout
+//
+ fptr_stdout = fopen( stdoutFileName, "rt" ); // открыли для чтения...
+//
+ TM0_stdout->Lines->BeginUpdate(); // начали изменение (Update) TM0_stdout без визуализации
+//
+ while( 1 ) // ...читать до последней строки...
+ {
+  if( fgets( str, sizeof(str), fptr_stdout ) != NULL ) // пока есть ещё строки в stdout
+  {
+   TM0_stdout->Lines->Add( str ); // добавили в окно stdout (компонент TM0_stdout)
+   p_printf( str ); // добавили в файл протокола
+  }
+  else
+   break;
+ } // конец while( 1 )
+//
+ TM0_stdout->Lines->EndUpdate(); // закончили режим изменения (Update) TM0_stdout без визуализации
+ SendMessage(TM0_stdout->Handle,EM_LINESCROLL,0,TM0_stdout->Lines->Count); // установить курсор на последнюю строку
+//
+ fclose( fptr_stdout ); // закрыли файл stdout
+//
+ p_printf( "<=== конец  stdout выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
+//
+} // ----- конец CopyStdoutToTextProtocol ------------------------------------------
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall CopyStderrToProtocol()
+{ // добавляет strerr в файл протокола
+ char str[_1024]; // строка для временных данных
+//
+ p_printf( "\n===> начало stderr выполнения скрипта %s ===>\n", ScriptFileName );
+//
+ fptr_stderr = fopen( stderrFileName, "rt" ); // открыли для чтения...
+//
+ while( 1 ) // ...читать до последней строки...
+ {
+  if( fgets( str, sizeof(str), fptr_stderr ) != NULL ) // пока есть ещё строки в stderr
+   p_printf( str ); // добавили в файл протокола
+  else
+   break;
+ } // конец while( 1 )
+//
+ fclose( fptr_stderr ); // закрыли файл stdout
+//
+ p_printf( "<=== конец  stderr выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
+//
+} // ----- конец CopyStderrToProtocol ------------------------------------------
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool __fastcall Lua_Init()
+{ // созаёт новый экземпляр Lua ( L - глобальное ), открывает стандартные библиотеки
+// регистрирует пользовательсие C-функции, настраивает уборщик мусора
+//
+ if( !L ) // если глобального экземпляра Lua ещё не создано...
+ {
+  if( !( L=luaL_newstate() ) ) // неудача создания экземпляра Lua
+  {
+   tpe_printf( "\nОшибка ""luaL_newstate()"" в функции %s()\n", __FUNC__ );
+   return false ; // ошибка создания нового экземпляра Lua
+  }
+//
+ luaL_openlibs( L ); // открываем стандартные библиотеки в L
+//
+ RegisterFunctions( L ); // регистрируем С-функции в L
+ } // конец if( !L )
+//
+ lua_gc( L, LUA_GCCOLLECT, 0 ); // полный цикл сборки мусора
+//
+ return true;
+//
+} // ------ конец Lua_Init -----------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall ShowBreakpoint( char *err )
+{ // показать точку проверки (Breakpoint) в текстовом редакторе Lua
+ int line = -13;
+//
+ char *p = strstr( err, ScriptFileName ); // в str ищем первое вхождение ScriptFileName
+ if( p ) // если нашли вхождение ScriptFileName...
+ {
+  *p = NULL; // указывает на нулевой символ
+  p += strlen( ScriptFileName ); // теперь p указывает на первый символ в stackTrace после вхождения ScriptFileName
+  if( sscanf( p, ":%d:", &line ) == 1 ) // если удалось корректно прочитать номер строки...
+  {
+   F1->LMD_EV0->GotoPhysLine( line-1 ); // переход к строке по её номеру (нумерация с 0 или 1)
+   IndicateColRowNumberOfEV0(); // индицировать положение курсора в верхней части окна редактирования скриптов
+   F1->actBreakSetExecute( 0 ); // в текстовом окне покажем точку проверки (BreakPoint)
+   Beep();
+  } // конец if( sscanf...
+//
+ } // конец if( p )
+} // ----- конец ShowBreakpoint ------------------------------------------------
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+int __fastcall lua_pcall_Debug( lua_State* L, int args, int results )
+{ // выполнение скрипта Lua ( args - число входных параметров, results - выходных )
+// in start: stack: func, arg1, arg2, ,,, argn (func помещено на стек luaL_loadfile)
+  lua_pushcfunction( L, errorHandler ); // stack: func, arg1, arg2, ,,, argn, errorHandler
+//
+  int errorHandlerIndex = - ( args + 2 );
+//
+  lua_insert( L, errorHandlerIndex ); // stack: errorHandler, func, arg1, arg2, ,,, argn
+//
+  int res = lua_pcall( L, args, results, errorHandlerIndex );
+//
+  if( res )
+   results = 1; // if error, only one result is placed on stack (instead of N results)
+//
+  lua_remove( L, -results - 1 ); // remove function errorHandler from stack
+//
+  return res ;
+//
+} // ----- конец pcall_lua_Debug -----------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool __fastcall RunLuaScript()
+{ // выполняет Lua-скрипты -----------------------------------------------------
+ char *sf = "\nПроблемы с %s. Выполнение текущего скрипта Lua остановлено... (%s)\nПроверьте корректность файла исходного текста Lua...";
+ char str[_512], sError[_512];
+ int error1=0, error2=0;
+//
+ if( !Lua_Init() ) // настриавает новый экземпляо Lua ( L, глобал )
+  goto label_StopSessionLua; // неудача...
+//
+ luaExecute = true; // теперь Lua выполняется...
+//
+ F1->actBreakDeleteAllExecute( 0 ); // сбросить все точки Breakpoints
+//
+// lua_atpanic( L, luaPanic ); // установим luaPanic как функцию паники для стейта L
+// t_printf( "-->%d", out ); // добавили в файл протокола
+// lua_sethook( L, LuaHook, 0, 0 ); // сброс функции-"ловушки"
+ lua_sethook( L, LuaHook, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT, HOOK_COUNT ); // установим функцию-"ловушку" на hookCount события выполнения Lua
+//
+ do_fStart_tStop // деактивировать кнопку Start, активировать кнонку Stop
+ do_HandRule_Disabled // деактивировать варианты "ручного управления" в главном меню
+//
+////////////////////////////////////////////////////////////////////////////////
+ F1->M0_stdout->Lines->Clear(); // очистили TM0_Bot
+//==============================================================================
+ fptr_protocol = fopen( FileNameProtocol, "wt" ); // открываем в режиме СОЗДАНИЕ, ЗАПИСЬ, ТЕКСТ
+// if( fptr_protocol )
+//  setbuf( fptr_protocol, NULL ); // отмена буфферизации
+//
+ fptr_stdout = fopen( stdoutFileName, "wt" ); // stdout буфферизируется построчно (_IOLBF)
+// if( fptr_stdout )
+//  setbuf( fptr_stdout, NULL );
+//
+ fptr_stderr = fopen( stderrFileName, "wt" ); // stderr никогда не буфферизируется (_IONBF)
+// if( fptr_stderr )
+//  setbuf( fptr_stderr, NULL );
+//
+ freopen( stdoutFileName, "wt", stdout ); // перенаправили stdout в файл stdoutFileName
+ freopen( stderrFileName, "wt", stderr ); // перенаправили stderr в файл stderrFileName
+//==============================================================================
+// --- выведем строки из редактора Lua в файл stdinFileName --------------------
+ SaveLuaScript( stdinFileName );
+////////////////////////////////////////////////////////////////////////////////
+ i_env_StopSessionLua = setjmp( env_StopSessionLua ); // установили точку перехода !!!!!!!!!!!
+ if( i_env_StopSessionLua ) // не ноль - значит, сюда был прыжок !!!!!!!!!!!!!!!!!!!!!!
+  goto label_StopSessionLua;
+////////////////////////////////////////////////////////////////////////////////
+// error1 = luaL_loadfile( L, stdinFileName ); // загружаем Lua-файл в интерпретатор
+ try
+ {
+  error1 = luaL_loadfile( L, ScriptFileName ); // загружаем Lua-файл в интерпретатор
+ } // конец try
+ catch( ... )
+ {
+  tpe_printf( sf, "luaL_loadfile()", __FUNC__ );
+  goto label_StopSessionLua;
+ } // конец cath( ... )
+////////////////////////////////////////////////////////////////////////////////
+//==============================================================================
+ try
+ {
+  error2 = lua_pcall_Debug( L, 0, 0 ); // lua_pcall + debug
+ } // конец try
+ catch( ... ) // ловим любое исключение
+ {
+  tpe_printf( sf, "lua_pcall_Debug()", __FUNC__ );
+  goto label_StopSessionLua;
+ } // конец cath( ... )
+//==============================================================================
+//
+ luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
+//
+// ----- пожалуй, следующий блок НИКОГДА НЕ ВЫПОЛНИТСЯ, ибо перехват всех
+// ----- ошибок теперь происходит внутри pcall (используем lua_pcall_Debug)
+ if( error1 || error2 ) // макрос luaL_dofile(L,InLuaFileName) = lua_loadfile + lua_pcall
+ {
+  strNcpy( sError, lua_tostring(L,-1) ); // скопировали текст ошибки со стека Lua
+  lua_pop( L, 1 ); // снимаем сообщение об ошибке со стека
+//
+  snprintf( str,sizeof(str), "\n%s: Выполнение Lua-скрипта остановлено [err: %d|%d] (%s):\n",
+                 PutDateTimeToString(0), error1, error2, __FUNC__ );
+//
+  tpe_printf( str ); // выводим в текстовое окно, в файл протокола и stderr
+//
+  MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
+//
+ } // конец обработки if error1 || error2 ======================================
+//
+////////////////////////////////////////////////////////////////////////////////
+label_StopSessionLua: // сюда переходим по longjmp -----------------------------
+//
+ lua_sethook( L, LuaHook, 0, 0 ); // сброс функции-"ловушки"
+//
+ F1->Master_Timer->Enabled = false; // остановили Master_Timer
+//
+ luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
+//
+ MessageBeep( MB_ICONEXCLAMATION );
+//
+ fclose( fptr_stdout ); // закрыли stdout
+ fclose( fptr_stderr ); // закрыли stderr
+//
+ Delay( 1000 );
+//
+ try
+ {
+  lua_close( L ); // закрыть Lua
+  L = NULL;
+ }
+ catch( ... )
+ {
+  MessageBox(0, "Внутрення ошибка. В перcпективе возможен сбой приложения...",
+                "Предупреждение",
+                 MB_OK | MB_ICONWARNING | MB_TOPMOST) ;
+//                 MB_YESNO | MB_ICONWARNING | MB_TOPMOST));
+ }
+//
+ t_printf( "\n\n-E- Текущий сеанс Lua завершён... -E-\n\n" );
+//
+ F1->Show(); // сделать окно формы F1 пктивным
+//
+ do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
+ do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
+//
+// fclose( fptr_stdout ); // закрыли stdout
+// fclose( fptr_stderr ); // закрыли stderr
+//
+ CopyStdoutToTextProtocol(); // stdout добавили в текстовое подокно TM0_stdout и в файл протокола
+//
+ CopyStderrToProtocol(); // stderr добавили в файл протокола
+//
+ CloseAndRenameFileProtocol(); // окончательное имя файла протокола
+//
+////////////////////////////////////////////////////////////////////////////////
+ return true ; // всё нормально...
+//
+} //===== конец RunLuaScript ===================================================
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+static int errorHandler(lua_State* L)
+{ // функция - обработчик ошибок методом вызова debug.traceback
+  char str[_512];
+//
+  lua_getglobal( L, "debug" ); // stack: err, debug
+  lua_getfield( L, -1, "traceback" ); // stack: err, debug, debug.traceback
+//
+  if( lua_pcall( L,0,1,0 ) ) // debug.traceback() возвращает одно значение
+   snprintf( str,sizeof(str), "\n%s [1]: (%s):\nError in debug.traceback() call: %s\n",
+             PutDateTimeToString(0), __FUNC__, lua_tostring( L,-1 ) );
+  else // трассировка стэка не дала точки останова
+   snprintf( str,sizeof(str), "\n%s [2]: (%s):\nC++ stack traceback: %s\n",
+             PutDateTimeToString(0), __FUNC__, lua_tostring( L,-1 ) );
+//
+  tp_printf( str ); // добавили в текстовое окно и в протокол
+//
+  ShowBreakpoint( str ); // покАз точки останОва в текстовом редакторе Lua !! не перенОсить (str пОртится!) !!
+//
+// lua_Debug *ar;
+//  switch( ar->event )
+//  {
+//   case LUA_HOOKCALL:
+//  lua_getinfo( L, ">n", ar ); t_printf( "\n%s %s %s\n", ar->name, ar->namewhat, ar->source );
+//  lua_getinfo( L, ">S", ar ); t_printf( "\n%d-%d\n", ar->linedefined, ar->lastlinedefined );
+//        break;
+//
+//  default: break;
+//
+//  } // конец switch
+//
+  stackDump( L , "РаскрУтка стека внутри errorHandler: " );
+//
+  longjmp( env_StopSessionLua, 1 ); // нелокальный переход к точке setjmp !!!!!!
+//
+} // --- конец errorHandler ----------------------------------------------------
 

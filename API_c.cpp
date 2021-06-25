@@ -1,8 +1,14 @@
 //
 //#define TEST_PRINT
 //
+// circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
+#define SS_01 " \246 " // строка-разделитель блоков при выводе в с_PutParamsTiers() // Special Sequence
+#define SS_02 "$" // строка-символ фиктивного €руса ниже с максимальным номером
+#define SS_03 "\xBB" // строка-символ "\xBB" = ">>" ; "x96\x9B"= "->"
+#define SS_04 "\xAB" // строка-символ "\xAB" = "<<"
+//
 char Test_eq,Test_sl,Test_sll,Test_cl,Test_sp,Test_vr; // "=//: |"
-char Test_symb[]="=/: |";
+char Test_symb[] = "=/: |";
 #define Test_n1n2     (sscanf(sN,"%c%d%c%d%c%c",&Test_eq,&n1,&Test_sl,&n2,&Test_cl,&Test_sp)==6 || \
                                   Test_eq==Test_symb[0]  || Test_sl==Test_symb[1] || Test_cl==Test_symb[2] || Test_sp==Test_symb[3])
 //
@@ -3681,8 +3687,8 @@ INT __fastcall c_SaveTLD( char FileName[] )
 //
  for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
  {
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), SS_03 ) ; // уничтожили символ SS_03 = ">>" в встроке
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), SS_04 ) ; // уничтожили символ SS_04 = "<<" в строке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *SS_03 ) ; // уничтожили символ SS_03[0] = ">>" в встроке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *SS_04 ) ; // уничтожили символ SS_04[0] = "<<" в строке
 //
   fprintf( fptr, "%s\n", paramsTLD->Strings[i] ); // печать в файл
  }
@@ -4127,13 +4133,8 @@ void __fastcall TF1::On_Master_Timer(TObject *Sender)
   }
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
- if( !L ) // если основное состо€ние L уже прекращено, ничего делать не надо - возврат...
- {
-  Master_Timer->Enabled = false; // остановили Master_Timer
-  return;
- }
 ////////////////////////////////////////////////////////////////////////////////
 // ------ всЄ нормально, выполн€ем вызов Lua в новом потоке --------------------
    CallLuaThread( Mem_EV[i].CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
@@ -4939,7 +4940,7 @@ INT __fastcall  c_CalcParamsTLD()
       snprintf( sW,sizeof(sW), " %c%d|%d->%d", SS_04, from_Op, i, max_to_Tier ) ; // SS_04 = "\xAB" = "<<"
      else
      if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
-       snprintf( sW,sizeof(sW), " %d%c|%d->"  SS_02 "", from_Op, SS_03, i ) ; // SS_03 = "\xBB" = ">>"
+       snprintf( sW,sizeof(sW), " %d" SS_03 "|%d->"  SS_02 "", from_Op, i ) ; // SS_03 = "\xBB" = ">>"
      else
       snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier );
 //

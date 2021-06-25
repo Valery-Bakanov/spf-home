@@ -1,0 +1,16 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 8
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file ABC1_R.SET */
+#
+digraph ABC1_R {
+100 -> 102 ; [[100]MUL A,B,AB,true; AB <- AxB] -> [[102]SQR AB,,ABC,true; ABC <- sqrt( AB )]
+101 -> 104 ; [[101]DIV A,C,AC,true; AC <- A/C] -> [[104]ADD ABC_P,AC,R,true; R <- ABC_P + AC]
+102 -> 103 ; [[102]SQR AB,,ABC,true; ABC <- sqrt( AB )] -> [[103]POW ABC,ABC,ABC_P,true; ABC_P <- ABC ^ ABC]
+103 -> 104 ; [[103]POW ABC,ABC,ABC_P,true; ABC_P <- ABC ^ ABC] -> [[104]ADD ABC_P,AC,R,true; R <- ABC_P + AC]
+105 -> 100 ; [[105]SET 1,,A,true; 1 -> A] -> [[100]MUL A,B,AB,true; AB <- AxB]
+105 -> 101 ; [[105]SET 1,,A,true; 1 -> A] -> [[101]DIV A,C,AC,true; AC <- A/C]
+106 -> 100 ; [[106]SET 2,,B,true; 2 -> B] -> [[100]MUL A,B,AB,true; AB <- AxB]
+107 -> 101 ; [[107]SET 3,,C,true; 3 -> C] -> [[101]DIV A,C,AC,true; AC <- A/C]
+}
