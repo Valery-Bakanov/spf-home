@@ -1928,7 +1928,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  nOpsInput  = Tiers( 0, 0 ); // число ВХОДНЫХ вершин (операторов)
  nOpsOutput = Tiers( nTiers, 0 ); // число ВЫХОДНЫХ вершин (операторов)
 //
- t_printf( "\n-I- %s(): ЯПФ графа в \"верхней\" канонической форме по файлу %s успешно построена -I-", __FUNC__, FileNameEdges );
+ t_printf( "\n-I- %s(): ЯПФ графа в \"верхней\" канонической форме по файлу [%s] успешно построена -I-", __FUNC__, FileNameEdges );
 //
  flagExistsTiers = true ; // массив Tiers[][] сформирован..!
 //
@@ -2596,7 +2596,7 @@ bool __fastcall RunLuaScript()
   lua_pop( L, 1 ); // снимаем сообщение об ошибке со стека
 //
   snprintf( str,sizeof(str), "\n%s: Выполнение Lua-скрипта остановлено [err: %d|%d] (%s):\n",
-                 PutDateTimeToString(0), error1, error2, __FUNC__ );
+            PutDateTimeToString(0), error1, error2, __FUNC__ );
 //
   tpe_printf( str ); // выводим в текстовое окно, в файл протокола и stderr
 //
@@ -2622,26 +2622,24 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
 //
  try
  {
-  lua_close( L ); // закрыть Lua
+  lua_close( L ); // закрыть экземпляр Lua
   L = NULL;
  }
  catch( ... )
  {
-  MessageBox(0, "Внутрення ошибка. В перcпективе возможен сбой приложения...",
+  MessageBox(0, "Внутренняя ошибка системы. В перcпективе возможен сбой приложения...",
                 "Предупреждение",
                  MB_OK | MB_ICONWARNING | MB_TOPMOST) ;
 //                 MB_YESNO | MB_ICONWARNING | MB_TOPMOST));
  }
 //
- t_printf( "\n\n-E- Текущий сеанс Lua завершён... -E-\n\n" );
+ tpe_printf( "\n-I- %s: Выполнение скрипта [%s] успешно завершено... -I-\n",
+             PutDateTimeToString(0), ScriptFileName );
 //
  F1->Show(); // сделать окно формы F1 пктивным
 //
  do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
  do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
-//
-// fclose( fptr_stdout ); // закрыли stdout
-// fclose( fptr_stderr ); // закрыли stderr
 //
  CopyStdoutToTextProtocol(); // stdout добавили в текстовое подокно TM0_stdout и в файл протокола
 //
