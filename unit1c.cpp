@@ -2600,8 +2600,6 @@ bool __fastcall RunLuaScript()
 //
   tpe_printf( str ); // выводим в текстовое окно, в файл протокола и stderr
 //
-  MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
-//
  } // конец обработки if error1 || error2 ======================================
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -2613,7 +2611,7 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
 //
  luaExecute = false; // Lua закончил выполнЕние (с ошибками ль без - тут неважно)
 //
- MessageBeep( MB_ICONEXCLAMATION );
+ MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
 //
  fclose( fptr_stdout ); // закрыли stdout
  fclose( fptr_stderr ); // закрыли stderr
@@ -2624,19 +2622,21 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
  {
   lua_close( L ); // закрыть экземпляр Lua
   L = NULL;
+//
+  tpe_printf( "\n-I- %s: Выполнение скрипта [%s] завершено успешно..! -I-\n",
+              PutDateTimeToString(0), ScriptFileName );
  }
  catch( ... )
  {
+  tpe_printf( "\n-E- %s: Выполнение скрипта [%s] завершено с проблемами... -E-\n",
+              PutDateTimeToString(0), ScriptFileName );
+//
   MessageBox(0, "Внутренняя ошибка системы. В перcпективе возможен сбой приложения...",
                 "Предупреждение",
                  MB_OK | MB_ICONWARNING | MB_TOPMOST) ;
-//                 MB_YESNO | MB_ICONWARNING | MB_TOPMOST));
  }
 //
- tpe_printf( "\n-I- %s: Выполнение скрипта [%s] успешно завершено... -I-\n",
-             PutDateTimeToString(0), ScriptFileName );
-//
- F1->Show(); // сделать окно формы F1 пктивным
+// F1->Show(); // сделать окно формы F1 активным...
 //
  do_tStart_fStop // деактивировать кнопку Stop, активировать кнонку Start
  do_HandRule_Enabled // активировать варианты "ручного управления" в главном меню
