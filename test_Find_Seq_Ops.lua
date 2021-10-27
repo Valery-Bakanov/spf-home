@@ -122,7 +122,7 @@ DrawDiagrTiers()
 DelayMS( -1 )
 --
 for i=1,GetCountOps(),1 do
- find_SerOps( GetNumbOp( i ))  -- тестируем операторы
+ find_SerOps( GetNumbOp( i ))   -- тестируем операторы
 end 
 --
 SoundPlay("rooster.wav")-- петух возвещает, что работа сделана

@@ -358,7 +358,6 @@ char busy_CommandLine[_256]; // выполн€юща€с€ в данный момент Lua-строка
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool  __fastcall RunLuaScript(); // выполн€ет Lua-скрипты в 'rptvgkzht Lua ( L, глобал )
-bool  __fastcall Lua_Init(); // насртаивает новый экземпл€р Lua ( L, глобал )
 bool  __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag); // увеличивает #операторов на €русах Tiers[][] до newSize
 char* __fastcall PutDateTimeToString(INT flag); // выдача текущих даты и времени в строку с форматированием
 bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное им€ файла протокола
@@ -2441,33 +2440,6 @@ void __fastcall CopyStderrToProtocol()
 } // ----- конец CopyStderrToProtocol ------------------------------------------
 
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-bool __fastcall Lua_Init()
-{ // созаЄт новый экземпл€р Lua ( L - глобальное ), открывает стандартные библиотеки
-// регистрирует пользовательсие C-функции, настраивает уборщик мусора
-//
- if( !L ) // если глобального экземпл€ра Lua ещЄ не создано...
- {
-  if( !( L=luaL_newstate() ) ) // неудача создани€ экземпл€ра Lua
-  {
-   tpe_printf( "\nќшибка ""luaL_newstate()"" в функции %s()\n", __FUNC__ );
-   return false ; // ошибка создани€ нового экземпл€ра Lua
-  }
-//
- luaL_openlibs( L ); // открываем стандартные библиотеки в L
-//
- RegisterFunctions( L ); // регистрируем —-функции в L
- } // конец if( !L )
-//
- lua_gc( L, LUA_GCCOLLECT, 0 ); // полный цикл сборки мусора
-//
- return true;
-//
-} // ------ конец Lua_Init -----------------------------------------------------
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall ShowBreakpoint( char *err )
@@ -2523,16 +2495,30 @@ bool __fastcall RunLuaScript()
  char str[_512], sError[_512];
  int error1=0, error2=0;
 //
- if( !Lua_Init() ) // настриавает новый экземпл€о Lua ( L, глобал )
-  goto label_StopSessionLua; // неудача...
+ if( !L ) // если глобального экземпл€ра Lua ещЄ не создано...
+ {
+  if( !( L=luaL_newstate() ) ) // неудача создани€ экземпл€ра Lua
+  {
+   tpe_printf( "\nќшибка ""luaL_newstate()"" в функции %s()\n", __FUNC__ );
+   goto label_StopSessionLua; // неудача...
+  }
 //
- luaExecute = true; // теперь Lua выполн€етс€...
+ luaL_openlibs( L ); // открываем стандартные библиотеки в L
+//
+ RegisterFunctions( L ); // регистрируем —-функции в L
+//
+ } // конец if( !L )
+//
+ lua_gc( L, LUA_GCCOLLECT, 0 ); // закладываем полный цикл уборки мусора
+//
+ luaExecute = true; // установ»ћ флаг "Lua выполн€етс€"...
 //
  F1->actBreakDeleteAllExecute( 0 ); // сбросить все точки Breakpoints
 //
 // lua_atpanic( L, luaPanic ); // установим luaPanic как функцию паники дл€ стейта L
 // t_printf( "-->%d", out ); // добавили в файл протокола
 // lua_sethook( L, LuaHook, 0, 0 ); // сброс функции-"ловушки"
+//
  lua_sethook( L, LuaHook, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT, HOOK_COUNT ); // установим функцию-"ловушку" на hookCount событи€ выполнени€ Lua
 //
  do_fStart_tStop // деактивировать кнопку Start, активировать кнонку Stop
