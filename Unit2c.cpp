@@ -95,34 +95,34 @@ void __fastcall TF2::OnResize_F2(TObject *Sender)
  int W = F2->Width, // вз€ли текущий размер главного окна программы
      H = F2->Height;
 // MessageBeep(MB_OK);
-
+//
  if( W < minW_F2 ) // окно не может быть менее minW_F2 * minH_F2
   W = minW_F2;
-
+//
  if( H < minH_F2 ) // ...
   H = minH_F2;
-
+//
 // теперь можем установить размеры главного окна и всех подокон
-
+//
  F2->Width  = W; // новый размер окна программы
  F2->Height = H;
-
+//
 // внутренние компоненты окна F2
-
+//
  PN1->Left   = F2->Width  - PN1->Width - 20 ; // панель-контейнер графического вывода
  PN1->Height = F2->Height - PN1->Top   - 102 ;
-
+//
  M1->Width  = PN1->Left - M1->Left - 3; // окно текстового вывода (слева сверху)
  M1->Height = PN1->Height; // нижн€€ граница  одинакова€ с PN1
-
+//
  L_GP->Top   = F2->Height - 99; // текст внизу слева
  L_GP->Width = IM_Logo->Left - L_GP->Left - 5 ; // ширина этого текста
-
+//
  L_OM->Left = PN1->Left ; // текст вверху cправа
-
+//
  IM_Logo->Left = PN1->Left + PN1->Width - IM_Logo->Width ;  // логотип - √–ј‘ќ¬џ∆»ћаЋ ј
  IM_Logo->Top  = PN1->Top  + PN1->Height + 3 ;
-
+//
 } //----------------------------------------------------------------------------
 
 

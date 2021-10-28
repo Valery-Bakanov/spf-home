@@ -5081,7 +5081,7 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
 "ќператоров= %d, дуг= %d, €русов= %d\
 %sяѕ‘: %s\
 %sоператоров на €русе/€рус (min:max)= %d/%d:%d/%d\
-%sвариативность яѕ‘: Vo|Vt|Vot= %.4g|%.4g|%.4g\
+%sвариативность яѕ‘: Vn|Vt|Vnt= %.4g|%.4g|%.4g\
 %sср.арифм.длин дуг= %.4g €русов\
 %s";
 //
@@ -5097,9 +5097,9 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
  Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
  SS_01,
 //
- (REAL)sdOps / nOps, // Vo
+ (REAL)sdOps / nOps, // Vn
  (REAL)sdTiers / nOps, // Vt
- (REAL)sdOps*sdTiers / (nOps*nOps), // Vot
+ (REAL)sdOps*sdTiers / (nOps*nOps), // Vnt
  SS_01,
 //
  StatTiers.AAL, // среднеарифметическа€ длина дуги
