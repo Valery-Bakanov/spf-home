@@ -244,7 +244,7 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
+ strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extTiers,extVizu))).c_str() ) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -292,7 +292,7 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
+ strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extGv,extVizu))).c_str() ) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -333,7 +333,7 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
+ strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extIno,extVizu))).c_str() ) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -397,7 +397,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extVizu) ); // преобразованное имя файла
+ strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extPrm,extVizu))).c_str() ) ); // преобразованное имя файла
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
@@ -410,7 +410,7 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
 //
  GetParamsGraph(); // взяли параметры графа ----------------------------------
 //
- fprintf(fptr, "#nOpMinIn=%12d #nEdgesMinIn=%10d\n#nOpMaxIn=%10d #nEdgesMaxIn=%10d\n#nOpMinOut=%9d #nEdgesMinOut=%9d\n#nOpMaxOut=%9d #nEdgesMaxOut=%9d\nAveIn=%14.3f AveOut=%16.3f",
+ fprintf(fptr, "#nOpMinIn=%10d #nEdgesMinIn=%10d\n#nOpMaxIn=%10d #nEdgesMaxIn=%10d\n#nOpMinOut=%9d #nEdgesMinOut=%9d\n#nOpMaxOut=%9d #nEdgesMaxOut=%9d\nAveIn=%14.3f AveOut=%16.3f",
                PG.nOpMinIn,  PG.nEdgesMinIn,
                PG.nOpMaxIn,  PG.nEdgesMaxIn,
                PG.nOpMinOut, PG.nEdgesMinOut,
@@ -430,7 +430,6 @@ bool __fastcall c_SaveTiers(char FileName[])
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
 //
-//
  if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
@@ -449,17 +448,28 @@ bool __fastcall c_SaveTiers(char FileName[])
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
 //
-//  // число ярусов (глобальное), max операторов на ярусе, на каком именно
- fprintf(fptr, "%d %d %d\n", nTiers+1, c_GetCountOpsOnTier( c_GetTierFirstMaxOps(1,nTiers) ),
-                                       c_GetTierFirstMaxOps(1,nTiers) );
+////////////////////////////////////////////////////////////////////////////////
+// определяем максимум числа операторов на ярусе и номер этого яруса (включая нулевой)
 //
+ INT MaxOpsOnTier = -1, TierWithMaxOps = -1; // начальные значения
+//
+ for(INT iTiers=0; iTiers<nTiers; iTiers++) // по ярусам ЯПФ графа
+  if( Tiers(iTiers,0) > MaxOpsOnTier ) // если больше...
+  {
+   MaxOpsOnTier   = Tiers(iTiers,0);
+   TierWithMaxOps = iTiers;
+  }
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+ fprintf(fptr, "%d %d %d\n", nTiers+1, MaxOpsOnTier, TierWithMaxOps); // вывод первой строки
  for(INT iTiers=0; iTiers<=nTiers; iTiers++) // по ярусам ЯПФ графа
  {
   strNcpy(str, ""); // очистили строку перед заполнением
-
+//
   for(INT j=0; j<=Tiers(iTiers,0); j++) // по номерам операторов на ярусе iTiers
   {
-   snprintf(tmp,sizeof(tmp), "%d ", Tiers(iTiers,j)); // по элементам строки уровня iTiers
+   snprintf( tmp,sizeof(tmp), "%d ", Tiers(iTiers,j) ); // по элементам строки уровня iTiers
    strcat(str, tmp); // прибавили для формирования строки
   } // конец цикла по j
 //
@@ -480,25 +490,23 @@ bool __fastcall c_ReadTiers(char FileName[])
  char str[_16384], *p;
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- INT MaxOpsOnTier, // мах число операторов на ярусе данной ЯПФ графа
-     TierWithMaxOps, // на каком (сверху) ярусе этот мах реализуется
-     j;
+ INT MaxOpsOnTier, // мах число операторов на ярусе данной ЯПФ графа (включая нулевой)
+     TierWithMaxOps; // на каком (сверху) ярусе этот мах реализуется (включая нулевой)
 //
- strNcpy( FileName, ChangeFileExt( FileName, extTiers ).c_str() ); // расширение - extTiers
+ char NewFileName[_512];
+ strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя яфайла
 //
- if(!(fptr = fopen(FileName, "r"))) // открыли для чтения
+ if(!(fptr = fopen(NewFileName, "r"))) // открыли для чтения
  {
   t_printf( "\n-E- Невозможно прочитать файл %s содержания ЯПФ -E-\n-W- вероятна некорректность при дальнейшей работе -W-",
-                   FileName );
+                   NewFileName );
   flagExistsTiers = false;
   return false ;
  }
 //
- nTiers = 0 ; // глобальное, число ярусов ЯПФ
-//
  fgets(str, sizeof(str), fptr); // прочитали первую строку файла
-// число ярусов (глобальное), max операторов на ярусе, на каком ярусе этот max
- if( sscanf(str, "%d %d %d", &nTiers, &MaxOpsOnTier, &TierWithMaxOps) == 0 ) // 0 = ошибка
+// число ярусов (глобальное), max операторов на ярусе, на каком ярусе этот max (включая нулевой)
+ if( sscanf(str, "%d %d %d", &nTiers, &MaxOpsOnTier, &TierWithMaxOps) != 3 ) // ошибка...
  {
   flagExistsTiers = false;
   return false ;
@@ -533,26 +541,24 @@ cont: // не надо реаллокировать память...
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- for(INT iTier=0; iTier<=nTiers; iTier ++) // по ярусам ЯПФ графа
+ nTiers -- ; // nTiers - без входного яруса
+//
+ for(INT iTier=0; iTier<=nTiers; iTier++) // по ярусам ЯПФ графа
  {
   fgets(str, sizeof(str), fptr); // прочитали очередную строку файла
 //
-  j = 0; // номер оператора на ярусе iTier
+  INT j = 0; // номера чисел в строке str
 //
-  if( p = strtok( str, " " ) ) // выделяем первое число до пробела
-  if( sscanf( p, "%d", &Tiers(iTier, ++j) ) != 1 ) // прочитали первый #оператора в Tiers[iTier][1]
-   goto cont_1;  // при успехе sscanf возвращается число успешно прочитанных элементов
+  p = strtok( str, " " ); // бежим по строке str, останавливаясь на пробелах...
+  if( p )
+   sscanf( p, "%d", &Tiers(iTier,j++) ); // число номер 0 = число операторов на ярусе
 //
   while( p ) // пока p = true
   {
    p = strtok( NULL, " "); // до следующего пробела..
-   if( sscanf( p, "%d", &Tiers(iTier, ++j) ) != 1 ) // прочитали #операторов больше первого в Tiers[iTier][*]
-    goto cont_1;
+   if( p )
+    sscanf( p, "%d", &Tiers(iTier,j++) ); // прочитали число номер =>1
   } // конец while
-//
-cont_1: // все операторы на ярусе iTier запомнены в Tiers[][] ------------------
-//
-  Tiers(iTier, 0) = j-1; // общее число операторов на ярусе iTier
 //
  } // конец цикла по iTiers
 //
@@ -560,7 +566,7 @@ cont_1: // все операторы на ярусе iTier запомнены в Tiers[][] ------------------
 //
  flagExistsTiers = true ; // all O'k...
 //
- t_printf( "-I- ЯПФ графа из файла %s успешно прочитана -I-", FileName );
+ t_printf( "\n-I- ЯПФ графа из файла %s успешно прочитана -I-", NewFileName );
 //
  flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
@@ -1511,10 +1517,10 @@ INT __fastcall c_PutTiersToTextFrame()
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- t_printf( "\n-=- Ярусов ЯПФ = %d -=-", nTiers ); // строка с числом ярусов
+ t_printf( "\n-=- Ярусов ЯПФ = %d -=-", nTiers ); // строка с числом ярусов (без входного)
 //
 // --- выводим в M1 номера операторов по ярусам --------------------------------
- for(INT iTier=0; iTier<=nTiers; iTier++) // по всем выявленным ярусам ЯПФ
+ for(INT iTier=0; iTier<=nTiers; iTier++) // по всем выявленным ярусам ЯПФ (без входного)
  {
   snprintf(str,sizeof(str), "%d|%d: ", iTier,Tiers(iTier,0)); // готовим строку (iTier ярус) для вывода в M1
 //
