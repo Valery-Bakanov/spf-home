@@ -341,7 +341,6 @@ char ScriptFileName[_256]  = "noname.lua", // текущее имя файла Lua-скрипта
      MySite[] = "http://vbakanov.ru", // адрес моего сайта
 //
      extGv[]    = "gv",   // расширение имени файла дуг графа для ввода
-     extEdges[] = "edg",  // расширение имени файла дуг графа для вывода
      extVizu[]  = "_vz", // дополнение к расширению имени файла для Vizu (вывод/ввод, ".")
      extTiers[] = "trs", // расширение имени файла ЯПФ (вывод, без ".")
      extIno[]   = "ino", // расширение имени файла ЯПФ (вывод, без ".")
@@ -440,6 +439,8 @@ REAL partHeightStdout[3] = {0.2, 0.1, 0.5}; // доля высоты окна stdout (текущая,
 int FileSizeFromServer; // размер файла при выгрузке с сервера
 ////////////////////////////////////////////////////////////////////////////////
 //
+//
+//
 __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале всего..!
 {
 //
@@ -462,7 +463,7 @@ __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале вс
 //
  Mem_EV = (ev*)   calloc( i_Events, sizeof(ev) ); // массив событий
 // стандартные имена файлов ----------------------------------------------------
- strNcpy( _FileNameEdges, ChangeFileExt( _FileNameEdges, extEdges ).c_str() ); // расширение - extEdges
+ strNcpy( _FileNameEdges, ChangeFileExt( _FileNameEdges, extGv ).c_str() ); // расширение - extGv
 //
 ////////////////////////////////////////////////////////////////////////////////
 //

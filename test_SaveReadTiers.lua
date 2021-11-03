@@ -91,12 +91,13 @@ PutTiersToTextFrame() -- вывести яѕ‘ как текст
 ClearDiagrArea() -- очистить поле графики
 DrawDiagrTiers() -- вывести яѕ‘ в виде линейной диаграммы
 --
---SaveEdgesVizu("a0")
---SaveInOutOpVizu("a00")
---SaveParamsVizu("a000")
+SaveEdgesVizu("a0")
+SaveEdges("a00")
+SaveInOutOpVizu("a000")
+SaveParamsVizu("a0000")
 --
 SaveTiers("a1")
---SaveTiersVizu("a11")
+SaveTiersVizu("a11")
 --
 ReadTiers("a2");
 PutTiersToTextFrame() -- вывести яѕ‘ как текст

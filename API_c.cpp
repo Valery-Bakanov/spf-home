@@ -3820,7 +3820,7 @@ bool __fastcall c_SaveEdges(char FileName[])
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName( FileName,extEdges ) ); // преобразованное имя файла
+ strcpy( NewFileName,ReformFileName( FileName,extGv ) ); // преобразованное имя файла
 //
  if(!(fptr = fopen(NewFileName, "w"))) // открыли для записи
  {
