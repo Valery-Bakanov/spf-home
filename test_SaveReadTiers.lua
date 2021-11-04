@@ -102,6 +102,9 @@ SaveTiersVizu("a11")
 ReadTiers("a2");
 PutTiersToTextFrame() -- вывести яѕ‘ как текст
 --
+ReadEdges("a2")
+PutEdgesToTextFrame()
+--
 SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
 --
 -- конец main

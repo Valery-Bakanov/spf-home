@@ -1,0 +1,17 @@
+#Op=111 #Tier=0 #In=0 #Out=2 100 101 
+#Op=112 #Tier=0 #In=0 #Out=2 102 103 
+#Op=113 #Tier=0 #In=0 #Out=1 104 
+#Op=114 #Tier=0 #In=0 #Out=2 100 103 
+#Op=115 #Tier=0 #In=0 #Out=1 101 
+#Op=116 #Tier=0 #In=0 #Out=1 102 
+#Op=100 #Tier=1 #In=2 111 114 #Out=2 109 110 
+#Op=101 #Tier=1 #In=2 111 115 #Out=1 104 
+#Op=102 #Tier=1 #In=2 112 116 #Out=2 107 108 
+#Op=103 #Tier=1 #In=2 112 114 #Out=1 105 
+#Op=104 #Tier=2 #In=2 101 113 #Out=1 105 
+#Op=105 #Tier=3 #In=2 103 104 #Out=1 106 
+#Op=106 #Tier=4 #In=1 105 #Out=2 107 108 
+#Op=107 #Tier=5 #In=2 102 106 #Out=1 109 
+#Op=108 #Tier=5 #In=2 102 106 #Out=1 110 
+#Op=109 #Tier=6 #In=2 100 107 #Out=0 
+#Op=110 #Tier=6 #In=2 100 108 #Out=0 

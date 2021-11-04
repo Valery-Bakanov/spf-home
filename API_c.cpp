@@ -30,8 +30,6 @@ char Test_symb[] = "=/: |";
 //#define TEST_PRINT // если определено - тестова€ печать
 ////////////////////////////////////////////////////////////////////////////////
 //
-#define APM Application->ProcessMessages(); // дать поработать Windows ---------
-//
 ////////////////////////////////////////////////////////////////////////////////
 //
 INT  __fastcall c_CalcParamsTLD(); // вычисл€ет (но не выводит!) данные времени жизни внутренних данных в яѕ‘
@@ -203,6 +201,8 @@ INT  __fastcall c_CalcParamsTiers(); // расчЄт статистики €русов яѕ‘
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в false все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
+//
+bool __fastcall isFileExists(char FileName[]); // перезаписать существующий файл?
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -488,6 +488,7 @@ bool __fastcall c_SaveTiers(char FileName[])
 bool __fastcall c_ReadTiers(char FileName[])
 {  // чтение операторов по €русам дл€ полного описани€ графа в виде яѕ‘
  char str[_16384], *p;
+ INT nTiersAll; // всего €русов в яѕ‘ (включа€ нулевой)
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  INT MaxOpsOnTier, // мах число операторов на €русе данной яѕ‘ графа (включа€ нулевой)
@@ -506,7 +507,7 @@ bool __fastcall c_ReadTiers(char FileName[])
 //
  fgets(str, sizeof(str), fptr); // прочитали первую строку файла
 // число €русов (глобальное), max операторов на €русе, на каком €русе этот max (включа€ нулевой)
- if( sscanf(str, "%d %d %d", &nTiers, &MaxOpsOnTier, &TierWithMaxOps) != 3 ) // ошибка...
+ if( sscanf(str, "%d %d %d", &nTiersAll, &MaxOpsOnTier, &TierWithMaxOps) != 3 ) // ошибка...
  {
   flagExistsTiers = false;
   return false ;
@@ -516,12 +517,9 @@ bool __fastcall c_ReadTiers(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- if( ( nTiers < _maxTiers ) && ( MaxOpsOnTier < _maxOpsOnTier ) ) // пам€ти достаточно
-  goto cont; // ... не надо реаллокировать пам€ть
-//
- _maxTiers = nTiers * stockMem; // число €русов с запасом в stockMem раз
- _maxOpsOnTier = MaxOpsOnTier * stockMem; // число операторов на €русе с запасом в stockMem раз
- pTiers = (INT*) realloc( pTiers, (_maxTiers+1) * (_maxOpsOnTier+1) * sizeof(INT) ); // реаллокировали пам€ть под Tiers[][]...
+ _maxTiers = nTiersAll; // число €русов (с учЄтом нулевого €руса)
+ _maxOpsOnTier = MaxOpsOnTier+1; // максимум числа операторов по €русам
+ pTiers = (INT*) realloc( pTiers, _maxTiers * _maxOpsOnTier * stockMem * sizeof(INT) ); // реаллокировали пам€ть под Tiers[][] с запасом в stockMem раз
 //
  if( !pTiers ) // совсем плохо - пам€ть в "куче" закончилась
  {
@@ -535,15 +533,13 @@ bool __fastcall c_ReadTiers(char FileName[])
   t_printf( "\n-I- ћассив я–”—ќ¬ (4) перераспределЄн на %d x %d = %d элементов -I-",
                    (_maxTiers+1), (_maxOpsOnTier+1), (_maxTiers+1) * (_maxOpsOnTier+1) );
 //
-cont: // не надо реаллокировать пам€ть...
-//
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- nTiers -- ; // nTiers - без входного €руса
+ nTiers = nTiersAll-1; // nTiers - число €русов без входного €руса
 //
- for(INT iTier=0; iTier<=nTiers; iTier++) // по €русам яѕ‘ графа
+ for( INT iTier=0; iTier<=nTiers; iTier++ ) // по €русам яѕ‘ графа
  {
   fgets(str, sizeof(str), fptr); // прочитали очередную строку файла
 //
@@ -677,30 +673,30 @@ INT __fastcall GetParamsGraph()
    for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам графа ========
     if( Edges(0,iEdge) == Op ) // нашли дугу, ¬џ’ќƒяў”ё ( from ) из нужного оператора...
      nEdgesOutOp ++ ; // суммируем дуги, ¬џ’ќƒяў»≈ из оператора Op...
-
+//
    PG.AveOut += nEdgesOutOp ; // сумма числа дуг Out дл€ оператора Op
-
+//
    if(nEdgesOutOp < PG.nEdgesMinOut) // ищем MIN выход€щих...
    {
     PG.nEdgesMinOut = nEdgesOutOp;
     PG.nOpMinOut    = Op; // запомнили соответствующий Op
    }
-
+//
    if(nEdgesOutOp > PG.nEdgesMaxOut) // ищем NAX выход€щих...
    {
     PG.nEdgesMaxOut = nEdgesOutOp;
     PG.nOpMaxOut    = Op; // запомнили соответствующий Op
    }
-
+//
   } // конец цикла по j
-
+//
 ////////////////////////////////////////////////////////////////////////////////
-
+//
  PG.AveIn  /= nOps - Tiers(1,0); // среднее число дуг, ¬’ќƒяў»’ ( to ) в операторы графа
  PG.AveOut /= nOps - Tiers(nTiers,0); // среднее число дуг, ¬џ’ќƒяў»’ ( from ) из операторов графа
-
+//
  return true ;
-
+//
 } // --- конец GetParamsGraph --------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -746,35 +742,34 @@ INT __fastcall GetOpByMinOutOnTiers(INT minTier, INT maxTier)
 { // --- вернуть номер оператора с MIN ¬џ’ќƒќ¬ на €русах с minTier по maxTier
  INT nEdgesOutOp = nEdges,  // больше быть не может
      iOp,iOpMinOut, sumEdgesOut;
-
+//
  if( !flagExistsTiers ) // массив Tiers[][] ещЄ не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-
+//
  for(INT j=minTier; j<=maxTier; j++) // по всем €русам с minTier по maxTier
-
  for(INT iOpOnTier=1; iOpOnTier<=Tiers(j,0); iOpOnTier++) // по всем этим операторам €руса Tier
  {
   iOp = Tiers(j,iOpOnTier); // вз€ли номер iOpOnToer по счЄту оператора на €русе j
-
+//
   sumEdgesOut = 0; // суммируем в переменной sumEdgesIn
   for(INT iEdge = 0; iEdge < nEdges; iEdge ++ ) // по всем дугам графа ========
    if( Edges(0,iEdge) == iOp ) // нашли дугу, ¬џ’ќƒяў”ё из оператора iOp
     sumEdgesOut ++ ; // суммируем число дуг, ¬џ’ќƒяў»’ из оператор iOp...
-
+//
   if(sumEdgesOut < nEdgesOutOp) // MIN ¬џ’ќƒќ¬ по всем опер. €русов minTier-maxTier
   {
    nEdgesOutOp = sumEdgesOut;
    iOpMinOut = iOp; // запомнили номер оператора
   }
-
+//
  } // конец цикла по i
    // конец цикла по j
-
+//
  return iOpMinOut; // оператор с MIN выходов на €русах minTier-maxTier
-
+//
 } // --- конец GetOpByOutMinOnTiers --------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -910,36 +905,36 @@ INT __fastcall c_GetTierLastMaxOps(INT Tier1, INT Tier2)
  INT TierMaxOp = - _maxOpsOnTier , // дл€ поиска MAX
      Tier;
  char w[_256];
-
+//
  if( !flagExistsTiers ) // массив Tiers[][] ещЄ не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-
+//
  if( ( Tier1 < 1 ) || ( Tier1 > nTiers ) ||
      ( Tier2 < 1 ) || ( Tier2 > nTiers ) )
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
 //  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  for(INT iTier=Tier1; iTier<=Tier2; iTier++) // по заданным €русам яѕ‘ ---------
   if ( Tiers(iTier,0) >= TierMaxOp ) // ищем MAX...
   {
    TierMaxOp = Tiers(iTier,0); // число операторов на €русе iTier
    Tier = iTier; // запомнили iTier с “≈ ”ў»ћ максимумом операторов
   }
-
+//
  return Tier ;
-
+//
 } // --- конец  c_GetTierLastMaxOps --------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -949,36 +944,36 @@ INT __fastcall c_GetTierFirstMinOps(INT Tier1, INT Tier2)
 // - если экстремумов (одинаковых) несколько - возвращаетс€ ѕ≈–¬џ… из них (c Tier = min)
  INT TierMinOp = _maxOpsOnTier , // дл€ поиска MIN
      Tier;
-
+//
  if( !flagExistsTiers ) // массив Tiers[][] ещЄ не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-
+//
  if( ( Tier1 < 1 ) || ( Tier1 > nTiers ) ||
      ( Tier2 < 1 ) || ( Tier2 > nTiers ) )
  {
   DisplayMessage( "E", __FUNC__, messParams1,  ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
 //  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  for(INT iTier=Tier1; iTier<=Tier2; iTier++) // по всем €русам яѕ‘ ------------
   if ( Tiers(iTier,0) < TierMinOp ) // ищем MIN...
   {
    TierMinOp = Tiers(iTier,0); //  число операторов на €русе iTier
    Tier = iTier; // запомнили iTier с “≈ ”ў»ћ минимумом операторов
   }
-
+//
  return Tier ;
-
+//
 } // --- конец  c_GetTierFirstMinOps -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -988,36 +983,36 @@ INT __fastcall c_GetTierLastMinOps(INT Tier1, INT Tier2)
 // - если экстремумов (одинаковых) несколько - возвращаетс€ ѕѕќ—Ћ≈ƒЌ»… из них (c Tier = max)
  INT TierMinOp = _maxOpsOnTier , // дл€ поиска MIN
      Tier;
-
+//
  if( !flagExistsTiers ) // массив Tiers[][] ещЄ не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
  }
-
+//
  if( ( Tier1 < 0 ) || ( Tier1 > nTiers ) ||
      ( Tier2 < 0 ) || ( Tier2 > nTiers ) )
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
 //  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
-
+//
  for(INT iTier=Tier1; iTier<=Tier2; iTier++) // по всем €русам яѕ‘ ------------
   if ( Tiers(iTier,0) <= TierMinOp ) // ищем MIN...
   {
    TierMinOp = Tiers(iTier,0); //  число операторов на €русе iTier
    Tier = iTier; // запомнили iTier с “≈ ”ў»ћ минимумом операторов
   }
-
+//
  return Tier ;
-
+//
 } // --- конец  c_GetTierLastMinOps --------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1479,7 +1474,6 @@ bool __fastcall c_AddLineToTextFrame(char *str)
    TM1->Lines->Add( buf ); // вывод строки buf в M1
    strNcpy( buf, "" ); // очистили строку w дл€ дальнейшей работы
 //
-//   Application->ProcessMessages(); // дать поработать Windows
   }
 //
  } // конец по символам строки str
@@ -3875,7 +3869,7 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
  Max_Edges = _128; // первоначальное максимальное количество дуг в »√ј
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- Mem_Edges = ( me* ) realloc( Mem_Edges, Max_Edges * sizeof( me ) ); // захватить или перераспределить пам€ть массив структур дуг информационного графа
+ Mem_Edges = ( me* ) realloc( Mem_Edges, Max_Edges * sizeof( me ) ); // перераспределить пам€ть массив структур дуг информационного графа
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  nEdges = 1; // число дуг в »√ј (глобальное, дл€ совместимости с Lua индексируем с 1 )
 //
@@ -3908,7 +3902,7 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
 //  if( flagEdges && !flagMLC )
   if( flagEdges )
-   if ( !ParseStringAndAddEdges( str ) ) // оптравл€ем строку str на рвзборку дл€ пополнени€ массива дуг
+   if ( !ParseStringAndAddEdges( str ) ) // отправл€ем строку str на рвзборку и пополнение массива дуг
     return false;
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -3979,7 +3973,7 @@ bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
 bool __fastcall ParseStringAndAddEdges( char *str )
 { // разбирает строку str, выдел€ет составл€ющих дуги номера вершин и добавл€ет их в массив дуг
 // общий формат строки: a -> b -> c -> -> d ; где a,b,c,d - целые числа
-// при ошибки аллокировани€ пам€ти при расширении массива дуг возращает false
+// при ошибке аллокировани€ пам€ти при расширении массива дуг возращает false
 //
  INT i,j,k=0;
 //
@@ -5143,4 +5137,30 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
  return true ;
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
+
+bool __fastcall isFileExists(char FileName[])
+{ // информирование о существовании файла с заданным имнем
+//
+ if( FileExists( FileName ) )
+ {
+  char tmp[_256];
+  sprintf( "‘айл %s уже существует. ѕерезаписать его?", FileName );
+//
+  MessageBeep( MB_ICONQUESTION ); // звуковое предупреждение...
+//
+  switch(MessageBox(0, tmp, "ѕредупреждение",
+                       MB_YESNO | MB_ICONWARNING | MB_TOPMOST))
+  {
+   case IDYES: return true ; // перезаписать файл
+               break;
+   case IDNO:  return false; // не перезаписывать файл
+               break;
+  } // конец switch
+//
+  return true ;
+ }
+//
+} // ------ конец isFileExists -------------------------------------------------
+
+
 
