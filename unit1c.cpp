@@ -1411,7 +1411,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
  else
  {
   TED0->Clear(); // очистить TR0
-  snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка дляч Lua
+  snprintf(str,sizeof(str), first_F1, PutDateTimeToString(0)); // начальная строка для Lua
   TED0->Lines->Add( str ); // добавить строку
  }
 //

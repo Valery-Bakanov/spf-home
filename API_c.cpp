@@ -34,7 +34,7 @@ char Test_symb[] = "=/: |";
 //
 INT  __fastcall c_CalcParamsTLD(); // вычисляет (но не выводит!) данные времени жизни внутренних данных в ЯПФ
 INT  __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
-INT  __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
+char* __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
 INT  __fastcall c_GetCountTiers(); // возвращает общее число ярусов в ЯПФ информационного графа алгоритма (ИГА)
 INT  __fastcall c_AddTier(INT Tier); // создаёт (пустой) ярус ниже яруса Tier
@@ -82,14 +82,14 @@ INT  __fastcall c_GetNumbInEdgeByOp(INT Numb, INT Op); // вернуть #опер., находя
 INT  __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op); // вернуть #опер., находящегося на Numb ВЫХОДЯЩЕЙ из Op дуге
 //
 bool __fastcall c_ReadEdges(char FileName[]); // читает из FileName дуги описания графа
-bool __fastcall c_SaveEdges(char FileName[]); // вывод в FileName дуг описания графа + Tiers[0/nTiers][*]
+char* __fastcall c_SaveEdges(char FileName[]); // вывод в FileName дуг описания графа + Tiers[0/nTiers][*]
 bool __fastcall c_ReadTiers(char FileName[]); // читает из FileName ЯПФ графа
-bool __fastcall c_SaveTiers(char FileName[]); // вывод в FileName ЯПФ графа
+char* __fastcall c_SaveTiers(char FileName[]); // вывод в FileName ЯПФ графа
 //
-INT  __fastcall c_SaveTiersVizu(char FileName[]); // сохранение файла операторов по ярусам
-INT  __fastcall c_SaveEdgesVizu(char FileName[]); // сохранение файла зависимостей (дуг) операторов
-INT  __fastcall c_SaveInOutOpVizu(char FileName[]); // сохранение файла входящих и выходящих душ для оператора Op
-INT  __fastcall c_SaveParamsVizu(char FileName[]); // параметры графа - выдаются GetParamsGraph()
+char* __fastcall c_SaveTiersVizu(char FileName[]); // сохранение файла операторов по ярусам
+char* __fastcall c_SaveEdgesVizu(char FileName[]); // сохранение файла зависимостей (дуг) операторов
+char* __fastcall c_SaveInOutOpVizu(char FileName[]); // сохранение файла входящих и выходящих душ для оператора Op
+char* __fastcall c_SaveParamsVizu(char FileName[]); // параметры графа - выдаются GetParamsGraph()
 //
 //------------------------------------------------------------------------------
 //
@@ -202,7 +202,7 @@ void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у о
 void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в false все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
 //
-bool __fastcall isFileExists(char FileName[]); // перезаписать существующий файл?
+char* __fastcall CreateUniqueFileName(char* FileName); // создание уникального имени файла при существовании файла с именем, заданным FileName
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ Delay(long mSecs)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveTiersVizu(char FileName[])
+char* __fastcall c_SaveTiersVizu(char FileName[])
 { // вывод числа операций по ярусам
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
@@ -240,17 +240,18 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
  if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extTiers,extVizu))).c_str() ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -275,30 +276,31 @@ INT __fastcall c_SaveTiersVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ;
 //
 } // --- конец SaveTiersVizu ---------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveEdgesVizu(char FileName[])
+char* __fastcall c_SaveEdgesVizu(char FileName[])
 { // вывод связей между операторами
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extGv,extVizu))).c_str() ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s содержания ИГА -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -308,13 +310,13 @@ INT __fastcall c_SaveEdgesVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ;
 //
 } // --- конец SaveEdgesVizu ---------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveInOutOpVizu(char FileName[])
+char* __fastcall c_SaveInOutOpVizu(char FileName[])
 { // вывод числа ВХОДЯЩИХ и ВЫХОДЯЩИХ дуг для операторов
  char str[_16384], tmp[_256], s1[]="* \0";
  INT jOpOnTier, iOp, j, nIn,nOut;
@@ -323,23 +325,24 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
  if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extIno,extVizu))).c_str() ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует... 
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s входящих и исходящих дуг по операторам -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -380,30 +383,31 @@ INT __fastcall c_SaveInOutOpVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ;
 //
 } // --- конец SaveInOutOpVizu -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveParamsVizu(char FileName[])
+char* __fastcall c_SaveParamsVizu(char FileName[])
 { // вывод числа ВХОДЯЩИХ и ВЫХОДЯЩИХ для операторов
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extPrm,extVizu))).c_str() ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно сохранить файл %s числа входящих и выходящих дуг по операторам -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -419,13 +423,13 @@ INT __fastcall c_SaveParamsVizu(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ;
 //
 } // --- конец SaveParamsVizu -------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-bool __fastcall c_SaveTiers(char FileName[])
+char* __fastcall c_SaveTiers(char FileName[])
 {  // вывод операторов по ярусам для полного описания графа в виде ЯПФ
  char str[_16384], tmp[_256];
  FILE *fptr = NULL; // рабочий указатель на файл
@@ -433,17 +437,18 @@ bool __fastcall c_SaveTiers(char FileName[])
  if( !flagExistsTiers ) // массива Tiers[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
  char NewFileName[_512];
  strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя яфайла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName, "w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s полного описания ИГА в ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -479,7 +484,7 @@ bool __fastcall c_SaveTiers(char FileName[])
 //
  fclose(fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ; // венули действительное имя файла
 //
 } // --- конец SaveTiers -------------------------------------------------------
 
@@ -3662,19 +3667,20 @@ INT __fastcall c_PutTLDToTextFrame()
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_SaveTLD( char FileName[] )
+char* __fastcall c_SaveTLD( char FileName[] )
 { // выдать диаграмму времени жизни данных в файл
 //
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,extTld) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно записать файл %s времени жизни внутренних данных -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -3694,6 +3700,8 @@ INT __fastcall c_SaveTLD( char FileName[] )
  }
 //
  fclose( fptr ) ; // закрыть файл
+//
+ return NewFileName ;
 //
 } // ----- конец c_SaveTLD -----------------------------------------------------
 
@@ -3809,18 +3817,19 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-bool __fastcall c_SaveEdges(char FileName[])
+char* __fastcall c_SaveEdges(char FileName[])
 {  // вывод дуг для полного описания графа
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName( FileName,extGv ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen(NewFileName, "w"))) // открыли для записи
  {
   t_printf( "\n-E- Невозможно сохранить файл %s списка дуг (комплементарных вершин) ИГА -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
                    NewFileName );
-  return false ;
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
 // setbuf( fptr, NULL ); // отключили буфферизацию при записи
@@ -3838,7 +3847,7 @@ bool __fastcall c_SaveEdges(char FileName[])
 //
  fclose( fptr); // закрыли файл
 //
- return true ;
+ return NewFileName ;
 //
 } // --- конец c_SaveEdges -----------------------------------------------------
 
@@ -5081,7 +5090,7 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 "Операторов= %d, дуг= %d, ЯПФ: высота= %d, ширина= %d (%d)\
 %s%s\
 %sоператоров на ярусе/ярус (min:max)= %d/%d:%d/%d\
-%sвариативность ЯПФ: Vn|Vt|Vnt= %.4g|%.4g|%.4g\
+%sвариативность ЯПФ: Vn|Vt|Vnt= %.4g|%s|%s\
 %sср.арифм.длин дуг= %.4g ярусов\
 %s";
 //
@@ -5097,9 +5106,13 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
  Tiers(c_GetTierFirstMaxOps(1,nTiers),0), c_GetTierFirstMaxOps(1,nTiers),
  SS_01,
 //
- (REAL)sdOps / nOps, // Vn
- (REAL)sdTiers / nOps, // Vt
- (REAL)sdOps*sdTiers / (nOps*nOps), // Vnt
+ (REAL)sdOps / nOps, // Vn (%.4g)
+// (REAL)sdTiers / nOps, // Vt
+// (REAL)sdTiers / ( nOps*nTiers ), // Vt
+ nTiers==1 ? "???" : Format("%.4g",OPENARRAY(TVarRec,( (REAL)sdTiers/(nOps*(nTiers-1)) ))).c_str(), // Vt (%.4g) не делить на 0 при nTiers=1
+// (REAL)sdOps*sdTiers / (nOps*nOps), // Vnt
+// (REAL)sdOps*sdTiers / ( nOps*nOps*(nTiers-1) ), // Vnt (%.4g)
+ nTiers==1 ? "???" : Format("%.4g",OPENARRAY(TVarRec,( (REAL)sdOps*sdTiers/( nOps*nOps*(nTiers-1)) ))).c_str(), // Vnt (%.4g) не делить на 0 при nTiers=1
  SS_01,
 //
  StatTiers.AAL, // среднеарифметическая длина дуги
@@ -5138,29 +5151,39 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
 
-bool __fastcall isFileExists(char FileName[])
-{ // информирование о существовании файла с заданным имнем
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall CreateUniqueFileName(char* FileName)
+{ // создание уникального имени файла при существовании файла с именем, задданным FileName
 //
- if( FileExists( FileName ) )
- {
-  char tmp[_256];
-  sprintf( "Файл %s уже существует. Перезаписать его?", FileName );
+ if( !FileExists( FileName ) ) // файл не cуществует...
+  return FileName ;
 //
-  MessageBeep( MB_ICONQUESTION ); // звуковое предупреждение...
+ char OldFileName[_512], NewFileName[_512]="\0", Comma[]=".\0";
 //
-  switch(MessageBox(0, tmp, "Предупреждение",
-                       MB_YESNO | MB_ICONWARNING | MB_TOPMOST))
-  {
-   case IDYES: return true ; // перезаписать файл
-               break;
-   case IDNO:  return false; // не перезаписывать файл
-               break;
-  } // конец switch
+ Delay( 100 ); // ждём 0,1 для гарантированного дистижения уникалности нового имени файла
 //
-  return true ;
- }
+ strcpy( OldFileName, FileName ); // исходное имя файла сохраняем в OldFileName
+ OldFileName[ strrchr(OldFileName,Comma[0]) -
+                     &OldFileName[0] ] = '\0'; // вмеcто точки ставим '\0' (отрезаем расширение имени файла)
 //
-} // ------ конец isFileExists -------------------------------------------------
+ strcpy( NewFileName, OldFileName ); // имя файла
+ strcat( NewFileName, Comma ); // добавили "." в качестве разделителя к уникальной строке
+ strcat( NewFileName, PutDateTimeToString(1) ); // уникальная строка
+ strcat( NewFileName, ExtractFileExt(FileName).c_str() ); // расширение исходного файла
+//
+ t_printf( "\n-W- Записываемый файл %s уже существует, переименован на %s -W-\n",
+           FileName, NewFileName ); // вывод сообщения в текстовое окно
+//
+ return NewFileName ;
+//
+} // ------ конец CreateUniqueFileName -----------------------------------------
+
+
+
+
+
 
 
 

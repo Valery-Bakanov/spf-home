@@ -416,7 +416,7 @@ static int SaveEdges(lua_State *L) // вызов С-функции c_SaveEdges из Lua
  sp_printf(" Lua call c_SaveEdges(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_SaveEdges( arg )); // вызовем c_SaveEdges и результат -> стек
+ lua_pushstring(L, c_SaveEdges( arg )); // вызовем c_SaveEdges и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveEdges =====================================================
 
@@ -442,7 +442,7 @@ static int SaveTiers(lua_State *L) // вызов С-функции c_SaveTiers из Lua
  sp_printf(" Lua call c_SaveTiers(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_SaveTiers( arg )); // вызовем c_SaveTiers и результат -> стек
+ lua_pushstring(L, c_SaveTiers( arg )); // вызовем c_SaveTiers и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveTiers =====================================================
 
@@ -455,7 +455,7 @@ static int SaveEdgesVizu(lua_State *L) // вызов С-функции c_SaveEdgesVizu из Lua
  sp_printf(" Lua call c_SaveEdgesVizu(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushinteger(L, c_SaveEdgesVizu( arg )); // вызовем c_SaveEdgesVizu и результат -> стек
+ lua_pushstring(L, c_SaveEdgesVizu( arg )); // вызовем c_SaveEdgesVizu и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveEdgesVizu =================================================
 
@@ -468,7 +468,7 @@ static int SaveTiersVizu(lua_State *L) // вызов С-функции c_SaveTiersVizu из Lua
  sp_printf(" Lua call c_SaveTiersVizu(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushinteger(L, c_SaveTiersVizu( arg )); // вызовем c_SaveTiersVizu и результат -> стек
+ lua_pushstring(L, c_SaveTiersVizu( arg )); // вызовем c_SaveTiersVizu и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveTiersVizu =================================================
 
@@ -481,7 +481,7 @@ static int SaveInOutOpVizu(lua_State *L) // вызов С-функции c_SaveInOutOpVizu из
  sp_printf(" Lua call c_SaveInOutOpVizu(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushinteger(L, c_SaveInOutOpVizu( arg )); // вызовем c_SaveInOutOpVizu и результат -> стек
+ lua_pushstring(L, c_SaveInOutOpVizu( arg )); // вызовем c_SaveInOutOpVizu и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveInOutOpVizu =================================================
 
@@ -494,7 +494,7 @@ static int SaveParamsVizu(lua_State *L) // вызов С-функции c_SaveParamsVizu из L
  sp_printf(" Lua call c_SaveParamsVizu(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushinteger(L, c_SaveParamsVizu( arg )); // вызовем c_SaveParamsVizu и результат -> стек
+ lua_pushstring(L, c_SaveParamsVizu( arg )); // вызовем c_SaveParamsVizu и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец SaveParamsVizu =================================================
 
@@ -930,7 +930,7 @@ static int SaveTLD(lua_State *L) // описываем функцию SaveTLD на С
  sp_printf(" Lua call c_SaveTLD(\"%s\")", arg);
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_SaveTLD(arg)); // вызовем c_SaveTLD() и результат -> стек
+ lua_pushstring(L, c_SaveTLD(arg)); // вызовем c_SaveTLD() и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец c_SaveTLD =====================================================
 
