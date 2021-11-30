@@ -1,5 +1,0 @@
-#nOpMinIn=       106 #nEdgesMinIn=         1
-#nOpMaxIn=       104 #nEdgesMaxIn=         2
-#nOpMinOut=      101 #nEdgesMinOut=        1
-#nOpMaxOut=      100 #nEdgesMaxOut=        2
-AveIn=         1.857 AveOut=           1.333
