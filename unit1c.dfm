@@ -1,6 +1,6 @@
 object F1: TF1
-  Left = 839
-  Top = 165
+  Left = 847
+  Top = 179
   Width = 900
   Height = 600
   HorzScrollBar.Visible = False
@@ -1251,14 +1251,6 @@ object F1: TF1
       object Lua531: TMenuItem
         Caption = #1054' '#1103#1079#1099#1082#1077' Lua '#1074#1077#1088#1089#1080#1080' 5.3'
         OnClick = AboutLua53
-      end
-      object N5: TMenuItem
-        Caption = '-'
-      end
-      object Thanks_LMD1: TMenuItem
-        Caption = 'WEB-'#1088#1077#1089#1091#1088#1089' AlgoWiki'
-        Hint = #1055#1077#1088#1077#1093#1086#1076' '#1085#1072' '#1089#1072#1081#1090' AlgoWiki'
-        OnClick = About_AW
       end
     end
   end

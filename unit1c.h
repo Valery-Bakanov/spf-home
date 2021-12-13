@@ -122,8 +122,6 @@ __published:	// IDE-managed Components
         TLMDEditColorSchemeDialog *LMD_ECSD0;
         TLMDEditGotoLineDialog *LMD_EGLD0;
         TMenuItem *mnuGoToNumber;
-        TMenuItem *N5;
-        TMenuItem *Thanks_LMD1;
         TPanel *PN0;
         TSplitter *SPL0;
         TMemo *M0_stdout;
@@ -196,8 +194,6 @@ __published:	// IDE-managed Components
         void __fastcall SelectSyntaxSheme(TObject *Sender);
         void __fastcall SelectSColorSheme(TObject *Sender);
         void __fastcall GotoLineN(TObject *Sender);
-//        void __fastcall Thanks_LMD_General(TObject *Sender);
-        void __fastcall About_AW(TObject *Sender);
         void __fastcall SPL0Moved(TObject *Sender);
         void __fastcall OnClickGetLua_01(TObject *Sender);
         void __fastcall OnClickGetEdg_01(TObject *Sender);
