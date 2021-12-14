@@ -204,8 +204,7 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в
 //
 char* __fastcall CreateUniqueFileName(char* FileName); // создание уникального имени файла при существовании файла с именем, заданным FileName
 //
-void __fastcall OutRepeatReady(char* s_Start, INT i, INT n, INT dn, char* s_End); // индикация готовности выполнения части цикла
-
+void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di, REAL Value, char* Fmt, char* s_After);
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -4764,7 +4763,7 @@ bool __fastcall c_DrawDiagrTLD()
      H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
      B_rect, // ширина горизонтальной полоски в пикселах
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
- char str[_256];
+ char str[_256]="\0";
 //
  if( !flagExistsTiers ) // массива Tiers[][] ещё нет...
  {
@@ -4911,7 +4910,7 @@ INT __fastcall  c_CalcParamsTLD()
 // для хранения/передачи данных между оператораи на ярусах ЯПФ
 // полагаем, что файл регистров ОБЩИЙ для всех параллельных вычислителей
 //
- char sN[_8192], sS[_8192], sW[_128];
+ char sN[_8192]="\0", sS[_8192]="\0", sW[_128]="\0";
  INT k,l, from_Op,to_Op, to_Tier, max_to_Tier;
  register INT i,j;
 //
@@ -4973,11 +4972,12 @@ INT __fastcall  c_CalcParamsTLD()
 //
 } // ---- конец  c_CalcParamsTLD -----------------------------------------------
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров ИГА и его ЯПФ -------------------------------
- char szOut[_4096]; // строка для выдачи интегрированных данных
+ char szOut[_4096]="\0"; // строка для выдачи интегрированных данных
  REAL AverWidth, // средняя ширина по ярусам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов невязок ширины по ярусам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины ярусов ЯПФ (кроме ярусов 1 и nTiers)
@@ -5011,17 +5011,11 @@ INT __fastcall c_PutParamsTiers()
 //
 // --- вычисляем ВАРИАТИВНОСТЬ -------------------------------------------------
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем ярусам ЯПФ
+ {
+   OutRepeatComplete(" * ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикация готовности выполнения части цикла
+//
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на ярусе iTier
   {
-//
-   OutRepeatReady(" * ", iTier, nTiers, 30, " ready" ); // индикация готовности выполнения части цикла
-
-//   if( !(iTier%(nTiers/30)) ) // индикация каждый 30-й раз..!
-//   {
-//    SB0->Text = Format(" * %.0f%% Ready",OPENARRAY(TVarRec,( (1e2*iTier)/nTiers ))).c_str();
-//    F1->SB->Repaint(); // перерисУем...
-//   }
-// -----------------------------------------------------------------------------
    Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на ярусе iTier
    dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон возможного перемещения Op по ярусам
 
@@ -5030,7 +5024,8 @@ INT __fastcall c_PutParamsTiers()
     sdOps += 1; // суммируем число ОПЕРАТОРОВ, которые могут быть перемещены по ярусам ЯПФ
     sdTiers += dTiers; // сумма диапазонов возможных перемещений по ярусам для оператора Op
    }
-  } // конец цикла по iOp (и iTier)
+  } // конец цикла по iOp
+ } // конец цикла по iTier
 //
 // === начало обработки информации о времени жизни данных между ярусами ЯПФ ====
 //
@@ -5062,7 +5057,7 @@ INT __fastcall c_PutParamsTiers()
    sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний / нижний ярус / число данных в этом промежутке
   else // последняя строка формата "n/$|m"
   {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:", &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
    n2=n1+1;
   }
 //
@@ -5195,16 +5190,22 @@ char* __fastcall CreateUniqueFileName(char* FileName)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall OutRepeatReady(char* s_Start, INT i, INT n, INT dn, char* s_End )
-{ // выдаёт процент выполненного цикла с шагом dn для текушего i из общего n
+void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
+                                  REAL Value, char* Fmt, char* s_After)
+{ // выдаёт процент выполненного цикла как плавающее Value по формату Fmt
+// с шагом di для текушего i из общего n при условии (i % n/di) # 0
+// выдача окружается строками s_Before и s_After
 //
- if( (i % nTiers/dn) ) // если есть остаток от деления по модулю - уходим...
+ if( i % (n/di) ) // если есть остаток от деления по модулю - уходим...
   return ;
 //
- SB0->Text = Format("%s%.0f%%%s",OPENARRAY( TVarRec,(s_Start,(1e2*i)/n,s_End) ) ).c_str();
+ char Fmt1[_256] = "%s";
+ strcat( Fmt1,Fmt ); // добавили Fmt
+ strcat( Fmt1,"%s" ); // добавили %s
+ SB0->Text = Format( Fmt1, OPENARRAY( TVarRec,(s_Before,Value,s_After) ) ).c_str();
  F1->SB->Repaint(); // перерисУем...
 //
-} // ----- конец OutRepeatReady -----------------------------------------------------
+} // ----- конец OutRepeatComplete ---------------------------------------------
 
 
 
