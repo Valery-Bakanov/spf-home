@@ -20,7 +20,7 @@ char Test_symb[] = "=/: |";
 //
 #define strEndZero(str) str[strlen(str)]='\0' // добавление '\0' в конец строки str
 //
-#define strNcpy(dest,source)  strncpy(dest,source,sizeof(dest)) // безопасное копирование dest <- source 
+#define strNcpy(dest,source)  strncpy(dest,source,sizeof(dest)) // безопасное копирование dest <- source
 //
 ////////////////////////////////////////////////////////////////////////////////
 // файл API_func.cpp ===========================================================
@@ -203,6 +203,9 @@ void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанав
 void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в false все флаги операторов-дублей Op в массиве дуг From/To=0/1 списка Edges[][]
 //
 char* __fastcall CreateUniqueFileName(char* FileName); // создание уникального имени файла при существовании файла с именем, заданным FileName
+//
+void __fastcall OutRepeatReady(char* s_Start, INT i, INT n, INT dn, char* s_End); // индикаци€ готовности выполнени€ части цикла
+
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -5010,6 +5013,15 @@ INT __fastcall c_PutParamsTiers()
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
   {
+//
+   OutRepeatReady(" * ", iTier, nTiers, 30, " ready" ); // индикаци€ готовности выполнени€ части цикла
+
+//   if( !(iTier%(nTiers/30)) ) // индикаци€ каждый 30-й раз..!
+//   {
+//    SB0->Text = Format(" * %.0f%% Ready",OPENARRAY(TVarRec,( (1e2*iTier)/nTiers ))).c_str();
+//    F1->SB->Repaint(); // перерис”ем...
+//   }
+// -----------------------------------------------------------------------------
    Op = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
    dTiers = c_GetMaxTierMaybeOp( Op ) - c_GetMinTierMaybeOp( Op ); // диапазон возможного перемещени€ Op по €русам
 
@@ -5018,7 +5030,7 @@ INT __fastcall c_PutParamsTiers()
     sdOps += 1; // суммируем число ќѕ≈–ј“ќ–ќ¬, которые могут быть перемещены по €русам яѕ‘
     sdTiers += dTiers; // сумма диапазонов возможных перемещений по €русам дл€ оператора Op
    }
-  } // конец цикла по iOp
+  } // конец цикла по iOp (и iTier)
 //
 // === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
 //
@@ -5179,6 +5191,20 @@ char* __fastcall CreateUniqueFileName(char* FileName)
  return NewFileName ;
 //
 } // ------ конец CreateUniqueFileName -----------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall OutRepeatReady(char* s_Start, INT i, INT n, INT dn, char* s_End )
+{ // выдаЄт процент выполненного цикла с шагом dn дл€ текушего i из общего n
+//
+ if( (i % nTiers/dn) ) // если есть остаток от делени€ по модулю - уходим...
+  return ;
+//
+ SB0->Text = Format("%s%.0f%%%s",OPENARRAY( TVarRec,(s_Start,(1e2*i)/n,s_End) ) ).c_str();
+ F1->SB->Repaint(); // перерис”ем...
+//
+} // ----- конец OutRepeatReady -----------------------------------------------------
 
 
 
