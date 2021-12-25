@@ -3872,7 +3872,8 @@ bool __fastcall c_ReadEdges(char FileName[])
   t_printf( "\n-E- Ќевозможно прочитать файл %s описани€ »√ј -E-\n-W- веро€тна некорректность при дальнейшей работе -W-",
                    NewFileName );
   flagExistsEdges = false ; // массив Mem_Edges[] не создан...
-  flagExistsTiers = false;
+  flagExistsOps   = false ;
+  flagExistsTiers = false ;
   return false ;
  }
 //
@@ -3928,6 +3929,7 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
  flagExistsEdges = true ; // всЄ нормально - массив Mem_Edges[] создан
 //
+ flagExistsOps = false; // число операторов неизвестно
  c_GetCountOps(); // подсчЄт числа операторов (вершин графа) Ѕ≈« ¬’ќƒЌџ’
 //
  c_GetCountOpsInput(); // подсчЄт числа операторов (вершин графа) “ќЋ№ ќ ¬’ќƒЌџ≈
@@ -4351,7 +4353,7 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
       xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
  INT iTier, iOp ,
      nOpsOnTier, // число операторов на €русе
-     minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // min/max операторов по €русам яѕ‘
+     minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
 //
      sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
      OpFrom, OpTo, nOutEdges, iOutEdge ; // ... то же ...
@@ -4359,6 +4361,8 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
 // =============================================================================
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
  {
+//
+  OutRepeatComplete(" * "__FUNC__"(): ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
 //
   nOpsOnTier = c_GetCountOpsOnTier(iTier); // число операторов на €русе iTier
 //
@@ -4689,8 +4693,15 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountOps()
-{ // возвращает число вершин »√ј без учЄта входных данных
-// // убираем повторы номеров операторов
+{ // возвращает число операторов (уникальных номеров вершин »√ј без учЄта входных данных)
+ if( flagExistsOps ) // количество операторов подсчитано
+  return nOps ;
+ else
+ {
+  DisplayMessage( "E", __FUNC__, messNotOps, ERR_NOT_MASSIVE_OPS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_OPS ;
+ }
+//
  if( !flagExistsEdges ) // нет массива Mem_Edges[]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
@@ -4713,6 +4724,8 @@ INT __fastcall c_GetCountOps()
  for( iEdge=1; iEdge<=nEdges; iEdge++ ) // по всем дугам начина€ с #1
   if( Edges_f(1,iEdge) ) // если true (у дубликатов - false )
     nOps ++ ;
+//
+ flagExistsOps = true; // число операторов (вершин) подсчитато
 //
  return nOps ;
 //
@@ -4930,11 +4943,15 @@ INT __fastcall  c_CalcParamsTLD()
 // ---- iBottomOfGap - Ќ»∆Ќяя граница промежутка определ€етс€ номером Ќ»∆Ќ≈√ќ €руса яѕ‘
  for( INT iBottomOfGap=1; iBottomOfGap<=nTiers+1; iBottomOfGap++ ) // по iBottomOfGap - нижней границе интервала в яѕ‘
  {
+//
+  OutRepeatComplete(" * "__FUNC__"(): ", iBottomOfGap, (nTiers+1), 50, (1.0e2*iBottomOfGap)/(nTiers+1), "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
+//
   strNcpy( sN, "" ); // очистили строку параметров диапазона €русов с "дном" в виде €руса iBottomOfGap
   l = 0; // число параметров данной строки
 //
-  for( i=0; i<iBottomOfGap; i++ ) // по €русам яѕ‘, не бќльшим (включающим) iBottomOfGap
+  for( i=0; i<iBottomOfGap; i++ ) // по €русам яѕ‘, не бќльшим (включа€) iBottomOfGap
   {
+//
    for( j=1; j<=c_GetCountOpsOnTier(i); j++ ) // по операторам по €русе j
    {
 //
@@ -5012,7 +5029,8 @@ INT __fastcall c_PutParamsTiers()
 // --- вычисл€ем ¬ј–»ј“»¬Ќќ—“№ -------------------------------------------------
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
  {
-   OutRepeatComplete(" * ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
+//
+  OutRepeatComplete(" * "__FUNC__"(): ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
 //
   for( iOp=1; iOp<=c_GetCountOpsOnTier(iTier); iOp++ ) // по номерам операторов на €русе iTier
   {
@@ -5196,13 +5214,14 @@ void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
 // с шагом di дл€ текушего i из общего n при условии (i % n/di) # 0
 // выдача окружаетс€ строками s_Before и s_After
 //
- if( i % (n/di) ) // если есть остаток от делени€ по модулю - уходим...
+ if( !(n/di) || // делить на 0 нельз€ !
+       i%(n/di) ) // если есть остаток от делени€ по модулю - уходим...
   return ;
 //
- char Fmt1[_256] = "%s";
- strcat( Fmt1,Fmt ); // добавили Fmt
- strcat( Fmt1,"%s" ); // добавили %s
- SB0->Text = Format( Fmt1, OPENARRAY( TVarRec,(s_Before,Value,s_After) ) ).c_str();
+ char _Fmt[_256] = "%s";
+ strcat( _Fmt,Fmt ); // добавили Fmt
+ strcat( _Fmt,"%s" ); // добавили %s
+ SB0->Text = Format( _Fmt, OPENARRAY( TVarRec,(s_Before,Value,s_After) ) ).c_str();
  F1->SB->Repaint(); // перерис”ем...
 //
 } // ----- конец OutRepeatComplete ---------------------------------------------

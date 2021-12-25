@@ -132,6 +132,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 //
 // ----- коды ошибок (коды возврата функций) -----------------------------------
 #define ERR_NOT_MASSIVE_EDGES -666 // нет массива Mem_Edges[], над которым производится действие
+#define ERR_NOT_MASSIVE_OPS   -667 // не определено число операторов в графе
 #define ERR_NOT_MASSIVE_TIERS -777 // нет массива Tiers[][], над которым производится действие
 #define ERR_IN_DATA -888 // некорректные входные данные
 #define ERR_RANGE_IN -1313 // ошибка диапазона входных параметров функции
@@ -294,9 +295,11 @@ INT nEdges, // всего число дуг в графе
 ////////////////////////////////////////////////////////////////////////////////
 bool flagExistsTiers = false , // сформирован ли массив Tiers[][] (после каждого считывания ИГА - false)
      flagExistsEdges = false , // сформирован ли Mem_Edges[]
-     flagCalcTLD = false ; // вычислен ли paramsTLD по Tiers[][]
+     flagExistsOps   = false , // число операторов (вершин графа) не определено
+     flagCalcTLD     = false ; // вычислен ли paramsTLD по Tiers[][]
 char messNotTiers[] = "массив ЯРУСОВ не сформирован", // сообщения об ошибках
      messNotEdges[] = "массив ДУГ не сформирован",
+     messNotOps[]   = "число ОПЕРАТОРОВ не определено",
      messParams1[]  = "некорректен диапазон параметров(1)",
      messParams2[]  = "некорректен диапазон параметров(2)",
      messParams3[]  = "некорректен диапазон параметров(3)";
