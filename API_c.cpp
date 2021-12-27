@@ -60,7 +60,7 @@ INT  __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2); // обмен между операторам
 INT  __fastcall c_GetOpsMoves(); // возвращает текущее значение числа перемещений операторов с яруса на ярус return nMoves ;
 INT  __fastcall c_CountMovesZeroing(); // обнуляет значение счётчика числа перемещений операторов с яруса на ярус ЯПФ
 //
-INT  __fastcall c_PutEdgesToTextFrame(); // выдаёт массив дуг Mem_Edges[] в окно для визуализации
+INT  __fastcall c_PutEdgesToTextFrame(); // выдаёт массив дуг Mem_Edges[][] в окно для визуализации
 bool __fastcall c_DelayMS(INT Sec); // ждёт Sec милли-секунд, давая при этом поработать Windows
 bool __fastcall c_SoundPlay(char str[]); // проигрывает мелодию из заданного файла
 //
@@ -190,7 +190,7 @@ INT  __fastcall c_ShellExecute( char *Operation, char *File, char *Parameters, c
 //
 INT  __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMessage); // запуск процесса-потомка
 //==============================================================================
-bool __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[]
+bool __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[][]
 bool __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет дуги в общий массив дуг
 bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
 INT  __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
@@ -288,7 +288,7 @@ char* __fastcall c_SaveEdgesVizu(char FileName[])
 { // вывод связей между операторами
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
@@ -324,7 +324,7 @@ char* __fastcall c_SaveInOutOpVizu(char FileName[])
  INT jOpOnTier, iOp, j, nIn,nOut;
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
@@ -395,7 +395,7 @@ char* __fastcall c_SaveParamsVizu(char FileName[])
 { // вывод числа ВХОДЯЩИХ и ВЫХОДЯЩИХ для операторов
  FILE *fptr = NULL; // рабочий указатель на файл
 //
- if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
@@ -582,7 +582,7 @@ bool __fastcall c_ReadTiers(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
 { // true - если наличествует дуга между операторами Op1 -> Op2
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с false
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с false
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -626,7 +626,7 @@ INT __fastcall GetParamsGraph()
 
 // PG - глобальная ! -----------------------------------------------------------
 
- if( !flagExistsEdges && !flagExistsTiers ) // нет массивов Mem_Edges[] и Tiers[][]
+ if( !flagExistsEdges && !flagExistsTiers ) // нет массивов Mem_Edges[][] и Tiers[][]
  {
   DisplayMessage( "E", __FUNC__, "массивы ДУГ и ЯРУСОВ не сформированы", ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -782,10 +782,10 @@ INT __fastcall GetOpByMinOutOnTiers(INT minTier, INT maxTier)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall AddEdge(INT fromOp, INT toOp)
-{ // --- прибавляет дугу и проверяет, есть ли еще место в Mem_Edges[] ----------
+{ // --- прибавляет дугу и проверяет, есть ли еще место в Mem_Edges[][] ----------
  char str[_256];
 
- if( !flagExistsEdges ) // нет массива Mem_Edges[]...
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -795,11 +795,11 @@ INT __fastcall AddEdge(INT fromOp, INT toOp)
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////c/////////////////////////////////////////////////////////
 
- if( ( nEdges+3 ) < Max_Edges ) // размера массива Mem_Edges[] ещё хватает!..
+ if( ( nEdges+3 ) < Max_Edges ) // размера массива Mem_Edges[][] ещё хватает!..
   goto cont;
 //
  Max_Edges *= stockMem; // увеличили в stockMem раз
- Mem_Edges = (me*) realloc( Mem_Edges, Max_Edges * sizeof(INT) ); // реаллокировали память под Mem_Edges[]...
+ Mem_Edges = (me*) realloc( Mem_Edges, Max_Edges * sizeof(INT) ); // реаллокировали память под Mem_Edges[][]...
 //
  if( !Mem_Edges ) // совсем плохо - память в "куче" закончилась
  {
@@ -807,14 +807,14 @@ INT __fastcall AddEdge(INT fromOp, INT toOp)
                              Max_Edges );
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
   MessageBeep(MB_OK); // звуковое предупреждение...
-  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
+  flagExistsEdges = false ; // массив Mem_Edges[][] не создан...
   return false ;
  }
 //
  t_printf( "\n-I- Массив ДУГ (00) перераспределён на %d x %d = %d элементов -I-",
                   Max_Edges );
 //
- cont: // не надо дополнительно аллокировать память для Mem_Edges[]
+ cont: // не надо дополнительно аллокировать память для Mem_Edges[][]
 //
 //////////////////////c/////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -853,7 +853,7 @@ INT __fastcall GetFirstFromOpToOp(INT toOp)
 { // --- вернуть ПЕРВЫЙ по счёту оператор fromOp, являющийся ВХОДЯЩИМ
 // --- по дуге графа относительно toOp
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1074,7 +1074,7 @@ INT __fastcall GetCountInOp(INT toOp, INT Numb)
 // ----- если неудача - возвращается -1
  INT nIn = 0;
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1175,7 +1175,7 @@ INT __fastcall c_GetMinTierMaybeOp(INT Op)
  INT fromOp, fromTier,
      retTier = 0;
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1384,7 +1384,7 @@ INT __fastcall c_DelTier(INT Tier)
 INT __fastcall c_GetCountEdges()
 { // возвращает общее число дуг в информационном графе алгоритма (ИГА)
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1550,7 +1550,7 @@ INT __fastcall c_PutTiersToTextFrame()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutEdgesToTextFrame()
-{ // выдаёт массив дуг Mem_Edges[] в окно для визуализации
+{ // выдаёт массив дуг Mem_Edges[][] в окно для визуализации
  char str[_2048];
 //
  if( !flagExistsEdges ) // если массив Edges[][] пуст - выйти и вернуть false
@@ -1565,7 +1565,7 @@ INT __fastcall c_PutEdgesToTextFrame()
  for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем выявленным дугам информационного графа алгоритма
   t_printf( "#%d: %d -> %d", iEdge, Edges(0,iEdge), Edges(1,iEdge) ); // готовим строку для дуги iEdge
 //
- return true; // всё нормально - массив Mem_Edges[] выдан в текстовое окно
+ return true; // всё нормально - массив Mem_Edges[][] выдан в текстовое окно
 //
 } // --- конец c_PutEdgesToTextFrame--------------------------------------------
 
@@ -1628,7 +1628,7 @@ INT __fastcall c_GetCountInEdgesByOp(INT Op)
 { // --- вернуть число ВХОДЯЩИХ дуг для оператора Op ---------------------------
  INT nIn = 0, iEdge;
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1659,7 +1659,7 @@ INT __fastcall c_GetCountOutEdgesByOp(INT Op)
 { // --- вернуть число ВЫХОДЯЩИХ дуг для оператора Op --------------------------
  INT nOut = 0, iEdge;
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -1690,7 +1690,7 @@ INT __fastcall c_GetNumbInEdgeByOp(INT Numb, INT Op)
  INT nIn = 0,
      maxNumb = c_GetCountInEdgesByOp( Op ); // общее число ВХОДЯЩИХ дуг оператора Op
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -1723,7 +1723,7 @@ INT __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op)
  INT nOut = 0,
      maxNumb = c_GetCountOutEdgesByOp( Op ); // общее число ВЫХОДЯЩИХ дуг оператора Op;
 //
- if( !flagExistsEdges ) // массив Mem_Edges[] ещё не существует - выходим с ошибкой
+ if( !flagExistsEdges ) // массив Mem_Edges[][] ещё не существует - выходим с ошибкой
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
   return ERR_NOT_MASSIVE_TIERS ;
@@ -3103,7 +3103,7 @@ char str[_4096], w[_256], sOut[_128], sSave[_128];;
  countAll = countOps * countCalcs;
  countOut = countAll / 100; // каждый процент выдаём
 //
- if( countOps <= 0 ) // проблемы! Скорее всего массива Mem_Edges[] не существует (соответсвующий файл не был загружен)
+ if( countOps <= 0 ) // проблемы! Скорее всего массива Mem_Edges[][] не существует (соответсвующий файл не был загружен)
  {
   t_printf( "\n-W- Число ОПЕРАТОРОВ не определено. Возможно, файл данных графа не был загружен... -W-\n" );
   return false ;
@@ -3633,7 +3633,7 @@ bool __fastcall c_IsOpContainOnTiers(INT Op)
  bool out = false;
  register INT i;
 //
- if( !flagExistsEdges ) // массива Mem_Edges[] не существует...
+ if( !flagExistsEdges ) // массива Mem_Edges[][] не существует...
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -3856,13 +3856,17 @@ char* __fastcall c_SaveEdges(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_ReadEdges(char FileName[])
-{ // читает из файла FileName данные о графе (массив Mem_Edges[] связей вершин
-// - и список операторов на уровне Tier = 0 - входные данные ); Mem_Edges[]
+{ // читает из файла FileName данные о графе (массив Mem_Edges[][] связей вершин
+// - и список операторов на уровне Tier = 0 - входные данные ); Mem_Edges[][]
 // - и Tiers[][] - глобальные; при ошибке открытия файла FileName возращается false
  char str[_2048*4];
  FILE *fptr = NULL; // указатель на файл
  bool flagEdges = false, // флаг начала описания дуг в ИГA
       flagMLC   = false; // флаг многострочного комментария (Many Lines Comment)
+//
+ flagExistsEdges =  // массив Mem_Edges[][] не создан...
+ flagExistsOps   =  // nOps не вычислено
+ flagExistsTiers = false ; // массив Tiers[][] не создан...
 //
  char NewFileName[_512];
  strcpy( NewFileName,ReformFileName(FileName,extGv) ); // преобразованное имя файла
@@ -3871,9 +3875,6 @@ bool __fastcall c_ReadEdges(char FileName[])
  {
   t_printf( "\n-E- Невозможно прочитать файл %s описания ИГА -E-\n-W- вероятна некорректность при дальнейшей работе -W-",
                    NewFileName );
-  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
-  flagExistsOps   = false ;
-  flagExistsTiers = false ;
   return false ;
  }
 //
@@ -3927,10 +3928,11 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
  t_printf( "\n-I- Файл %s описания графа успешно прочитан -I-", FileNameEdges );
 //
- flagExistsEdges = true ; // всё нормально - массив Mem_Edges[] создан
+ flagExistsEdges = true ; // всё нормально - массив Mem_Edges[][] создан
 //
  flagExistsOps = false; // число операторов неизвестно
  c_GetCountOps(); // подсчёт числа операторов (вершин графа) БЕЗ ВХОДНЫХ
+ flagExistsOps = true; // ... на всякий случай !
 //
  c_GetCountOpsInput(); // подсчёт числа операторов (вершин графа) ТОЛЬКО ВХОДНЫЕ
 //
@@ -3951,16 +3953,16 @@ bool __fastcall c_ReadEdges(char FileName[])
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
-{ // тестирует необходимость увеличения массива дуг Mem_Edges[] и при
+{ // тестирует необходимость увеличения массива дуг Mem_Edges[][] и при
 // необходимости увеличивает его в stockMem раз. При успехе возращает true...
 //
- if( nEdges < Max_Edges ) // памяти для массива Mem_Edges[] достаточно...
+ if( nEdges < Max_Edges ) // памяти для массива Mem_Edges[][] достаточно...
   return true;
 //
 // ===== памяти не хватает =====================================================
 //
  Max_Edges *= stockMem; // захватываем в stockMem раз больше, чем было...
- Mem_Edges = ( me* ) realloc( Mem_Edges, Max_Edges * sizeof(me) ); // реаллокировали память под Mem_Edges[]...
+ Mem_Edges = ( me* ) realloc( Mem_Edges, Max_Edges * sizeof(me) ); // реаллокировали память под Mem_Edges[][]...
 //
  if( !Mem_Edges ) // совсем плохо - реалокировать дополнительную память не получилось..!
  {
@@ -3969,7 +3971,7 @@ bool __fastcall TestAndAddMemoryForEdges( INT nEdges )
                              Max_Edges );
   MessageBeep(MB_OK); // звуковое предупреждение...
   MessageBox(0, str, "Предупреждение", MB_OK | MB_ICONWARNING | MB_TOPMOST);
-  flagExistsEdges = false ; // массив Mem_Edges[] не создан...
+  flagExistsEdges = false ; // массив Mem_Edges[][] не создан...
   return false ;
  } // конец  if( Mem_Edges == NULL )
  else
@@ -4015,7 +4017,7 @@ bool __fastcall ParseStringAndAddEdges( char *str )
   if( sscanf( str, "%d->%d", &Edges(0,nEdges), &Edges(1,nEdges) ) == 2 ) // ровно 2 поля прочитаны
   {
    nEdges ++ ;
-   if( !TestAndAddMemoryForEdges( nEdges ) ) // надо ли добавлять память для Mem_Edges[] ?
+   if( !TestAndAddMemoryForEdges( nEdges ) ) // надо ли добавлять память для Mem_Edges[][] ?
     return false;
   } // конец  if( sscanf( str, "%d -> %d",
  else // ровно 2 поля прочитать на удалось..!
@@ -4420,7 +4422,7 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 INT __fastcall c_GetNumbOp(INT Numb)
 { // возвращает номер Numb оператора (исключая входные) по мере вхождения в файл дуг
 // убираем повторы номеров операторов
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4511,7 +4513,7 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo,INT Op )
 INT __fastcall c_GetCountOpsInput()
 { // возвращает только ВХОДНЫЕ вершины (0-й ярус) в ИГА ------------------------
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4556,7 +4558,7 @@ INT __fastcall c_GetCountOpsInput()
 INT __fastcall c_GetCountOpsOutput()
 { // возвращает число вершин в ИГА (только выходные данные)
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4601,7 +4603,7 @@ INT __fastcall c_GetCountOpsOutput()
 INT __fastcall c_GetNumbOpInput(INT Numb)
 { // возвращает номер Numb оператора (только из ВХОДНЫХ операторов)
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4648,7 +4650,7 @@ INT __fastcall c_GetNumbOpInput(INT Numb)
 INT __fastcall c_GetNumbOpOutput(INT Numb)
 { // возвращает номер Numb вершины (только из ВЫХОДНЫХ операторов)
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // нет массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -4694,15 +4696,15 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountOps()
 { // возвращает число операторов (уникальных номеров вершин ИГА без учёта входных данных)
- if( flagExistsOps ) // количество операторов подсчитано
-  return nOps ;
- else
+ if( !flagExistsOps ) // количество операторов nOps не подсчитано
  {
-  DisplayMessage( "E", __FUNC__, messNotOps, ERR_NOT_MASSIVE_OPS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_OPS ;
+  DisplayMessage( "E", __FUNC__, messNotOps, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
+  return ERR_NOT_MASSIVE_EDGES ;
  }
+ else
+  return nOps ;
 //
- if( !flagExistsEdges ) // нет массива Mem_Edges[]
+ if( !flagExistsEdges ) // не существует массива Mem_Edges[][][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -5017,7 +5019,7 @@ INT __fastcall c_PutParamsTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
- char szStatTiers[_256]; // данные статистики ярусов ЯПФ
+ char szStatTiers[_256]="\0"; // данные статистики ярусов ЯПФ
 //
  if( nTiers != 1 )
   snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, СКО= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g",
@@ -5055,7 +5057,7 @@ INT __fastcall c_PutParamsTiers()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
- if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
+ if( !PutParamsTLDOnTextFrame ) // обход вычисления времени жизни данных
   goto calc_TLD ; // ...да простит меня Эдсгер Вибе Дейкстра! -------------
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -5117,7 +5119,7 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 %sоператоров на ярусе/ярус (min:max)= %d/%d:%d/%d\
 %sвариативность ЯПФ: Vn|Vt|Vnt= %.4g|%s|%s\
 %sср.арифм.длин дуг= %.4g ярусов\
-%s";
+%s\0";
 //
  snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
 //
@@ -5142,7 +5144,7 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 //
  StatTiers.AAL, // среднеарифметическая длина дуги
 //
- szStatTLD ); // данные статистики времени жизни локальных данных (ParamsTLD)
+ PutParamsTLDOnTextFrame ? szStatTLD : " " ); // данные статистики времени жизни локальных данных (ParamsTLD) ... ОПЦИОНАЛЬНО !!!
 //
  F2->L_GP->Caption = szOut; // вывод основных параметров ЯПФ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
@@ -5151,7 +5153,7 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
  strcpy( szStatTLD, "\n" );
  strcat( szStatTLD, szTemp ); // подготовили строку для вывода в файл протокола
 //
- if( !PutParamsDataLiveOnTextFrame ) // обход вычисления времени жизни данных
+ if( !PutParamsTLDOnTextFrame ) // обход вычисления времени жизни данных
   strcpy( szStatTLD, "\0" );
 //
 // ===== вывод рассчитанных данных в протокол расчёта (файл) ===================

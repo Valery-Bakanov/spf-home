@@ -131,12 +131,12 @@ TStringList *paramsTLD = new( TStringList ) ;
 #define maxRet 1000000000 // максимальное возвращаемое число (не более 2^32... с запАсом!)
 //
 // ----- коды ошибок (коды возврата функций) -----------------------------------
-#define ERR_NOT_MASSIVE_EDGES -666 // нет массива Mem_Edges[], над которым производится действие
+#define ERR_NOT_MASSIVE_EDGES -666 // нет массива Mem_Edges[][], над которым производится действие
 #define ERR_NOT_MASSIVE_OPS   -667 // не определено число операторов в графе
 #define ERR_NOT_MASSIVE_TIERS -777 // нет массива Tiers[][], над которым производится действие
 #define ERR_IN_DATA -888 // некорректные входные данные
 #define ERR_RANGE_IN -1313 // ошибка диапазона входных параметров функции
-#define ERR_NOT_MEMORY -133 // нехватка памяти для Mem_Edges[] и/или Tiers[][]
+#define ERR_NOT_MEMORY -133 // нехватка памяти для Mem_Edges[][] и/или Tiers[][]
 #define ERR_TRANSFORM -131313 // ошибка преобразования числового параметра по sscanf
 // #define ERR_LIMITS_OP_CALC -131331 // проблемы в c_canExecOpCalc(INT Op, INT Calc)
 #define ERR_METRIC -666.777 // невозможно найти метрику вершины (оператора) или дуги
@@ -184,7 +184,7 @@ char *spf_pt0  = "=\\d{1,}/\\d{1,}:", // =12/155: // шаблоны для регулярных выра
 //
 #define GetRand(a,b) ( rand() % ( (b)-(a)+1)+(a) ) // случайное число от a до b (включительно)
 //
-char Ident[] = "Bakanov Valery Mikhailovich, Moscow, Russia, 2009-2021\n \
+char Ident[] = "Bakanov Valery Mikhailovich, Moscow, Russia, 2009-2022\n \
 Автор программного продукта Валерий Баканов не является ярым сторонником Объектно-Ориентированного Программирования \
 (внутри автора точно сидит Линус Торвальдс!) и поэтому большая часть кода не использует ООП\n \
 The author of the software Valery Bakanov is not an ardent supporter of Object-Oriented Programming \
@@ -271,7 +271,7 @@ INT _maxOpsOnTier     = 100, // max число операций на ярусе  ( ИЗМЕНЯЕМОЕ !!! )
 INT *pTiers  = NULL, // указатель на (плоский) массив Tiers
     *npTiers = NULL; // указатель на временный массив
 // 2D-массив Tiers[][] раскладывается по СТРОКАМ в одномерный массив с адреса указателя pTiers
-// здесь i - номер яруса (начиная с 0), j - номер оператора на ярусе (j начинаем с 1) 
+// здесь i - номер яруса (начиная с 0), j - номер оператора на ярусе (j начинаем с 1)
 #define Tiers(i,j) pTiers[(i)*(_maxOpsOnTier+1)+(j)] // обращение к 2D-массиву Tiers как к плоскому
 ////////////////////////////////////////////////////////////////////////////////
 #define stockMem 1.667 // величина "запаса" при увеличении массивов
@@ -294,7 +294,7 @@ INT nEdges, // всего число дуг в графе
     nMoves = 0; // глобальная переменная для подсчёта успешных перемещений операторов между ярусами
 ////////////////////////////////////////////////////////////////////////////////
 bool flagExistsTiers = false , // сформирован ли массив Tiers[][] (после каждого считывания ИГА - false)
-     flagExistsEdges = false , // сформирован ли Mem_Edges[]
+     flagExistsEdges = false , // сформирован ли Mem_Edges[][]
      flagExistsOps   = false , // число операторов (вершин графа) не определено
      flagCalcTLD     = false ; // вычислен ли paramsTLD по Tiers[][]
 char messNotTiers[] = "массив ЯРУСОВ не сформирован", // сообщения об ошибках
@@ -320,7 +320,7 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
  "Pos_F1", // [2] положение формы главного окна
   "Top","Left","Width","Height","partheightStdout",
  "Pos_F2", // [3] оложение формы дочернего окна
-  "Top","Left","Width","Height","PutParamsTiersOnTextFrame","PutParamsDataLiveOnTextFrame",
+  "Top","Left","Width","Height","PutParamsTiersOnTextFrame","PutParamsTLDOnTextFrame",
  "LastScript", // [4] последний файл скрипта
   "ScriptFileName",
  "LMD_EditViewColors", // [5] цвета окна редактирования Lua
@@ -419,8 +419,8 @@ WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" для компон
            ActiveSyntaxScheme = "defSyntaxScheme";
 char extSchemes[] = "xml"; // расширение файлов схем цветов и синтаксиса ( БЕЗ ТОЧКИ )
 ////////////////////////////////////////////////////////////////////////////////
-bool PutParamsTiersOnTextFrame = false, // если трудно обдумать быстро бегущие данные (задаётся в INI-файле)
-     PutParamsDataLiveOnTextFrame = false; // выводить ли данные о времени жиэни в окно F2
+bool PutParamsTiersOnTextFrame = false, // если трудно осмыслить быстро бегущие данные (задаётся в INI-файле)
+     PutParamsTLDOnTextFrame   = false; // выводить ли данные о времени жиэни в окно F2 (так же)
 // при true выводится в текстовое окно то же самое, что в нижней части текстового окна вывода
 ////////////////////////////////////////////////////////////////////////////////
 bool luaExecute = false; // флаг времени выполнения Lua (при выполнеЕнии true, иначе false)
@@ -1099,7 +1099,7 @@ void __fastcall Read_Config()
  TEV0->Color                     = tINI->ReadInteger(RWC.Sect5, RWC.Sect5_Var8, clWhite);
 //
  PutParamsTiersOnTextFrame       = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var5, 0); // выводить ли параметры ЯПФ в текстовый фрейм
- PutParamsDataLiveOnTextFrame    = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var6, 0); // выводить ли параметры времени жизни данных в F2
+ PutParamsTLDOnTextFrame         = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var6, 0); // выводить ли параметры времени жизни данных в F2
 //
  F1->Master_Timer->Interval      = tINI->ReadInteger(RWC.Sect6, RWC.Sect6_Var1, 10); // интевал главного таймера (мсек)
 //
@@ -1660,7 +1660,7 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
  else
   strNcpy( FileNameEdges, OD_Edg->FileName.c_str() ); // новое имя файла описания информационного графа
 //
- if ( c_ReadEdges( FileNameEdges ) == false ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[]...
+ if ( c_ReadEdges( FileNameEdges ) == false ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[][]...
  {
   t_printf( "\n-!- %s(): файл описания информационного графа %s прочитать не удалось -!-", UpperCase(FileNameEdges), __FUNC__ );
   MessageBeep( MB_OK ); // звуковое предупреждение...
@@ -1732,7 +1732,7 @@ void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
-{ // выбирает ИГА-файл, читает его в Mem_Edges[] и выводит в текстовый фрейм ------
+{ // выбирает ИГА-файл, читает его в Mem_Edges[][] и выводит в текстовый фрейм ------
  OD_Edg->InitialDir = ExtractFilePath ( Application->ExeName ); // считываем из текущего каталога
 //
  OD_Edg->Files->Clear(); // чистим историю
@@ -1746,7 +1746,7 @@ void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
  else
   strNcpy( FileNameEdges, OD_Edg->FileName.c_str() ); // новое имя файла описания информационного графа
 //
- if ( !c_ReadEdges( FileNameEdges ) ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[]...
+ if ( !c_ReadEdges( FileNameEdges ) ) // если не удалось прочитать данные информационного графа в массив Mem_Edges[][]...
  {
   t_printf( "\n-!- %s(): файл описания информационного графа %s прочитать не удалось -!-", UpperCase(FileNameEdges), __FUNC__ );
   MessageBeep( MB_OK ); // звуковое предупреждение...
@@ -1757,7 +1757,7 @@ void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
 //
  c_PutEdgesToTextFrame(); // вывести ИГА в текстовое окно ----------------------
 //
- flagExistsEdges = true;
+ flagExistsEdges =
  flagExistsTiers = false;
 } //----------------------------------------------------------------------------
 
@@ -1770,9 +1770,9 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  INT iOp, fromOp, toOp, i;
  char str[_2048], w[_256];
 //
- if( !c_ReadEdges( FileName ) ) // читаем ИГА-файл в массив Mem_Edges[]
+ if( !c_ReadEdges( FileName ) ) // читаем ИГА-файл в массив Mem_Edges[][]
  {
-  flagExistsEdges = false;
+  flagExistsEdges =
   flagExistsTiers = false;
 //
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение

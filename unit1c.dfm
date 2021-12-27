@@ -6,7 +6,7 @@ object F1: TF1
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   BorderIcons = [biSystemMenu, biMinimize, biHelp]
-  Caption = ' SPF@home client ver. 4.4 (2015-2021)'
+  Caption = ' SPF@home client ver. 4.4 (2015-2022)'
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
