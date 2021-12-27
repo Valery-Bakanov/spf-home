@@ -3928,7 +3928,7 @@ bool __fastcall c_ReadEdges(char FileName[])
 //
  t_printf( "\n-I- ‘айл %s описани€ графа успешно прочитан -I-", FileNameEdges );
 //
- flagExistsEdges = true ; // всЄ нормально - массив Mem_Edges[][] создан
+ flagExistsEdges = true ; // массив Mem_Edges[][] создан !!!
 //
  flagExistsOps = false; // число операторов неизвестно
  c_GetCountOps(); // подсчЄт числа операторов (вершин графа) Ѕ≈« ¬’ќƒЌџ’
@@ -4696,15 +4696,11 @@ INT __fastcall c_GetNumbOpOutput(INT Numb)
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountOps()
 { // возвращает число операторов (уникальных номеров вершин »√ј без учЄта входных данных)
- if( !flagExistsOps ) // количество операторов nOps не подсчитано
- {
-  DisplayMessage( "E", __FUNC__, messNotOps, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
-  return ERR_NOT_MASSIVE_EDGES ;
- }
- else
+//
+ if( flagExistsOps ) // количество операторов nOps подсчитано..!
   return nOps ;
 //
- if( !flagExistsEdges ) // не существует массива Mem_Edges[][][]
+ if( !flagExistsEdges ) // не существует массива Mem_Edges[][]
  {
   DisplayMessage( "E", __FUNC__, messNotEdges, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
@@ -5144,7 +5140,7 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
 //
  StatTiers.AAL, // среднеарифметическа€ длина дуги
 //
- PutParamsTLDOnTextFrame ? szStatTLD : " " ); // данные статистики времени жизни локальных данных (ParamsTLD) ... ќѕ÷»ќЌјЋ№Ќќ !!!
+ PutParamsTLDOnTextFrame ? szStatTLD : "" ); // данные статистики времени жизни локальных данных (ParamsTLD) ... ќѕ÷»ќЌјЋ№Ќќ !!!
 //
  F2->L_GP->Caption = szOut; // вывод основных параметров яѕ‘ графа
  F2->L_GP->Repaint(); // принудительно перерисовываем
@@ -5189,7 +5185,7 @@ char* __fastcall CreateUniqueFileName(char* FileName)
 //
  char OldFileName[_512], NewFileName[_512]="\0", Comma[]=".\0";
 //
- Delay( 100 ); // ждЄм 0,1 дл€ гарантированного дистижени€ уникалности нового имени файла
+ Delay( 100 ); // ждЄм 0,1 дл€ гарантированного дистижени€ уникальности нового имени файла
 //
  strcpy( OldFileName, FileName ); // исходное им€ файла сохран€ем в OldFileName
  OldFileName[ strrchr(OldFileName,Comma[0]) -
@@ -5216,7 +5212,7 @@ void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
 // с шагом di дл€ текушего i из общего n при условии (i % n/di) # 0
 // выдача окружаетс€ строками s_Before и s_After
 //
- if( !(n/di) || // делить на 0 нельз€ !
+ if( !(n/di) || // делить на 0 нельз€ !!!
        i%(n/di) ) // если есть остаток от делени€ по модулю - уходим...
   return ;
 //
