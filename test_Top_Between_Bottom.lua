@@ -132,7 +132,7 @@ for iTier=1,GetCountTiers() do -- по €русам яѕ‘
    for nOp=1,GetCountOpsOnTier(iTier) do -- по пор€дковым номерам операторов на €русе iTier  
       OpsOnTiers[iTier][nOp]=GetOpByNumbOnTier(nOp,iTier) -- вз€ть номер оператора nOp
 end end -- конец циклов for по iTier и for по nOp
-end -- конец функции f_OpsOnTiers(0
+end -- конец функции f_OpsOnTiers()
 --===
 local function f_OutTiers() -- вывод яѕ‘ из массива OpsOnTiers в текстовый фрейм
 OutLine( "\n--- ярусов яѕ‘ = " .. GetCountTiers() .. " ---") -- вывод заголовка
