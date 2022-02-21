@@ -107,15 +107,14 @@ end -- конец функции SearchToOp()
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-
-
+                 
 local function Visual() -- визуализация состояния ЯПФ
 AddLineToTextFrame("=============================================================================")  
 PutTiersToTextFrame() 
 PutParamsTiers() 
 ClearDiagrArea() 
 DrawDiagrTiers()
-DelayMS( -3  )
+DelayMS( -1  )
 end -- конец функции Visual()
 
 --------------------------------------------------------------------------------------------------------
@@ -129,15 +128,15 @@ local H,iTier,j,nTiers,nOps,iOp, fromTier,toTier,newTier
 
 for i=1, 1000000000,1 do -- цикл по информационным графам алгоритмов
 --
-projectName = "e916_o624_t89" -- имя файла по умолчанию
+projectName = "mnk_5" -- имя обрабатываемого ИГА-файла 
 if i%2==0 then
-projectName = "slau_5"
+projectName = "squa_equ_2.pred"
 elseif i%3==0 then
-projectName = "slau_7"
-elseif i%4==0 then
 projectName = "slau_3"
+elseif i%4==0 then
+projectName = "slau_4"
 elseif i%5==0 then
-projectName = "slau_10"
+projectName = "m_matr_4"
 end
 --
 ClearTextFrame() -- очистить текстовое окно
@@ -147,12 +146,6 @@ ClearTextFrame() -- очистить текстовое окно
 CreateTiersByEdges( projectName .. ".gv" ) -- создать ЯПФ по ИГА
 --
 Visual() -- визуализация состояния ЯПФ
---
---print( debug.gethook(L) )
---
---if MessageDialog( "Задержка", "Для продолжения нажмите YES","11000000",0) ~= 6 then
---return
---end
 --
 nTiers=GetCountTiers() -- общее число ярусов
 nOps=GetCountOps() -- общее число операторов 
@@ -174,7 +167,7 @@ then goto cont_iTier end
 -- верхняя граница цикла изменяется (что в Lua недопустимо)
 --
 --border = averH -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-border = GetCountOpsOnTier(iTier) -1 -- !!! новая гранитца !!!!!!!!!!!!!
+border = GetCountOpsOnTier(iTier) -1 -- !!! новая граница !!!!!!!!!!!!!
 --
 j=1 -- начало цикла по операторам на ярусе iTier
 repeat 
