@@ -173,18 +173,21 @@ static int  luaPanic( lua_State* L ); // функция паники Lua
 //==============================================================================
 ////////////////////////////////////////////////////////////////////////////////
 //
-char *spf_pt0  = "=\\d{1,}/\\d{1,}:", // =12/155: // шаблоны для регулярных выражений
-     *spf_pt00 = "-[a-zA-Zа-яА-Я]{1}[_a-zA-Zа-яА-Я0-9]{0,}", // -param_1
-     *spf_pt01 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}", // -par_1 m1
-     *spf_pt02 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}", // -parr_2 m1 m2
-     *spf_pt03 = "-[a-zA-Z]{1}[_a-zA-Z0-9]{0,}(\\s{1,}[+-]{0,1}\\d{0,}\\.{0,1}\\d{0,}){2}"; // -parr_2 m1 m2
+char
+pattern_01[] = "[=][0-9]{1,}[/][0-9]{1,}[:]" // =n1/n2: -name1 Val1 -name2 Val2 ...
+               "([ ][-][A-za-x0-9_]{1,}[ ][.,0-9]{1,}){0,}" // повтор всего до бесконечности
+               ;
+char
+pattern_02[] = "[=][0-9]{1,}[/][0-9]{1,}[:]" // =n1/n2: -name1 minVal1 maxval1 -name2 minVal2 maxVal2 ...
+               "([ ][-][A-za-x0-9_]{1,}[ ][.,0-9]{1,}[ ][.,0-9]{1,}){0,}" // повтор всего до бесконечности
+               ;
 //
 #define strcat(dest,src) strncat(dest,src,sizeof(dest)-strlen(dest)-5) // безопасное добавление src к dest
 // !!!!! при >=5 всё нормально, при <5 имеем останов в metametod "__newindex" строка 274 OpsCalcs[subTiers][mCalc]=iOp
 //
 #define GetRand(a,b) ( rand() % ( (b)-(a)+1)+(a) ) // случайное число от a до b (включительно)
 //
-char Ident[] = "Bakanov Valery Mikhailovich, Moscow, Russia, 2009-2022\n \
+char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2022\n \
 Автор программного продукта Валерий Баканов не является ярым сторонником Объектно-Ориентированного Программирования \
 (внутри автора точно сидит Линус Торвальдс!) и поэтому большая часть кода не использует ООП\n \
 The author of the software Valery Bakanov is not an ardent supporter of Object-Oriented Programming \
