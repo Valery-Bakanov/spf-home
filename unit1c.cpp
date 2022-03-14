@@ -1552,32 +1552,6 @@ void __fastcall TF1::OnClickGetRar_01(TObject *Sender)
 } //----------------------------------------------------------------------------
 
 
-void __fastcall GetFileFromServer( char FileName[] )
-{ // получить файл с HTTP-сервера ( FileNameInServer - полное имя файла на сервере,
- char FileNameOnServer[_512], FileNameOnClient[_512]; // полные имена файла на сервере и клиенте
-//
- TMemoryStream *UnLoadStream = new TMemoryStream;  // создаём поток для сохранения вЫгруженного из Сети файла
-//
-// --- полный путь к каталогу исходных данных (включая слэш в конце)
- snprintf( PathToSubDirInData,sizeof(PathToSubDirInData), "%s%s\\", ExtractFilePath ( Application->ExeName ), NameSubDirInData);
- if( !DirectoryExists( PathToSubDirInData ) ) // если не существует этого каталога...
-  if( !CreateDir( PathToSubDirInData ) ) // если не удалось создать...
-   strNcpy( PathToSubDirInData, '\0' ); // обнуляем путь к подкаталогу PathToSubDirOutData
-//
- snprintf( FileNameOnClient,sizeof(FileNameOnClient), "%s%s", PathToSubDirInData, FileName ); // куда сохранять на клиенте (+++)
- snprintf( FileNameOnServer,sizeof(FileNameOnServer), "%s/spf@home/content/%s", MySite, FileName ); // полное имя файла на сервере (+++)
-//
-// ShowMessageFmt( "Client: |%s|\n\nServer: |%s|", OPENARRAY(TVarRec, (FileNameOnClient,FileNameOnServer) ) );
-//
- F1->INC0->Get( FileNameOnServer, UnLoadStream ); // метод Get выгружает файл посредством потока UnLoadStream
- UnLoadStream->SaveToFile( FileNameOnClient ); // сохраняем данные в файл на клиенте
-//
- delete UnLoadStream; // поток более не нужен...
-//
- F1->INC0->Disconnect(); // разрываем соединениe с сервером
-//
-} //----------------------------------------------------------------------------
-
 void __fastcall TF1::INC0_OnConnected(TObject *Sender)
 { // вызывается при соединении с сервером
  SB0->Text = " Соединение с сервером установлено";
@@ -2702,3 +2676,29 @@ static int errorHandler(lua_State* L)
 //
 } // --- конец errorHandler ----------------------------------------------------
 
+
+void __fastcall GetFileFromServer( char FileName[] )
+{ // получить файл с HTTP-сервера ( FileNameInServer - полное имя файла на сервере,
+ char FileNameOnServer[_512], FileNameOnClient[_512]; // полные имена файла на сервере и клиенте
+//
+ TMemoryStream *UnLoadStream = new TMemoryStream;  // создаём поток для сохранения вЫгруженного из Сети файла
+//
+// --- полный путь к каталогу исходных данных (включая слэш в конце)
+ snprintf( PathToSubDirInData,sizeof(PathToSubDirInData), "%s%s\\", ExtractFilePath ( Application->ExeName ), NameSubDirInData);
+ if( !DirectoryExists( PathToSubDirInData ) ) // если не существует этого каталога...
+  if( !CreateDir( PathToSubDirInData ) ) // если не удалось создать...
+   strNcpy( PathToSubDirInData, '\0' ); // обнуляем путь к подкаталогу PathToSubDirOutData
+//
+ snprintf( FileNameOnClient,sizeof(FileNameOnClient), "%s%s", PathToSubDirInData, FileName ); // куда сохранять на клиенте (+++)
+ snprintf( FileNameOnServer,sizeof(FileNameOnServer), "%s/spf@home/content/%s", MySite, FileName ); // полное имя файла на сервере (+++)
+//
+// ShowMessageFmt( "Client: |%s|\n\nServer: |%s|", OPENARRAY(TVarRec, (FileNameOnClient,FileNameOnServer) ) );
+//
+ F1->INC0->Get( FileNameOnServer, UnLoadStream ); // метод Get выгружает файл посредством потока UnLoadStream
+ UnLoadStream->SaveToFile( FileNameOnClient ); // сохраняем данные в файл на клиенте
+//
+ delete UnLoadStream; // поток более не нужен...
+//
+ F1->INC0->Disconnect(); // разрываем соединениe с сервером
+//
+} //----------------------------------------------------------------------------
