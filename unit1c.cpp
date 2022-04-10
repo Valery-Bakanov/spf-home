@@ -325,7 +325,7 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
  "Pos_F2", // [3] оложение формы дочернего окна
   "Top","Left","Width","Height","PutParamsTiersOnTextFrame","PutParamsTLDOnTextFrame",
  "LastScript", // [4] последний файл скрипта
-  "ScriptFileName",
+  "FileNameLua",
  "LMD_EditViewColors", // [5] цвета окна редактирования Lua
   "Gutter->LinesBarBg","Gutter->LinesBarTextColor","Gutter->FoldsBarBg","Gutter->FoldsBarLineColor","Gutter->CustomBarBg","SelectionBg","SelectionColor","Color",
  "Tick_Interval", // [6] интервал главного таймера (мсек)
@@ -333,7 +333,7 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
 } ; // [ReadWriteConfig] имена секций файла конфигурации
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char ScriptFileName[_256]  = "noname.lua", // текущее имя файла Lua-скрипта
+char FileNameLua[_256]  = "noname.lua", // текущее имя файла Lua-скрипта
      stdinFileName[_256], // временный файл Lua-скрипта ( stdin )
      stdoutFileName[_256], // stdout...
      stderrFileName[_256], // stderr...
@@ -373,7 +373,7 @@ bool  __fastcall RunLuaScript(); // выполняет Lua-скрипты в 'rptvgkzht Lua ( L, 
 bool  __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag); // увеличивает #операторов на ярусах Tiers[][] до newSize
 char* __fastcall PutDateTimeToString(INT flag); // выдача текущих даты и времени в строку с форматированием
 bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное имя файла протокола
-void  __fastcall PutScriptFileName(); // выдаёт имя файла скрипта на форму
+void  __fastcall PutFileNameLua(); // выдаёт имя файла скрипта на форму
 void  __fastcall DisplayMessage(char* Level, char* funcName, char* Text, INT Err); // выдать сообщение Text уровня Level
 void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в позиции курсора
 char* __fastcall ReplaceManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
@@ -847,7 +847,7 @@ bool __fastcall IncreaseOpsOnTier(INT Tier, INT newSize, INT flag)
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::SaveScriptToCurrentFile(TObject *Sender)
 { // сохранить скрипт в текущий файл без вопросов
- SaveLuaScript( ScriptFileName );
+ SaveLuaScript( FileNameLua );
  Write_Config(); // сохранить файл конфигурации
 } //-------SaveScriptDirect-----------------------------------------------------
 
@@ -867,7 +867,7 @@ bool __fastcall CloseAndRenameFileProtocol()
  fclose( fptr_protocol ); // закрыли файл протокола исполнения скрипта
 //
  snprintf(newFNP,sizeof(newFNP), "%s%s%s!%s%s", PathToSubDirOutData, "protocol!",
-                                   ExtractFileName(ScriptFileName),
+                                   ExtractFileName(FileNameLua),
                                    uniqueStr,     ".txt");
  return RenameFile( FileNameProtocol, newFNP ); // переименовали файл протокола
 } // ----- конец RenameFileNameProtocol ----------------------------------------
@@ -915,8 +915,8 @@ void __fastcall TF1::SaveScriptToFile(TObject *Sender)
  if( SD0->Execute() ) // если что-то выбрали...
  {
   SaveLuaScript( SD0->FileName.c_str() ); // сохранили в файл содержимой TED0
-  strNcpy( ScriptFileName, SD0->FileName.c_str() ); // запомнили имя файла
-  PutScriptFileName(); // вывод на форму
+  strNcpy( FileNameLua, SD0->FileName.c_str() ); // запомнили имя файла
+  PutFileNameLua(); // вывод на форму
  }
 //
 } //--- конец SaveFileScript ---------------------------------------------------
@@ -932,8 +932,8 @@ void __fastcall TF1::OpenFileScript(TObject *Sender)
  if( OD_Lua->Execute() ) // если что-то выбрали...
  {
   TED0->LoadFromFile( OD_Lua->FileName ); // загрузили файл
-  strNcpy( ScriptFileName, OD_Lua->FileName.c_str() ); // запомнили имя файла скрипта
-  PutScriptFileName(); // вывод на форму
+  strNcpy( FileNameLua, OD_Lua->FileName.c_str() ); // запомнили имя файла скрипта
+  PutFileNameLua(); // вывод на форму
   TEV0->SetFocus(); // фокус - на окно редактирования
   IndicateColRowNumberOfEV0(); // выводим номер строки и столбца под курсором
  }
@@ -942,12 +942,12 @@ void __fastcall TF1::OpenFileScript(TObject *Sender)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall PutScriptFileName()
+void __fastcall PutFileNameLua()
 { // выводит имя файла скрипта на главную форму над окном редактирования скрипта
  char str[_512];
- snprintf( str,sizeof(str), "Файл скрипта: %s", ScriptFileName );
+ snprintf( str,sizeof(str), "Файл скрипта: %s", FileNameLua );
  F1->L_FNS->Caption = str; // вывод на форму
-} // --- конец PutScriptFileName -----------------------------------------------
+} // --- конец PutFileNameLua -----------------------------------------------
 
 
 void __fastcall TF1::MouseDown(TObject *Sender, TMouseButton Button,
@@ -996,7 +996,7 @@ char* __fastcall PutDateTimeToString(INT flag)
 void __fastcall TF1::CopyToNotepad(TObject *Sender)
 { // весь текст передаётся в Notepad
  char FileName[_256];
- strNcpy( FileName, ChangeFileExt( ScriptFileName, ".txt" ).c_str() );
+ strNcpy( FileName, ChangeFileExt( FileNameLua, ".txt" ).c_str() );
 //
  SaveLuaScript( FileName ); // сохранили в файл содержимой TED0
  ShellExecute( F1->Handle, NULL, FileName, NULL, NULL, SW_SHOWNORMAL ); // открыть файл FileName
@@ -1098,7 +1098,7 @@ void __fastcall Read_Config()
  F2->Width  = tINI->ReadInteger(RWC.Sect3, RWC.Sect3_Var3, minW_F2);
  F2->Height = tINI->ReadInteger(RWC.Sect3, RWC.Sect2_Var4, minH_F2);
 //
- strNcpy( ScriptFileName, tINI->ReadString(RWC.Sect4, RWC.Sect4_Var1, "noname.lua").c_str()); // имя файла скрипта
+ strNcpy( FileNameLua, tINI->ReadString(RWC.Sect4, RWC.Sect4_Var1, "noname.lua").c_str()); // имя файла скрипта
 //
  TEV0->Gutter->LinesBarBg        = tINI->ReadInteger(RWC.Sect5, RWC.Sect5_Var1, clAqua);
  TEV0->Gutter->LinesBarTextColor = tINI->ReadInteger(RWC.Sect5, RWC.Sect5_Var2, clNavy);
@@ -1172,10 +1172,10 @@ void __fastcall Write_Config()
  tINI->WriteInteger(RWC.Sect3, RWC.Sect3_Var4, F2->Height);
 //
 // --- если путь к Lua-файлу = текущему каталогу, путь не пишем (только имя файла)
- if( !strcmp( ExtractFileDir(ScriptFileName).c_str(),ExtractFileDir(ParamStr(0)).c_str() ) )
-  strNcpy( ScriptFileName,ExtractFileName(ScriptFileName).c_str() );
+ if( !strcmp( ExtractFileDir(FileNameLua).c_str(),ExtractFileDir(ParamStr(0)).c_str() ) )
+  strNcpy( FileNameLua,ExtractFileName(FileNameLua).c_str() );
 //
- tINI->WriteString(RWC.Sect4, RWC.Sect4_Var1, ScriptFileName); // имя файла скрипта
+ tINI->WriteString(RWC.Sect4, RWC.Sect4_Var1, FileNameLua); // имя файла скрипта
 //
 // tINI->WriteInteger(RWC.Sect5, "HeigthEd", TEV0->Heigth); // высота окна редактора
 //
@@ -1292,7 +1292,7 @@ void __fastcall TF1::FD0_Show(TObject *Sender)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-bool __fastcall StartByCommandLine( char* DefScriptFileName )
+bool __fastcall StartByCommandLine( char* DefFileNameLua )
 { // начало выполнения с параметрами командной строки
  char FileNameProject[_256], // имя файла проекта
       str[6][_256], w[_256]; // рабочая строка
@@ -1311,7 +1311,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
  if(!(fptr = fopen( FileNameProject, "r")) ) // открыли для чтения
   {
    tp_printf( "\n-E- Невозможно прочитать файл проекта %s -E-\n-I- Загружаем скрипт %s -I-\n",
-                 FileNameProject, DefScriptFileName );
+                 FileNameProject, DefFileNameLua );
 //
    MessageBeep( MB_OK ); // звуковое предупреждение...
    Delay( -1 ); // ждём 1 сек
@@ -1343,12 +1343,12 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
  tp_printf( "-I- Конец содержимого файла проекта %s -I-", FileNameProject );
 //
 // --- работаем с файлом исходного текста Lua-скрипта --------------------------
- strNcpy( ScriptFileName, str[0] );
+ strNcpy( FileNameLua, str[0] );
 
- if( !FileExists( ScriptFileName ) ) // файл не существует...
+ if( !FileExists( FileNameLua ) ) // файл не существует...
  {
   tp_printf( "\n-E- Заданного в проекте файла |%s| не существует -E-\n",
-              ScriptFileName );
+              FileNameLua );
   return false;
  }
 //
@@ -1398,7 +1398,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 // -----------------------------------------------------------------------------
  Read_Config(); // читать файл конфиг.(параметры фонта и посл. файла Lua-скпипта)
 //
- strNcpy( str, ScriptFileName ); // запомнили имя файла скрипта из Config'а
+ strNcpy( str, FileNameLua ); // запомнили имя файла скрипта из Config'а
 //
 // --- читаем командную строку -------------------------------------------------
  if( ParamCount() == 1 ) // не 1 параметр в командной cтроке (не считая полного пути к файлу)
@@ -1407,10 +1407,10 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 //
 //  flag = true; // автоматически стартовать Lua-скрипт
 //
-  if( FileExists( ScriptFileName ) ) // если файл скрипта существует...
+  if( FileExists( FileNameLua ) ) // если файл скрипта существует...
   {
-   PutScriptFileName(); // вывод на форму
-   TED0->LoadFromFile( ScriptFileName );// загрузить в TR0
+   PutFileNameLua(); // вывод на форму
+   TED0->LoadFromFile( FileNameLua );// загрузить в TR0
   } // конец if FileExists..
  } // конец if ParamCount...
 //
@@ -1418,9 +1418,9 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 //
  if( FileExists( str ) ) // если файл из Config'а существует...
  {
-  strNcpy( ScriptFileName, str ); // восстановили имя файла скрипта
-  PutScriptFileName(); // вывод на форму
-  TED0->LoadFromFile( ScriptFileName );// загрузить в TR0
+  strNcpy( FileNameLua, str ); // восстановили имя файла скрипта
+  PutFileNameLua(); // вывод на форму
+  TED0->LoadFromFile( FileNameLua );// загрузить в TR0
  }
  else
  {
@@ -2015,7 +2015,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 //
  Set_FileNames_All_Protocols(); // подготовили имена всех файлов протоколов (для Out!Data)
 //
- SaveLuaScript( ScriptFileName ); // сохранили в файл содержимой TED0
+ SaveLuaScript( FileNameLua ); // сохранили в файл содержимое TED0
 //
  ticks = 0; // обнуляем глобальный счётчик тиков
 //
@@ -2047,7 +2047,7 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 //*
  RunLuaScript(); // запуск Lua-скрипта на выполнение в основном потоке
 //
-// Copy_Stdout_To_Memo(); // копировать stdout на Memo
+ Upload_Data(); // выгрузить файлы на сервер
 //
  return;
 //
@@ -2159,7 +2159,7 @@ void Set_FileNames_All_Protocols()
    strNcpy( PathToSubDirOutData, '\0' ); // обнуляем путь к подкаталогу PathToSubDirOutData
 // далее генерИм уникальные имена файлов для данного конкректного расчёта ------
  char tmp[_512], cnst[_512];
- sprintf( cnst, "!%s!%s.txt", ExtractFileName(ScriptFileName), uniqueStr ); // постоянная часть имени
+ sprintf( cnst, "!%s!%s.txt", ExtractFileName(FileNameLua), uniqueStr ); // постоянная часть имени
 //
  snprintf( tmp, sizeof(tmp), "%s%s%s", PathToSubDirOutData, "stdin",  cnst ); // полный путь к stdin
   snprintf( stdinFileName, sizeof(stdinFileName), "%s", tmp );
@@ -2319,7 +2319,7 @@ void __fastcall CopyStdoutToTextProtocol()
  char str[_1024]; // строка для временных данных
 //
 // --- строки stdout - в текстовое окно и в файл протокола ---------------------
- p_printf( "\n===> начало stdout выполнения скрипта %s ===>\n", ScriptFileName ); // добавили в файл протокола
+ p_printf( "\n===> начало stdout выполнения скрипта %s ===>\n", FileNameLua ); // добавили в файл протокола
 //------------------------------------------------------------------------------
 //
  TM0_stdout->Clear(); // очистили TM0_stdout
@@ -2344,7 +2344,7 @@ void __fastcall CopyStdoutToTextProtocol()
 //
  fclose( fptr_stdout ); // закрыли файл stdout
 //
- p_printf( "<=== конец  stdout выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
+ p_printf( "<=== конец  stdout выполнения скрипта %s <===\n", FileNameLua ); // добавили в файл протокола
 //
 } // ----- конец CopyStdoutToTextProtocol ------------------------------------------
 
@@ -2355,7 +2355,7 @@ void __fastcall CopyStderrToProtocol()
 { // добавляет strerr в файл протокола
  char str[_1024]; // строка для временных данных
 //
- p_printf( "\n===> начало stderr выполнения скрипта %s ===>\n", ScriptFileName );
+ p_printf( "\n===> начало stderr выполнения скрипта %s ===>\n", FileNameLua );
 //
  fptr_stderr = fopen( stderrFileName, "rt" ); // открыли для чтения...
 //
@@ -2369,7 +2369,7 @@ void __fastcall CopyStderrToProtocol()
 //
  fclose( fptr_stderr ); // закрыли файл stdout
 //
- p_printf( "<=== конец  stderr выполнения скрипта %s <===\n", ScriptFileName ); // добавили в файл протокола
+ p_printf( "<=== конец  stderr выполнения скрипта %s <===\n", FileNameLua ); // добавили в файл протокола
 //
 } // ----- конец CopyStderrToProtocol ------------------------------------------
 
@@ -2380,11 +2380,11 @@ void __fastcall ShowBreakpoint( char *err )
 { // показать точку проверки (Breakpoint) в текстовом редакторе Lua
  int line = -13;
 //
- char *p = strstr( err, ScriptFileName ); // в str ищем первое вхождение ScriptFileName
- if( p ) // если нашли вхождение ScriptFileName...
+ char *p = strstr( err, FileNameLua ); // в str ищем первое вхождение FileNameLua
+ if( p ) // если нашли вхождение FileNameLua...
  {
   *p = NULL; // указывает на нулевой символ
-  p += strlen( ScriptFileName ); // теперь p указывает на первый символ в stackTrace после вхождения ScriptFileName
+  p += strlen( FileNameLua ); // теперь p указывает на первый символ в stackTrace после вхождения FileNameLua
   if( sscanf( p, ":%d:", &line ) == 1 ) // если удалось корректно прочитать номер строки...
   {
    F1->LMD_EV0->GotoPhysLine( line-1 ); // переход к строке по её номеру (нумерация с 0 или 1)
@@ -2485,7 +2485,7 @@ bool __fastcall RunLuaScript()
 // error1 = luaL_loadfile( L, stdinFileName ); // загружаем Lua-файл в интерпретатор
  try
  {
-  error1 = luaL_loadfile( L, ScriptFileName ); // загружаем Lua-файл в интерпретатор
+  error1 = luaL_loadfile( L, FileNameLua ); // загружаем Lua-файл в интерпретатор
  } // конец try
  catch( ... )
  {
@@ -2543,12 +2543,12 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
   L = NULL;
 //
   tpe_printf( "\n-I- %s: Выполнение скрипта [%s] завершено успешно..! -I-\n",
-              PutDateTimeToString(0), ScriptFileName );
+              PutDateTimeToString(0), FileNameLua );
  }
  catch( ... )
  {
   tpe_printf( "\n-E- %s: Выполнение скрипта [%s] завершено с проблемами... -E-\n",
-              PutDateTimeToString(0), ScriptFileName );
+              PutDateTimeToString(0), FileNameLua );
 //
   MessageBox(0, "Внутренняя ошибка системы. Возможен сбой приложения...",
                 "Предупреждение",
