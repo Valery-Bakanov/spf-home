@@ -398,6 +398,12 @@ void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
 void  __fastcall CopyStdoutToTextProtocol(); // копировать stdout текстовое подокно TM0_stdout и в файл протокола
 void  __fastcall CopyStderrToProtocol(); // копировать stderr в файл протокола
 //
+void  __fastcall GetFileFromServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // взять файл с сервера
+void  __fastcall PutFileToServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // вЫгрузить файл на сервер
+void  __fastcall Upload_Data(); // вЫгрузить файлы на сервер
+void  __fastcall Unload_Install(); // загрузить с сервера инсталляционную версию продукта
+void  __fastcall Work_LogInOut( bool Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
+//
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (для Out!Data)
 ////////////////////////////////////////////////////////////////////////////////
 // строки для хранения параметров ВЫЧИСЛИТЕЛЕЙ и ОПЕРАТОРОВ --------------------
@@ -446,7 +452,6 @@ REAL partHeightStdout[3] = {0.2, 0.1, 0.5}; // доля высоты окна stdout (текущая,
 ////////////////////////////////////////////////////////////////////////////////
 INT FileSizeFromServer = 0; // размер файла при выгрузке с сервера
 ////////////////////////////////////////////////////////////////////////////////
-//
 //
 //
 __fastcall TF1::TF1(TComponent* Owner) : TForm(Owner) // выполняется в начале всего..!
@@ -783,9 +788,12 @@ void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
               if( Mem_Edges )
                free ( Mem_Edges ); // ...
 //
+              Work_LogInOut( 0 ); // сообщить о конце работы программы SPF_CLIENT.EXE
+//
               F2->Close(); // закрыли F2 - форма выдачи данных
               Action=caFree; // нажата кнопка Yes
               break;
+//
   case IDNO:  Action=caNone; // нажата кнопка No
               break;
  } //конец блока SWITCH
@@ -1382,7 +1390,7 @@ bool __fastcall StartByCommandLine( char* DefScriptFileName )
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::OnShow_F1(TObject *Sender)
 { // вызывается при показе главной формы
- char str[_512];
+ char str[_512] = "\0";
 //
 // -----------------------------------------------------------------------------
  F2->Show(); // показать окно формы F2 в НЕМОДАЛЬНОМ РЕЖИМЕ
@@ -1447,6 +1455,8 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
 //
   F1->Close(); // уничтожили F1 - главное окно
  }
+//
+ Work_LogInOut( 1 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
 //
 } //--- конец OnShow_F1 --------------------------------------------------------
 
@@ -1530,94 +1540,19 @@ void __fastcall TF1::SPL0Moved(TObject *Sender)
 
 void __fastcall TF1::OnClickGetLua_01(TObject *Sender)
 { // получить файл Lua_01 с сервера
- GetFileFromServer( "Test_Lua_API.lua" );
+ GetFileFromServer( "spf@home\\content\\Test_Lua_API.lua" ); // не забывать "\\"
 } //----------------------------------------------------------------------------
 
 
 void __fastcall TF1::OnClickGetEdg_01(TObject *Sender)
 {  // получить файл Edg_01 с сервера
- GetFileFromServer( "e17039_o9853_t199.gv" );
+ GetFileFromServer( "spf@home\\content\\e17039_o9853_t199.gv" );  // не забывать "\\"
 } //----------------------------------------------------------------------------
 
 
 void __fastcall TF1::OnClickGetEdg_02(TObject *Sender)
 { // получить файл Edg_02 с сервера
- GetFileFromServer( "e2367_o1397_t137.gv" );
-} //----------------------------------------------------------------------------
-
-
-void __fastcall TF1::OnClickGetRar_01(TObject *Sender)
-{ // получить последнюю версию SPF@home ( SPF@home.rar )
- GetFileFromServer( "install_spf.exe" );
-} //----------------------------------------------------------------------------
-
-
-void __fastcall TF1::HTTP_Get_OnConnected(TObject *Sender)
-{ // вызывается при соединении с сервером
- SB0->Text = " Соединение с сервером установлено";
- Delay( 500 );
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::HTTP_Get_Disconnected(TObject *Sender)
-{ // вызывается при разрыве соединения с сервером
- SB0->Text = " Соединение с сервером разорвано";
- Delay( 500 );
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::HTTP_Get_OnWork(TObject *Sender, TWorkMode AWorkMode, const int AWorkCount)
-{ // вызывается при вЫгрузке данных с сервера на клиент
- SB0->Text = Format(" %.0f%% (из %d байт) данных получено с сервера", OPENARRAY(TVarRec, (100.0*AWorkCount/FileSizeFromServer, int(FileSizeFromServer)) ) );
- Delay( 500 );
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::HTTP_Get_OnWorkEnd(TObject *Sender, TWorkMode AWorkMode)
-{ // вызывается в конце вЫгрузки данных с сервера на клиент
- Delay( 500 );
- SB0->Text = Format(" %d байт получено с сервера", OPENARRAY(TVarRec, (int(FileSizeFromServer)) ) );
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::HTTP_Get_OnWorkBegin(TObject *Sender, TWorkMode AWorkMode,
-                                      const int AWorkCountMax)
-{
- FileSizeFromServer = AWorkCountMax; // запомнили
- SB0->Text = Format(" %d байт запрошено для получения с сервера", OPENARRAY(TVarRec, (AWorkCountMax) ) );
- Delay( 500 );
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::HTTP_Get_OnStatus(TObject *axSender,
-                                   const TIdStatus axStatus, const AnsiString asStatusText)
-{
-  switch( axStatus )
-  {
-   case hsResolving:     //SB0->Text = " A host name is being resolved for an IP address...";
-                         SB0->Text = " Доменное имя успешно разрешено в IP-адрес...";
-        break;
-   case hsConnecting:    //SB0->Text = " A connection is being opened...";
-                         SB0->Text = " Соединение устанавливается...";
-        break;
-//   case hsConnected:     //SB0->Text = " A connection has been made...";
-//                         SB0->Text = " Соединение успешно устанавлено...";
-//        break;
-   case hsDisconnecting: //SB0->Text = " The connection is being closed...";
-                         SB0->Text = " Соединение закрывается...";
-        break;
-//   case hsDisconnected:  //SB0->Text = " The connection has been closed...";
-//                         SB0->Text = " Соединение разорвано...";
-//        break;
-//   case hsText:          //SB0->Text = asStatusText;
-//                         SB0->Text = asStatusText;
-//        break;
-//   default:                //SB0->Text = asStatusText;
-//                           SB0->Text = asStatusText;
-  }
-
- Delay( 500 );
-
-} //----------------------------------------------------------------------------
-
-void __fastcall TF1::EndedUploadFile(TObject *Sender)
-{ // разрыв соединения с сервером
- F1->HTTP_Get->Disconnect(); // разрываем соединение с сервером
+ GetFileFromServer( "spf@home\\content\\e2367_o1397_t137.gv" );  // не забывать "\\"
 } //----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2677,28 +2612,42 @@ static int errorHandler(lua_State* L)
 } // --- конец errorHandler ----------------------------------------------------
 
 
-void __fastcall GetFileFromServer( char FileName[] )
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall GetFileFromServer( char FileNameServer[] )
 { // получить файл с HTTP-сервера ( FileNameInServer - полное имя файла на сервере,
- char FileNameOnServer[_512], FileNameOnClient[_512]; // полные имена файла на сервере и клиенте
+ char FileNameOnServer[_512]="\0", // полные имена файла на сервере и клиенте
+      FileNameOnClient[_512]="\0"; // полные имена файла на сервере и клиенте
 //
- TMemoryStream *UnLoadStream = new TMemoryStream;  // создаём поток для сохранения вЫгруженного из Сети файла
+ TMemoryStream *fs = new TMemoryStream();  // создаём поток для сохранения вЫгруженного из Сети файла
 //
 // --- полный путь к каталогу исходных данных (включая слэш в конце)
  snprintf( PathToSubDirInData,sizeof(PathToSubDirInData), "%s%s\\", ExtractFilePath ( Application->ExeName ), NameSubDirInData);
  if( !DirectoryExists( PathToSubDirInData ) ) // если не существует этого каталога...
   if( !CreateDir( PathToSubDirInData ) ) // если не удалось создать...
-   strNcpy( PathToSubDirInData, '\0' ); // обнуляем путь к подкаталогу PathToSubDirOutData
+   strcpy( PathToSubDirInData, '\0' ); // обнуляем путь к подкаталогу PathToSubDirOutData
 //
- snprintf( FileNameOnClient,sizeof(FileNameOnClient), "%s%s", PathToSubDirInData, FileName ); // куда сохранять на клиенте (+++)
- snprintf( FileNameOnServer,sizeof(FileNameOnServer), "%s/spf@home/content/%s", MySite, FileName ); // полное имя файла на сервере (+++)
+ snprintf( FileNameOnServer,sizeof(FileNameOnServer), "%s/%s", MySite, FileNameServer ); // полное имя файла на сервере (+++)
+ snprintf( FileNameOnClient,sizeof(FileNameOnClient), "%s%s", PathToSubDirInData, ExtractFileName(FileNameServer) ); // куда сохранять на клиенте (+++)
 //
-// ShowMessageFmt( "Client: |%s|\n\nServer: |%s|", OPENARRAY(TVarRec, (FileNameOnClient,FileNameOnServer) ) );
+ try
+ {
+  F1->FTP_Get->Get( FileNameOnServer, fs ); // метод Get выгружает файл в поток fs
+ }
+ catch(const EIdException& E) // ловим исключение Indy-компонента
+ {
+//  SBM0->Text = Format(" Ошибка: %s", OPENARRAY(TVarRec, (E.Message) ) );
+  ShowMessage(" Ошибка: " + E.Message);
+ };
 //
- F1->HTTP_Get->Get( FileNameOnServer, UnLoadStream ); // метод Get выгружает файл посредством потока UnLoadStream
- UnLoadStream->SaveToFile( FileNameOnClient ); // сохраняем данные в файл на клиенте
+ fs->SaveToFile( FileNameOnClient ); // сохраняем данные в файл на клиенте
 //
- delete UnLoadStream; // поток более не нужен...
+ delete fs; // поток более не нужен...
 //
- F1->HTTP_Get->Disconnect(); // разрываем соединениe с сервером
-//
+ F1->FTP_Get->Disconnect(); // разрываем соединениe с сервером
 } //----------------------------------------------------------------------------
+
+
+//
+#include "FTP_GetPost_SPF.cpp" // обмен с сервером vbakanov.ru по FTP (Indy 8.0.25)
+//

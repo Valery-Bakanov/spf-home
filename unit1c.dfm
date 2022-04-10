@@ -1194,9 +1194,9 @@ object F1: TF1
           C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3EEEEEE666664C3C3
           C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3
           C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3}
-        Caption = #1055#1086#1083#1091#1095#1080#1090#1100' '#1087#1086#1089#1083#1077#1076#1085#1102#1102' '#1074#1077#1088#1089#1080#1102' SPF@home (rar)'
+        Caption = #1055#1086#1083#1091#1095#1080#1090#1100' '#1087#1086#1089#1083#1077#1076#1085#1102#1102' '#1074#1077#1088#1089#1080#1102' SPF@home'
         Hint = #1060#1072#1081#1083' '#1073#1091#1076#1077#1090' '#1087#1086#1084#1077#1097#1077#1085' '#1074' ./In!Data/'
-        OnClick = OnClickGetRar_01
+        OnClick = OnClickGetInstall
       end
       object N2: TMenuItem
         Caption = '-'
@@ -1874,27 +1874,35 @@ object F1: TF1
     Left = 192
     Top = 304
   end
-  object HTTP_Get: TIdHTTP
-    OnStatus = HTTP_Get_OnStatus
-    OnDisconnected = HTTP_Get_Disconnected
-    OnWork = HTTP_Get_OnWork
-    OnWorkBegin = HTTP_Get_OnWorkBegin
-    OnWorkEnd = HTTP_Get_OnWorkEnd
-    OnConnected = HTTP_Get_OnConnected
-    Request.Accept = 'text/html, */*'
-    Request.ContentLength = 0
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
-    Request.ProxyPort = 0
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Left = 120
-    Top = 232
-  end
   object Master_Timer: TTimer
     Enabled = False
     Interval = 10
     OnTimer = On_Master_Timer
     Left = 320
     Top = 176
+  end
+  object FTP_Get: TIdFTP
+    OnStatus = FTP_Get_OnStatus
+    OnDisconnected = FTP_Get_OnDisconnected
+    OnWork = FTP_Get_OnWork
+    OnWorkBegin = FTP_Get_OnWorkBegin
+    OnWorkEnd = FTP_Get_OnWorkEnd
+    OnConnected = FTP_Get_OnConnected
+    Left = 384
+    Top = 392
+  end
+  object FTP_Post: TIdFTP
+    Left = 472
+    Top = 392
+  end
+  object IdAntiFreeze1: TIdAntiFreeze
+    Left = 424
+    Top = 384
+  end
+  object IPWatch: TIdIPWatch
+    HistoryEnabled = False
+    HistoryFilename = 'iphist.dat'
+    Left = 360
+    Top = 280
   end
 end

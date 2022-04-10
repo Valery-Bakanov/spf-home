@@ -27,6 +27,10 @@
 #include <IdHTTP.hpp>
 #include <IdTCPClient.hpp>
 #include <IdTCPConnection.hpp>
+#include <IdAntiFreeze.hpp>
+#include <IdAntiFreezeBase.hpp>
+#include <IdFTP.hpp>
+#include <IdIPWatch.hpp>
 //---------------------------------------------------------------------------
 class TF1 : public TForm
 {
@@ -133,7 +137,6 @@ __published:	// IDE-managed Components
         TMenuItem *mnuGetSPF;
         TLMDPrinter *Printer;
         TMenuItem *N2;
-        TIdHTTP *HTTP_Get;
         TMenuItem *N4;
         TMenuItem *CreateLowerSPF;
         TMenuItem *CreateTimeLiveData;
@@ -144,6 +147,10 @@ __published:	// IDE-managed Components
         TMenuItem *CreateParamsByOp;
         TMenuItem *N9;
         TTimer *Master_Timer;
+        TIdFTP *FTP_Get;
+        TIdFTP *FTP_Post;
+        TIdAntiFreeze *IdAntiFreeze1;
+        TIdIPWatch *IPWatch;
         void __fastcall OnClose_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall OnClose_1_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall CloseSpfAtHome(TObject *Sender);
@@ -198,16 +205,16 @@ __published:	// IDE-managed Components
         void __fastcall OnClickGetLua_01(TObject *Sender);
         void __fastcall OnClickGetEdg_01(TObject *Sender);
         void __fastcall OnClickGetEdg_02(TObject *Sender);
-        void __fastcall OnClickGetRar_01(TObject *Sender);
-        void __fastcall HTTP_Get_OnConnected(TObject *Sender);
-        void __fastcall HTTP_Get_Disconnected(TObject *Sender);
-        void __fastcall HTTP_Get_OnWork(TObject *Sender, TWorkMode AWorkMode,
-                                    const int AWorkCount);
-        void __fastcall HTTP_Get_OnWorkEnd(TObject *Sender, TWorkMode AWorkMode);
-        void __fastcall HTTP_Get_OnWorkBegin(TObject *Sender, TWorkMode AWorkMode,
-                                         const int AWorkCountMax);
-        void __fastcall HTTP_Get_OnStatus(TObject *axSender,
-                                      const TIdStatus axStatus, const AnsiString asStatusText);
+        void __fastcall OnClickGetInstall(TObject *Sender);
+        void __fastcall FTP_Get_OnConnected(TObject *Sender);
+        void __fastcall FTP_Get_OnDisconnected(TObject *Sender);
+        void __fastcall FTP_Get_OnWork(TObject *Sender, TWorkMode AWorkMode,
+                                       const int AWorkCount);
+        void __fastcall FTP_Get_OnWorkEnd(TObject *Sender, TWorkMode AWorkMode);
+        void __fastcall FTP_Get_OnWorkBegin(TObject *Sender, TWorkMode AWorkMode,
+                                            const int AWorkCountMax);
+        void __fastcall FTP_Get_OnStatus(TObject *axSender,
+                                         const TIdStatus axStatus, const AnsiString asStatusText);
         void __fastcall EndedUploadFile(TObject *Sender);
         void __fastcall CreateBottomSPFAndPutToTextFrame(TObject *Sender);
         void __fastcall PutTLDToTextFrameAndDiagr(TObject *Sender);
