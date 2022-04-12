@@ -99,7 +99,6 @@ using namespace std; // стандартное пространство имён
 TF1 *F1;
 //
 TStringList *paramsTLD = new( TStringList ) ;
-// paramsTLD - глобал; заполняется данными в c_CalcParamsTLD() -----------------
 //
 //#include "pcre.h" // библиотека регулярных выражений от Borland C++ RTL
 //
@@ -333,7 +332,7 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
 } ; // [ReadWriteConfig] имена секций файла конфигурации
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char FileNameLua[_256]  = "noname.lua", // текущее имя файла Lua-скрипта
+char FileNameLua[_256]  = "spf_client.lua", // текущее имя файла Lua-скрипта
      stdinFileName[_256], // временный файл Lua-скрипта ( stdin )
      stdoutFileName[_256], // stdout...
      stderrFileName[_256], // stderr...
@@ -863,14 +862,12 @@ void __fastcall TF1::CloseSpfAtHome(TObject *Sender)
 bool __fastcall CloseAndRenameFileProtocol()
 {
  char newFNP[_512];  // новое постоянное (для сохранения) имя файла протокола
-//
  fclose( fptr_protocol ); // закрыли файл протокола исполнения скрипта
-//
  snprintf(newFNP,sizeof(newFNP), "%s%s%s!%s%s", PathToSubDirOutData, "protocol!",
                                    ExtractFileName(FileNameLua),
                                    uniqueStr,     ".txt");
  return RenameFile( FileNameProtocol, newFNP ); // переименовали файл протокола
-} // ----- конец RenameFileNameProtocol ----------------------------------------
+} // ----- конец CloseFileNameProtocol -----------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2463,15 +2460,12 @@ bool __fastcall RunLuaScript()
  fptr_protocol = fopen( FileNameProtocol, "wt" ); // открываем в режиме СОЗДАНИЕ, ЗАПИСЬ, ТЕКСТ
 // if( fptr_protocol )
 //  setbuf( fptr_protocol, NULL ); // отмена буфферизации
-//
  fptr_stdout = fopen( stdoutFileName, "wt" ); // stdout буфферизируется построчно (_IOLBF)
 // if( fptr_stdout )
 //  setbuf( fptr_stdout, NULL );
-//
  fptr_stderr = fopen( stderrFileName, "wt" ); // stderr никогда не буфферизируется (_IONBF)
 // if( fptr_stderr )
 //  setbuf( fptr_stderr, NULL );
-//
  freopen( stdoutFileName, "wt", stdout ); // перенаправили stdout в файл stdoutFileName
  freopen( stderrFileName, "wt", stderr ); // перенаправили stderr в файл stderrFileName
 //==============================================================================
