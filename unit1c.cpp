@@ -21,6 +21,7 @@
 #include <sys\timeb.h>
 #include "cstring.h"
 #include "SysUtils.hpp"
+#include <DateUtils.hpp> // для DayOf, WeekOf, MonthOf и др.
 #include <System.hpp>
 //
 #include <shellapi.h>
@@ -422,6 +423,9 @@ char // те же имена файлов, но РАБОЧИЕ (глобалы)--------------------------------
      FileNameParamsEdges[_256], // ...
      FileNameParamsVertices[_256]; // ...
 char sDef[] = "=Def:\0"; // строка для поиска и сравнения
+//
+long int SessionStartTime = 0L; // время начала сессии исследований (глобал)
+//
 ////////////////////////////////////////////////////////////////////////////////
 WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" для компонентов LMD
            ActiveSyntaxScheme = "defSyntaxScheme";
@@ -1453,6 +1457,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
   F1->Close(); // уничтожили F1 - главное окно
  }
 //
+ SessionStartTime = (long int) ( ((double)TDateTime::CurrentDateTime()-36500.0)*86400000.0 ); // отняли 100*365 дней...
  Work_LogInOut( 1 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
 //
 } //--- конец OnShow_F1 --------------------------------------------------------
