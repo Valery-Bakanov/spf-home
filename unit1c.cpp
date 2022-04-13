@@ -400,9 +400,9 @@ void  __fastcall CopyStderrToProtocol(); // копировать stderr в файл протокола
 //
 void  __fastcall GetFileFromServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // вз€ть файл с сервера
 void  __fastcall PutFileToServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // вџгрузить файл на сервер
-void  __fastcall Upload_Data(); // вџгрузить файлы на сервер
 void  __fastcall Unload_Install(); // загрузить с сервера инсталл€ционную версию продукта
-void  __fastcall Work_LogInOut( bool Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
+void  __fastcall Upload_Data( int Rule ); // вџгрузить файлы на сервер (в зависимости от pyfxtybz Rule )
+void  __fastcall Work_LogInOut( int Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
 //
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
 ////////////////////////////////////////////////////////////////////////////////
@@ -791,7 +791,7 @@ void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
               if( Mem_Edges )
                free ( Mem_Edges ); // ...
 //
-              Work_LogInOut( 0 ); // сообщить о конце работы программы SPF_CLIENT.EXE
+              Work_LogInOut( 1 ); // сообщить о конце работы программы SPF_CLIENT.EXE
 //
               F2->Close(); // закрыли F2 - форма выдачи данных
               Action=caFree; // нажата кнопка Yes
@@ -1458,7 +1458,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
  }
 //
  SessionStartTime = (long int) ( ((double)TDateTime::CurrentDateTime()-36500.0)*86400000.0 ); // отн€ли 100*365 дней...
- Work_LogInOut( 1 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
+ Work_LogInOut( 0 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
 //
 } //--- конец OnShow_F1 --------------------------------------------------------
 
@@ -2046,10 +2046,12 @@ void __fastcall TF1::StartLuaScript(TObject *Sender)
 // =============================================================================
  flagHook = false; // "ловушка" отключена
 ////////////////////////////////////////////////////////////////////////////////
-//*
+//
+ Upload_Data( 0 ); // выгрузить LUA-файл на сервер ( Rule == 0 )
+//
  RunLuaScript(); // запуск Lua-скрипта на выполнение в основном потоке
 //
- Upload_Data(); // выгрузить файлы на сервер
+ Upload_Data( 1 ); // выгрузить PRO-файл на сервер ( Rule == 1 )
 //
  return;
 //
