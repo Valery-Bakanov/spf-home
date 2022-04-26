@@ -1457,8 +1457,8 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
   F1->Close(); // уничтожили F1 - главное окно
  }
 //
- SessionStartTime = (long int) ( ((double)TDateTime::CurrentDateTime()-36500.0)*86400000.0 ); // отняли 100*365 дней...
- Work_LogInOut( 0 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
+  SessionStartTime = (long int) ( ((double)TDateTime::CurrentDateTime()-365.0*100) * 365.0*24*60*60*1000 ); // отняли 100*365 дней (результат в мсек)...
+  Work_LogInOut( 0 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
 //
 } //--- конец OnShow_F1 --------------------------------------------------------
 
