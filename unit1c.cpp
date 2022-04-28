@@ -424,7 +424,7 @@ char // те же имена файлов, но РАБОЧИЕ (глобалы)--------------------------------
      FileNameParamsVertices[_256]; // ...
 char sDef[] = "=Def:\0"; // строка для поиска и сравнения
 //
-long int SessionStartTime = 0L; // время начала сессии исследований (глобал)
+__int64 SessionStartTime = 0L; // время начала сессии исследований (глобал)
 //
 ////////////////////////////////////////////////////////////////////////////////
 WideString ActiveColorScheme  = "defColorScheme", // "широкие строки" для компонентов LMD
@@ -1457,7 +1457,7 @@ void __fastcall TF1::OnShow_F1(TObject *Sender)
   F1->Close(); // уничтожили F1 - главное окно
  }
 //
-  SessionStartTime = (long int) ( ((double)TDateTime::CurrentDateTime()-365.0*100) * 365.0*24*60*60*1000 ); // отняли 100*365 дней (результат в мсек)...
+  SessionStartTime = (__int64) ( ((double)TDateTime::CurrentDateTime()-365.0*100) * 365.0*24*60*60*1000 ); // отняли 100*365 дней (результат в мсек)...
   Work_LogInOut( 0 ); // сообщить о начале работы программы SPF_CLIENT.EXE (сообщение "LogIn")
 //
 } //--- конец OnShow_F1 --------------------------------------------------------
