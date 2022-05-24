@@ -4358,7 +4358,7 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
      minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
 //
      sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
-     OpFrom, OpTo, nOutEdges, iOutEdge ; // ... то же ...
+     OpFrom, OpTo, nOutEdges, iOutEdge; // ... то же ...
 //
 // =============================================================================
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
@@ -4413,6 +4413,8 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
  StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
 //
  StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическа€ длина дуги (Average Arc Length)
+//
+ StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. операторов по €русам (ширина яѕ‘)
 //
 } // ----- конец c_—alcParamsTiers() -------------------------------------------
 

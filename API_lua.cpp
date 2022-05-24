@@ -1019,6 +1019,7 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
    lua_pushnumber(L, StatTiers.IC); // коэффициент неравномерности (max/min)
    lua_pushnumber(L, StatTiers.ICL); // коэффициент неравномерности (по кривой Лоренца)
    lua_pushnumber(L, StatTiers.AAL); // среднеарифметическая длина дуги (Average Arc Length)
+   lua_pushnumber(L, StatTiers.MaxOpsByTiers); // ширина ЯПФ (мах. ширина яруса ЯПФ)
    return sizeof(StatTiers)/sizeof(REAL) ; // число чисел на стеке Lua
   case 1:
    lua_pushnumber(L, StatTiers.averWidth );
@@ -1040,6 +1041,9 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
    return 1 ;
   case 7:
    lua_pushnumber(L, StatTiers.ICL);
+   return 1 ;
+  case 8:
+   lua_pushnumber(L, StatTiers.MaxOpsByTiers);
    return 1 ;
   } // конец  switch( arg1 )
 //
