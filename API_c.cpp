@@ -4414,7 +4414,8 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 //
  StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическая длина дуги (Average Arc Length)
 //
- StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. операторов по ярусам (ширина ЯПФ)
+ StatTiers.MinOpsByTiers = minOpsByTiers; // мин. операторов по ярусам
+ StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
 //
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
 

@@ -91,7 +91,7 @@ end -- конец  for iTier=1,nTiers
 --
 ICL = ( sICL - 0.5  ) /  0.5 -- (минус полуплощадь квадрата) по отношению к полуплощади
 --
---OutLine( string.format("\nКоэффициент неравномерности= %g (%g)", ICL,CalcParamsTiers (6) ))
+--OutLine( string.format("\nКоэффициент неравномерности= %g (%g)", ICL,CalcParamsTiers(8) ))
 --
 return ICL
 --
@@ -161,9 +161,9 @@ if out ==1 then  -- если перемещение успешно...
 --
  f_Stat() -- расчёт статистики ширин ЯПФ
  OutLine( string.format("#%010d   CV=%-.3f (%-.3f)  IC=%-.3f  (%-.3f)  ICL= %-.3f (%-.3f)", iter,
-                                          CV,CalcParamsTiers (4),
-                                          IC,CalcParamsTiers(5),
-                                          f_ICL(),CalcParamsTiers (6) ) )
+                                          CV,CalcParamsTiers(6),
+                                          IC,CalcParamsTiers(7),
+                                          f_ICL(),CalcParamsTiers(8) ) )
  iter = iter + 1
 --
  DelayMS( 1000 )

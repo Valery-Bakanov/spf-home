@@ -95,7 +95,7 @@ end -- конец  for iTier=1,nTiers
 --
 ICL = ( sICL - 0.5  ) / 0.5 -- (минус полуплощадь квадрата) по отношению к полуплощади
 --
-OutLine( string.format("\nКоэффициент неравномерности= %g (%g)", ICL,CalcParamsTiers(6) )) 
+OutLine( string.format("\nКоэффициент неравномерности= %g (%g)", ICL,CalcParamsTiers(8) )) 
 --                                                                                                                
 return ICL
 --
