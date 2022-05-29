@@ -5133,8 +5133,7 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
  SS_01,
 //
  (REAL)sdOps / nOps, // Vn (%.4g)
-// (REAL)sdTiers / nOps, // Vt
-// (REAL)sdTiers / nTiers , // Vt
+// (REAL)sdTiers / nTiers // Vt
  nTiers==1 ? "???" : Format("%.4g",OPENARRAY(TVarRec,( (REAL)sdTiers/(nTiers-1) ))).c_str(), // Vt (%.4g) не делить на 0 при nTiers=1
 // (REAL)sdOps*sdTiers / (nOps*nOps), // Vnt
 // (REAL)sdOps*sdTiers / ( nOps*nOps*(nTiers-1) ), // Vnt (%.4g)
