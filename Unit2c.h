@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-
 #ifndef Unit2cH
 #define Unit2cH
 //---------------------------------------------------------------------------
@@ -35,13 +34,10 @@ __published:	// IDE-managed Components
         void __fastcall M1_PM_CopyToNotepad(TObject *Sender);
         void __fastcall CopyPictureToClipboard(TObject *Sender);
         void __fastcall OnResize_F2(TObject *Sender);
+        void __fastcall M1_OneClick(TObject *Sender);
 private:	// User declarations
-//        void __fastcall WMNCHitTest(TMessage& Msg); // обработчик WM_NCHITTEST
 public:		// User declarations
         __fastcall TF2(TComponent* Owner);
-//BEGIN_MESSAGE_MAP
-//MESSAGE_HANDLER(WM_NCHITTEST,TMessage,WMNCHitTest) // WM_NCHITTEST->wnNCHitTest
-//END_MESSAGE_MAP(TForm)
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TF2 *F2;

@@ -8,7 +8,7 @@
 //
 #include <vcl.h>
 #include <vcl/dstring.h> // дл€ работы с ANSI-строками
-// #include <vcl/StrUtils.hpp> // дл€ работы с ANSI-строками ( AnsiReplaceStr )
+#include <vcl/StrUtils.hpp> // дл€ работы с ANSI-строками ( AnsiReplaceStr )
 #include <cstddef.h>
 //
 #include "stdio.h"
@@ -115,7 +115,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 #define _IN  " \xAB%d" // \xab=<< признак того, что у оператора нет ¬’ќƒ€ў»’  дуг (это исходные данные)
 #define _OUT " %d\xBB" // \xbb=>> признак того, что у оператора нет ¬џ’ќƒ€ў»’ дуг (это результат программы)
 //
-// определение констант дл€ всей программы
+// определение констант
 #define _32    32
 #define _64    64
 #define _128   128
@@ -405,8 +405,9 @@ void  __fastcall PutFileToServer(  char *FileNameSource, char *FileNameDestinati
 void  __fastcall Unload_Install(); // загрузить с сервера инсталл€ционную версию продукта
 void  __fastcall Upload_Data( int Rule ); // вџгрузить файлы на сервер (в зависимости от pyfxtybz Rule )
 void  __fastcall Work_LogInOut( int Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
-//
+void  __fastcall PutParamsAboutSelectOp( INT Op ); // выдать параметры оператора Op
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
+//
 ////////////////////////////////////////////////////////////////////////////////
 // строки дл€ хранени€ параметров ¬џ„»—Ћ»“≈Ћ≈… и ќѕ≈–ј“ќ–ќ¬ --------------------
 char *sCalcs = NULL, // длинные строки дл€ хранени€  параметров ¬џ„»—Ћ»“≈Ћ≈…
@@ -449,7 +450,7 @@ char first_F1[] = "-- %s: скрипт на €зыке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n
 #include "LMD_c.cpp" // описание на — пакетов LMD
 //
 const int minW_F1=900, minH_F1=600; // минимальные размеры главной формы F1
-extern const int minW_F2, minH_F2; // минимальный размер дочерной формы F2
+extern const int minW_F2, minH_F2; // минимальный размер дочерной формы F2 (определены в Unit2.cpp)
 ////////////////////////////////////////////////////////////////////////////////
 //int outGlobal = 0; // глобал дл€ запоминани€, из какого MenuItem вызван CD0 (перенесено в LMD_c.cpp)
 ////////////////////////////////////////////////////////////////////////////////
@@ -770,8 +771,7 @@ void __fastcall DeleteSymbolAll( char str[], char symb )
 //
 } // ----- конец DeleteSymbolAll -----------------------------------------------
 
-
-
+     
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
@@ -1925,10 +1925,10 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::PutParamsByOp(TObject *Sender)
+void __fastcall TF1::PutParAboutOp(TObject *Sender)
 { // выдать в текстовое окно параметры заданного оператора
  char str[_1024], tmp[_256];
- INT Op, i, Tier;
+ INT Tier,Op,i;
  bool flag;
 //
  if( !flagExistsTiers ) // нет массива Tiers[][]
@@ -1943,9 +1943,9 @@ retry:
 //
  strNcpy( str, IntToStr(c_GetOpByNumbOnTier(1,1)).c_str() ); // умолчание: 1-й оператор 1-го €руса
  AnsiString defStr = AnsiString( str ); // все входные параметры InputQuery суть типа AnsiString..!
-//
+////////////////////////////////////////////////////////////////////////////////
  flag = InputQuery( "ѕолучение данных об операторе", "¬ведите номер оператора в данной яѕ‘", defStr );
-//
+////////////////////////////////////////////////////////////////////////////////
  if( !flag ) // не была нажата Ok...
  {
   MessageBeep( MB_ICONASTERISK );
@@ -1957,12 +1957,25 @@ retry:
   MessageBeep( MB_ICONASTERISK );
   goto retry;
  }
-//
+////////////////////////////////////////////////////////////////////////////////
  if( c_GetTierByOp(Op) == ERR_COMMON ) // оператора с таким номером в яѕ‘ не существует..!
  {
   MessageBeep( MB_ICONHAND );
   goto retry;
  }
+//
+ PutParamsAboutSelectOp( Op ); // выдать в текстовое окно параметры оператора Op
+//
+} // ----- PutParAboutOp -------------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall PutParamsAboutSelectOp( INT Op )
+{ // выдать в текстовое окно параметры заданного оператора Op
+ char str[_1024], tmp[_256];
+ INT i, Tier;
+ bool flag;
 //
  Tier = c_GetTierByOp(Op); // оператор Op находитс€ на €русе Tier
  t_printf( "\nѕј–јћ≈“–џ ќѕ≈–ј“ќ–ј %d/%d (#опер/#€рус) дл€ данной яѕ‘:", Op, Tier );
@@ -2008,8 +2021,7 @@ retry:
  else
   t_printf( "4.  омментарий(*): %s\n", str );
 //
-} // ----- PutPatamsByOp -------------------------------------------------------
-
+} // ----- PutParamsAboutSelectOp ----------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2573,7 +2585,6 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
  return true ; // всЄ нормально...
 //
 } //===== конец RunLuaScript ===================================================
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

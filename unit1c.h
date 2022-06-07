@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-
 #ifndef Unit1H
 #define Unit1H
 //---------------------------------------------------------------------------
@@ -34,7 +33,7 @@
 //---------------------------------------------------------------------------
 class TF1 : public TForm
 {
-__published:	// IDE-managed Components
+__published: // IDE-managed Components
         TStatusBar *SB;
         TMainMenu *MM;
         TMenuItem *mnuFile;
@@ -157,11 +156,9 @@ __published:	// IDE-managed Components
         void __fastcall CreateNewScript(TObject *Sender);
         void __fastcall SaveScriptToFile(TObject *Sender);
         void __fastcall OpenFileScript(TObject *Sender);
-//        void __fastcall PrintScript(TObject *Sender);
         void __fastcall OnKeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
         void __fastcall StartLuaScript(TObject *Sender);
         void __fastcall CopyToNotepad(TObject *Sender);
-//        void __fastcall CopyToMSWord(TObject *Sender);
         void __fastcall StopLuaScript(TObject *Sender);
         void __fastcall SaveScriptToCurrentFile(TObject *Sender);
         void __fastcall CreateUpperSPFAndPutToTextFrame(TObject *Sender);
@@ -170,17 +167,12 @@ __published:	// IDE-managed Components
         void __fastcall AboutLua(TObject *Sender);
         void __fastcall AboutLua53(TObject *Sender);
         void __fastcall AboutLuaDetail(TObject *Sender);
-//        void __fastcall CreateSpfByPredifinedIgaFile(TObject *Sender);
-        void __fastcall MouseDown(TObject *Sender, TMouseButton Button,
-                                  TShiftState Shift, int X, int Y);
+        void __fastcall MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall OnShow_F1(TObject *Sender);
         void __fastcall SelectFont(TObject *Sender);
         void __fastcall AboutAlgoWiki(TObject *Sender);
         void __fastcall OnResize_F1(TObject *Sender);
-//        void __fastcall OnPaint_F1(TObject *Sender);
         void __fastcall OnCreate_F1(TObject *Sender);
-//        void __fastcall SB_ColorsClick(TObject *Sender);
-//        void __fastcall CD0_Show(TObject *Sender);
         void __fastcall FD0_Show(TObject *Sender);
         void __fastcall LMD_RD0_Show(TObject *Sender);
         void __fastcall LMD_ERD0_Show(TObject *Sender);
@@ -208,24 +200,18 @@ __published:	// IDE-managed Components
         void __fastcall OnClickGetInstall(TObject *Sender);
         void __fastcall FTP_Get_OnConnected(TObject *Sender);
         void __fastcall FTP_Get_OnDisconnected(TObject *Sender);
-        void __fastcall FTP_Get_OnWork(TObject *Sender, TWorkMode AWorkMode,
-                                       const int AWorkCount);
+        void __fastcall FTP_Get_OnWork(TObject *Sender, TWorkMode AWorkMode, const int AWorkCount);
         void __fastcall FTP_Get_OnWorkEnd(TObject *Sender, TWorkMode AWorkMode);
-        void __fastcall FTP_Get_OnWorkBegin(TObject *Sender, TWorkMode AWorkMode,
-                                            const int AWorkCountMax);
-        void __fastcall FTP_Get_OnStatus(TObject *axSender,
-                                         const TIdStatus axStatus, const AnsiString asStatusText);
+        void __fastcall FTP_Get_OnWorkBegin(TObject *Sender, TWorkMode AWorkMode, const int AWorkCountMax);
+        void __fastcall FTP_Get_OnStatus(TObject *axSender, const TIdStatus axStatus, const AnsiString asStatusText);
         void __fastcall EndedUploadFile(TObject *Sender);
         void __fastcall CreateBottomSPFAndPutToTextFrame(TObject *Sender);
         void __fastcall PutTLDToTextFrameAndDiagr(TObject *Sender);
         void __fastcall ReadEdgesFileAndPutToTextFrame(TObject *Sender);
-        void __fastcall PutParamsByOp(TObject *Sender);
-//        void __fastcall SelectPrintAction(TObject *Sender);
+        void __fastcall PutParAboutOp(TObject *Sender);
         void __fastcall actBreakSetExecute(TObject *Sender);
         void __fastcall actBreakDeleteAllExecute(TObject *Sender);
         void __fastcall On_Master_Timer(TObject *Sender);
-//
-//        void __fastcall OnTimerCallFunc(TObject *Sender); // вызывается по таймеру MyTimer
 //
 private:	// User declarations
         TLMDEditSearchDlgOptions FSearchOptions;
@@ -234,7 +220,7 @@ public:		// User declarations
 protected:
 //
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern PACKAGE TF1 *F1;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

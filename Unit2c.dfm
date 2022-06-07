@@ -173,11 +173,13 @@ object F2: TF2
     ShowHint = True
   end
   object M1: TMemo
-    Left = 3
+    Left = 4
     Top = 25
     Width = 708
     Height = 475
-    Hint = 'ReadOnly; '#1087#1088#1072#1074#1072#1103' '#1082#1085#1086#1087#1082#1072' '#1084#1099#1096#1080' - '#1074#1089#1087#1083#1099#1074#1072#1102#1097#1077#1077' '#1084#1077#1085#1102
+    Hint = 
+      'ReadOnly; '#1083#1077#1074#1072#1103' '#1082#1085#1086#1087#1082#1072' '#1084#1099#1096#1080' - '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086#1073' '#1086#1087#1077#1088#1072#1090#1086#1088#1072#1093#13#10' '#1074' '#1086#1073#1083#1072#1089 +
+      #1090#1080' '#1071#1055#1060', '#1087#1088#1072#1074#1072#1103' '#1084#1099#1096#1080' -  '#1074#1089#1087#1083#1099#1074#1072#1102#1097#1077#1077' '#1084#1077#1085#1102
     TabStop = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
@@ -186,12 +188,13 @@ object F2: TF2
     Font.Style = []
     ParentFont = False
     ParentShowHint = False
-    PopupMenu = M1_PM
+    PopupMenu = F1.PM_Print
     ReadOnly = True
     ScrollBars = ssBoth
     ShowHint = True
     TabOrder = 0
     WordWrap = False
+    OnClick = M1_OneClick
   end
   object PN1: TPanel
     Left = 716
