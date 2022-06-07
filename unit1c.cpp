@@ -2665,3 +2665,8 @@ void __fastcall GetFileFromServer( char FileNameServer[] )
 //
 #include "FTP_GetPost_SPF.cpp" // обмен с сервером vbakanov.ru по FTP (Indy 8.0.25)
 //
+void __fastcall TF1::N5_OutOpsDown(TObject *Sender)
+{ // выходные операторы помещать на выходной ярус (самый нижний)
+ N5->Checked = !N5->Checked ; // изменим состояние на противоположное
+} //----------------------------------------------------------------------------
+

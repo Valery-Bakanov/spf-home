@@ -150,6 +150,8 @@ __published: // IDE-managed Components
         TIdFTP *FTP_Post;
         TIdAntiFreeze *IdAntiFreeze1;
         TIdIPWatch *IPWatch;
+        TMenuItem *N5;
+        TMenuItem *N11;
         void __fastcall OnClose_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall OnClose_1_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall CloseSpfAtHome(TObject *Sender);
@@ -212,6 +214,7 @@ __published: // IDE-managed Components
         void __fastcall actBreakSetExecute(TObject *Sender);
         void __fastcall actBreakDeleteAllExecute(TObject *Sender);
         void __fastcall On_Master_Timer(TObject *Sender);
+        void __fastcall N5_OutOpsDown(TObject *Sender);
 //
 private:	// User declarations
         TLMDEditSearchDlgOptions FSearchOptions;
