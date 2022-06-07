@@ -1,8 +1,8 @@
 object F1: TF1
   Left = 262
-  Top = 219
+  Top = 254
   Width = 900
-  Height = 600
+  Height = 565
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   BorderIcons = [biSystemMenu, biMinimize, biHelp]
@@ -68,7 +68,7 @@ object F1: TF1
   end
   object SB: TStatusBar
     Left = 0
-    Top = 522
+    Top = 520
     Width = 884
     Height = 19
     Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080' '#1103#1086' '#1089#1086#1089#1090#1086#1103#1085#1080#1080' '#1089#1080#1089#1090#1077#1084#1099

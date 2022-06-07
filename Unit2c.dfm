@@ -188,7 +188,7 @@ object F2: TF2
     Font.Style = []
     ParentFont = False
     ParentShowHint = False
-    PopupMenu = F1.PM_Print
+    PopupMenu = M1_PM
     ReadOnly = True
     ScrollBars = ssBoth
     ShowHint = True
