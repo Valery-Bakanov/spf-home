@@ -318,7 +318,8 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
      *Sect3, *Sect3_Var1,*Sect3_Var2,*Sect3_Var3,*Sect3_Var4,*Sect3_Var5,*Sect3_Var6,
      *Sect4, *Sect4_Var1,
      *Sect5, *Sect5_Var1,*Sect5_Var2,*Sect5_Var3,*Sect5_Var4,*Sect5_Var5,*Sect5_Var6,*Sect5_Var7,*Sect5_Var8,
-     *Sect6, *Sect6_Var1 ;
+     *Sect6, *Sect6_Var1,
+     *Sect7, *Sect7_Var1 ;
 } RWC = {
  "Font", // [1] фонт окна редактировани€ Lua-скриптов
   "Name","Size","Color","Charset","Pitch","Bold","Italic","Underline","StrikeOut",
@@ -331,7 +332,9 @@ char *Sect1, *Sect1_Var1,*Sect1_Var2,*Sect1_Var3,*Sect1_Var4,*Sect1_Var5,*Sect1_
  "LMD_EditViewColors", // [5] цвета окна редактировани€ Lua
   "Gutter->LinesBarBg","Gutter->LinesBarTextColor","Gutter->FoldsBarBg","Gutter->FoldsBarLineColor","Gutter->CustomBarBg","SelectionBg","SelectionColor","Color",
  "Tick_Interval", // [6] интервал главного таймера (мсек)
-  "Interval"
+  "Interval",
+ "OutOpsPutBottom", // [7] переносить ли принудительно вызодные операторы на самый нижний €рус ( 1/0 )
+   "OutOpsPutOnBottomTier"
 } ; // [ReadWriteConfig] имена секций файла конфигурации
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -407,6 +410,7 @@ void  __fastcall Upload_Data( int Rule ); // вџгрузить файлы на сервер (в зависи
 void  __fastcall Work_LogInOut( int Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
 void  __fastcall PutParamsAboutSelectOp( INT Op ); // выдать параметры оператора Op
 void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
+void  __fastcall OutOpsMoveLowerTier(); // все выходные операторы перенести на самый нижний €рус
 //
 ////////////////////////////////////////////////////////////////////////////////
 // строки дл€ хранени€ параметров ¬џ„»—Ћ»“≈Ћ≈… и ќѕ≈–ј“ќ–ќ¬ --------------------
@@ -1062,7 +1066,7 @@ void __fastcall DisplayMessage( char* Level, char* funcName, char* Text, INT Err
 void __fastcall Read_Config()
 { // восстанавливает данные в файл конфигурации
 //
- TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniIFile
+ TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniFile
 //
  F1->FD0->Font->Name    = tINI->ReadString(RWC.Sect1,  RWC.Sect1_Var1, "Arial"); // им€ фонта
  F1->FD0->Font->Size    = tINI->ReadInteger(RWC.Sect1, RWC.Sect1_Var2,      12); // размер символов
@@ -1117,6 +1121,8 @@ void __fastcall Read_Config()
 //
  F1->Master_Timer->Interval      = tINI->ReadInteger(RWC.Sect6, RWC.Sect6_Var1, 10); // интевал главного таймера (мсек)
 //
+ F1->N5->Checked                 = tINI->ReadBool(RWC.Sect7, RWC.Sect7_Var1, false); // переносить ли принудительно вызодные операторы на самый нижний €рус ( 1/0 )
+//
  delete tINI; // уничтожили объект - более не нужен !...
 //
  TEV0->SetFocus(); // фокус - на окно редактировани€
@@ -1147,7 +1153,7 @@ void __fastcall Read_Config()
 void __fastcall Write_Config()
 { // сохран€ет данные в файл конфигурации
 //
- TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniIFile
+ TIniFile* tINI = new TIniFile(FileNameINI); // создали объект типа TIniFile
 //
  tINI->WriteString(RWC.Sect1,  RWC.Sect1_Var1, F1->FD0->Font->Name); // им€ фонта
  tINI->WriteInteger(RWC.Sect1, RWC.Sect1_Var2, F1->FD0->Font->Size); // размер
@@ -1190,6 +1196,8 @@ void __fastcall Write_Config()
  tINI->WriteInteger(RWC.Sect5, RWC.Sect5_Var6, TEV0->SelectionBg);
  tINI->WriteInteger(RWC.Sect5, RWC.Sect5_Var7, TEV0->SelectionColor);
  tINI->WriteInteger(RWC.Sect5, RWC.Sect5_Var8, TEV0->Color);
+//
+ tINI->WriteBool(RWC.Sect7, RWC.Sect7_Var1, F1->N5->Checked); // переносить ли принудительно вызодные операторы на самый нижний €рус ( 1/0 )
 //
  delete tINI; // уничтожили объект - более не нужен !...
 //
@@ -1585,9 +1593,8 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
   return ;
  }
 //
-// ---- ур-р€... всЄ OK.........................................................
-//
   c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" канонической форме в окно текстовых данных
+//
   c_ClearDiagrArea(); // очистить графическое представление я
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
@@ -1596,6 +1603,7 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
 //
   flagExistsEdges = true;
   flagExistsTiers = true;
+//
 } //---конец CreateUpperSpfBySelectedIgaFile -----------------------------------
 
  ////////////////////////////////////////////////////////////////////////////////
@@ -1645,10 +1653,12 @@ void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
 //
 } //---конец CreateLowerSpfBySelectedIgaFile -----------------------------------
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::ReadEdgesFileAndPutToTextFrame(TObject *Sender)
 { // выбирает »√ј-файл, читает его в Mem_Edges[][] и выводит в текстовый фрейм ------
+//
  OD_Edg->InitialDir = ExtractFilePath ( Application->ExeName ); // считываем из текущего каталога
 //
  OD_Edg->Files->Clear(); // чистим историю
@@ -1686,6 +1696,8 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  INT iOp, fromOp, toOp, i;
  char str[_2048], w[_256];
 //
+ INT old_nMoves = nMoves; // запомнили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
+//
  if( !c_ReadEdges( FileName ) ) // читаем »√ј-файл в массив Mem_Edges[][]
  {
   flagExistsEdges =
@@ -1722,7 +1734,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 ////////////////////////////////////////////////////////////////////////////////
 //==============================================================================
 ////////////////////////////////////////////////////////////////////////////////
-
+//
 // --- в Tiers[0][*] помещаем операторы ¬’ќƒЌќ√ќ (нулевого) €руса --------------
 // --- это операторы, Ќ≈ »ћ≈ёў»≈ ¬’ќƒќ¬ (только выходы) ------------------------
  Tiers(0,0) = 0; // число операторов ¬’ќƒЌќ√ќ (нулевого) €руса
@@ -1753,7 +1765,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
     Tiers(0,0) ++ ; // увеличили на 1 число операторов на ¬’ќƒЌќћ (нулевом) уровне
     Tiers(0, Tiers(0,0)) = Edges(i,iEdges); // запомнили его в столбце Tiers(0,j)
-
+//
    } // конец if
   } // конец цикла по i
 // конец цикла по iEdges -------------------------------------------------------
@@ -1873,9 +1885,15 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
  flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
+ if( F1->N5->Checked ) // если включЄн режим "приземлени€" всех всех выходных операторов...
+  OutOpsMoveLowerTier(); // все выходные операторы перенести на самый нижний €рус
+//
+ nMoves = old_nMoves; // восстановили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
+//
  return true ; // всЄ нормально - массив Tiers[][] в "верхней" канонической форме построен
 //
 } // --- конец c_CreateTiersByEdges---------------------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1886,7 +1904,7 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 // - верифицирует корректность "нижней" формы яѕ‘ (условие невозможности перенќса ¬—≈’ операторов "вверх")
  UINT iTier, jOp, Op, errCount=0;
 //
-////////////////////////////////////////////////////////////////////////////////
+ INT old_nMoves = nMoves; // запомнили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
 //
  if( !c_CreateTiersByEdges( FileName ) ) // читает »√ј-файл и создаЄт яѕ‘ в "верхней" канонической форме
   return false ; // не удалось..!
@@ -1919,9 +1937,12 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 //
  flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
+ nMoves = old_nMoves; // восстановили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
+//
  return true ; // всЄ нормально - массив Tiers[][] в "нижней" канонической форме построен
 //
 } // --- конец c_CreateTiersByEdges_Bottom--------------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2662,11 +2683,38 @@ void __fastcall GetFileFromServer( char FileNameServer[] )
 } //----------------------------------------------------------------------------
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall TF1::N5_OutOpsDown(TObject *Sender)
+{ // выходные операторы принудительно помещать на выходной €рус (самый нижний) или нет ( 1/0 соответственно )
+//
+ F1->N5->Checked = !F1->N5->Checked ; // изменим состо€ние на противоположное
+//
+ Write_Config(); // запись Sect7.Sect7_Var1
+//
+ MessageBeep( MB_ICONEXCLAMATION ); // звуковое предупреждение...
+//
+} //----------------------------------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall OutOpsMoveLowerTier()
+{ // все выходные операторы перенести на самый нижний €рус
+//
+ INT nOp;
+//
+ for( INT iTier=1; iTier<=c_GetCountTiers()-1; iTier++  ) // по всем €русам с 1 по nTiers-1
+  for( INT jOp=1; jOp<=c_GetCountOpsOnTier(iTier); jOp++ ) // по всем операторам €руса iTiers
+  {
+   nOp = c_GetOpByNumbOnTier( jOp,iTier ); // номер оператора #jOp на €русе iTier
+   if( !c_GetCountOutEdgesByOp( nOp ) ) // если  у оператора nOp число выход€щих дуг нулевое...
+    c_MoveOpTierToTier( nOp,c_GetCountTiers() ); // перемещаем оператор nOp на самый нижний €рус яѕ‘
+  }
+//
+} //----------------------------------------------------------------------------
+
+
 //
 #include "FTP_GetPost_SPF.cpp" // обмен с сервером vbakanov.ru по FTP (Indy 8.0.25)
 //
-void __fastcall TF1::N5_OutOpsDown(TObject *Sender)
-{ // выходные операторы помещать на выходной €рус (самый нижний)
- N5->Checked = !N5->Checked ; // изменим состо€ние на противоположное
-} //----------------------------------------------------------------------------
-

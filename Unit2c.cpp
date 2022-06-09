@@ -34,7 +34,14 @@
 #pragma resource "*.dfm"
 TF2 *F2;
 //
+#define REAL float // тип вещественных чисел при вычислениях (32 бит)
 #define INT  signed long int // тип целых (32 бит)
+//
+#define ULI unsigned long int // длинное целое без знака (32 бит)
+#define UI  unsigned int // целое без знака (32 бит)
+//
+#define _minINT -1073741824 // минимум -(2^30) и максимум 2^30 int_32
+#define _maxINT  1073741824
 //
 ////////////////////////////////////////////////////////////////////////////////
 extern const int minW_F2=850, minH_F2=600; // минимальный размер дочерной формы F2
