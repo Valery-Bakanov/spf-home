@@ -80,14 +80,14 @@ void __fastcall TF2::M1_PM_CopyAll(TObject *Sender)
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF2::M1_PM_CopyToNotepad(TObject *Sender)
 { // копировать в NotePad всё из M1 (TMemo)
- char FileName[_256];
- strcpy( FileName, ChangeFileExt( FileNameEdges, ".txt" ).c_str()); // имя пректа + "txt"
- M1->Lines->SaveToFile( FileName ); // выдать все строки из M1 в файл FileName
- ShellExecute( Handle, "open", FileName, NULL, NULL, SW_RESTORE ); // открыть файл FileName
+ char tmpFileName[_256];
+ strcpy( tmpFileName, ChangeFileExt( FileNameEdges, ".txt" ).c_str()); // имя проекта + "txt"
+ M1->Lines->SaveToFile( tmpFileName ); // выдать все строки из M1 в файл tmpFileName
+ ShellExecute( Handle, "open", tmpFileName, NULL, NULL, SW_RESTORE ); // открыть файл tmpFileName
 //
  sleep( 1 ); // #include <dos.h>
 //
- DeleteFile( FileName ); // уничтожить (временный) файл
+ DeleteFile( tmpFileName ); // уничтожить (временный) файл
 } //----------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////

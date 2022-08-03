@@ -171,6 +171,8 @@
 
         <Regex token0 = 'SPF_API_Keywords' regex = '\bCalcParamsTiers\b' />
 
+        <Regex token0 = 'SPF_API_Keywords' regex = '\bBruteForce_SPF\b' />
+
 <!--================================================================================-->
 
         <RegexBlock innerScheme='StringInterpolation' start_token0='string' 

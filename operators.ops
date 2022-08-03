@@ -1,7 +1,11 @@
 
-=1/50: -Mem_Size 7 -Float 100 -Vect 23 -Double 2 -A1 334
-=11/999: -Type4 50 
-=Def:   -Type5 1.2
+=100/133: -Float 100 
+=134/166: -Double 10
+=167/201: -Vect 50
+
+=Def:     -Float 10
+
+
 
 
 

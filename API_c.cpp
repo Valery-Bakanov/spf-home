@@ -4,8 +4,8 @@
 // circle \225 \x0095; крест \207 \x0087; верт.лин \174 \x007c; разорв.верт.лини€ \246 \x00A6
 #define SS_01 " \246 " // строка-разделитель блоков при выводе в с_PutParamsTiers() // Special Sequence двойна€ вертикальна€
 #define SS_02 "$" // строка-символ фиктивного €руса ниже с максимальным номером
-#define SS_03 "\xBB" // строка-символ "\xBB" = ">>" ; "x96\x9B"= "->"
-#define SS_04 "\xAB" // строка-символ "\xAB" = "<<"
+#define _OUT "\xBB" // строка-символ "\xBB" = ">>" ||| признак того, что у оператора нет ¬џ’ќƒ€ў»’ дуг (это выходные данные)
+#define _IN  "\xAB" // строка-символ "\xAB" = "<<" ||| признак того, что у оператора нет ¬’ќƒ€ў»’  дуг (это исходные данные)
 //
 char Test_eq,Test_sl,Test_sll,Test_cl,Test_sp,Test_vr; // "=//: |"
 char Test_symb[] = "=/: |";
@@ -264,10 +264,10 @@ char* __fastcall c_SaveTiersVizu(char FileName[])
   for(INT j = 1; j<=Tiers( iTier,0 ); j++) // по списку номеров операторов на €русе i
   {
    if( !c_GetCountInEdgesByOp( Tiers(iTier,j) )) // у этого оператора нет ¬’ќƒ€ў»’ дуг...
-    snprintf(tmp,sizeof(tmp), _IN,  Tiers(iTier,j)); // это выходной оператор (результат программы)
+    snprintf(tmp,sizeof(tmp), " " _IN "%d",  Tiers(iTier,j)); // это выходной оператор (результат программы)
    else
    if( !c_GetCountOutEdgesByOp( Tiers(iTier,j) )) // у этого оператора нет ¬џ’ќƒ€ў»’ дуг...
-    snprintf(tmp,sizeof(tmp), _OUT, Tiers(iTier,j)); // это выходной оператор (результат программы)
+    snprintf(tmp,sizeof(tmp), " %d" _OUT , Tiers(iTier,j)); // это выходной оператор (результат программы)
    else
     snprintf(tmp,sizeof(tmp), " %d", Tiers(iTier,j) ); // порци€ очередного оператора дл€ выводной строки
 //
@@ -1528,10 +1528,10 @@ INT __fastcall c_PutTiersToTextFrame()
   for(INT j=1; j<=Tiers(iTier,0); j++) // по номерам операторов на €русе iTier
   {
    if( !c_GetCountInEdgesByOp( Tiers(iTier,j) )) // у этого оператора нет ¬’ќƒ€ў»’ дуг...
-    snprintf(tmp,sizeof(tmp), _IN,  Tiers(iTier,j)); // это выходной оператор (результат программы)
+    snprintf(tmp,sizeof(tmp), " " _IN "%d", Tiers(iTier,j)); // это выходной оператор (результат программы)
    else
    if( !c_GetCountOutEdgesByOp( Tiers(iTier,j) )) // у этого оператора нет ¬џ’ќƒ€ў»’ дуг...
-    snprintf(tmp,sizeof(tmp), _OUT, Tiers(iTier,j)); // это выходной оператор (результат программы)
+    snprintf(tmp,sizeof(tmp), " %d" _OUT , Tiers(iTier,j)); // это выходной оператор (результат программы)
    else
     snprintf(tmp,sizeof(tmp), " %d", Tiers(iTier,j) ); // порци€ очередного оператора дл€ выводной строки
 //
@@ -2864,28 +2864,28 @@ bool __fastcall c_PutParamsAll()
  if( c_LoadFileNameParamsCalcs( FileNameParamsCalcs ) ) // если с файлом всЄ удачно...
  {
   t_printf( "=> ¬џ„»—Ћ»“≈Ћ»: файл |%s|", FileNameParamsCalcs ); // им€ файла параметров ¬џ„»—Ћ»“≈Ћ≈…
-  t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
+  t_printf( "исходна€:  |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sCalcs ); // скоректированна€ строка
  }
 //
  if( c_LoadFileNameParamsOps( FileNameParamsOps ) )
  {
   t_printf( "=> ќѕ≈–ј“ќ–џ: файл |%s|", FileNameParamsOps ); // им€ файла параметров ќѕ≈–ј“ќ–ќ¬
-  t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
+  t_printf( "исходна€:  |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sOps ); // скоректированна€ строка
  }
 //
  if( c_LoadFileNameParamsEdges( FileNameParamsEdges ) )
  {
   t_printf( "=> ћ≈“–» » ƒ”√: файл |%s|", FileNameParamsEdges ); // им€ файла метрик ƒ”√
-  t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
+  t_printf( "исходна€:  |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sEdg ); // скоректированна€ строка
  }
 //
  if( c_LoadFileNameParamsVertices( FileNameParamsVertices ) )
  {
   t_printf( "=> ћ≈“–» » ¬≈–Ў»Ќ: файл |%s|", FileNameParamsVertices ); // им€ файла метрик ¬≈–Ў»Ќ
-  t_printf( "исходна€:   |%s|", sWork ); // исходна€ строка
+  t_printf( "исходна€:  |%s|", sWork ); // исходна€ строка
   t_printf( "коррекци€: |%s|", sVrt ); // скоректированна€ строка
  }
 //
@@ -3695,8 +3695,8 @@ char* __fastcall c_SaveTLD( char FileName[] )
 //
  for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
  {
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *SS_03 ) ; // уничтожили символ SS_03[0] = ">>" в встроке
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *SS_04 ) ; // уничтожили символ SS_04[0] = "<<" в строке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_OUT ) ; // уничтожили символ _OUT[0] = ">>" в встроке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_IN ) ; // уничтожили символ _IN[0] = "<<" в строке
 //
   fprintf( fptr, "%s\n", paramsTLD->Strings[i] ); // печать в файл
  }
@@ -4336,90 +4336,6 @@ cont:
 } // --- конец ReformFileName --------------------------------------------------
 
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ‘
-{
-//
- if( !flagExistsTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
- REAL averWidth =  (REAL)nOps / nTiers, // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
-      sumSqWidth = 0.0 , // суммирование квадратов нев€зок
-      sumOps = 0.0 , // сумма операторов по €русам  яѕ‘
-      sumICL = 0.0 , // сумма дл€ коэффициента неравномерности по кривой Ћоренца
-      xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
- INT iTier, iOp ,
-     nOpsOnTier, // число операторов на €русе
-     minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
-//
-     sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
-     OpFrom, OpTo, nOutEdges, iOutEdge; // ... то же ...
-//
-// =============================================================================
- for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
- {
-//
-  OutRepeatComplete(" * "__FUNC__"(): ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
-//
-  nOpsOnTier = c_GetCountOpsOnTier(iTier); // число операторов на €русе iTier
-//
-  minOpsByTiers = min( minOpsByTiers, nOpsOnTier ) ; // ищем min / max
-  maxOpsByTiers = max( maxOpsByTiers, nOpsOnTier ) ;
-//
-  sumSqWidth += ( averWidth - nOpsOnTier ) * ( averWidth - nOpsOnTier ) ; // сумма квадратов нев€зок
-// -----------------------------------------------------------------------------
-//
-  sumOps += nOpsOnTier ; // накопленное число операторов по €русам яѕ‘
-  xAxis = (REAL)iTier / nTiers ; // ось абсцисс  (доли единицы)
-  yAxis = sumOps / nOps ; // ось ординат  (доли единицы)
-//
-  sumICL += 0.5 * ( yAxis + yAxis_old ) * ( xAxis - xAxis_old ) ; // площадь трапеции
-//
-  xAxis_old = xAxis ; yAxis_old = yAxis ; // запомним предыдущие значени€
-//
-// =============================================================================
-  for( iOp=1; iOp<=nOpsOnTier; iOp++ ) // по номерам операторов на €русе iTier
-  {
-//
-   OpFrom = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
-   nOutEdges = c_GetCountOutEdgesByOp( OpFrom ); // число »—’ќƒяў»’ дуг у оператора OpFrom
-//
-   for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ ) // цикл по всем »—’ќƒяў»ћ дугам
-   {
-    OpTo = c_GetNumbOutEdgeByOp( iOutEdge, OpFrom ); // номер оператора, к которому идЄт дуга iOutEdge от оператора OpFrom
-    sumDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#€руса оператора OpFrom) - (#€руса оператора OpTo)
-    sumEdges += 1; // сумма числа проанализированных дуг
-   } // конец цикла    for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ )
-//
-// =============================================================================
-  } // конец for( iOp=1; iOp<=nOpsOnTier; iOp++ )
-//
- } // конец for( iTier=1; iTier<=nTiers; iTier++ )
-//
- StatTiers.averWidth  = averWidth ;  // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
- StatTiers.sumSqWidth = sumSqWidth ; // сумма квадратов нев€зок
- StatTiers.SD = nTiers>1 ? sqrt(sumSqWidth/(nTiers-1.0)) : ERR_CALC ; // — ќ (Standard Deviation)
- StatTiers.CV = nTiers>1 ? StatTiers.SD/averWidth : ERR_CALC ; // коэффициент вариации CV (несмещЄнный)
-//
-// IC = max/min операторов по €русам яѕ‘ ( Irregularity Coefficient, коэффициент неравномерности )
- StatTiers.IC = (REAL)maxOpsByTiers / minOpsByTiers ;
-//
-// неравномерность распределени€ операторов по €русам яѕ‘ по кривой Ћоренца
- StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
-//
- StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическа€ длина дуги (Average Arc Length)
-//
- StatTiers.MinOpsByTiers = minOpsByTiers; // мин. операторов по €русам
- StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
-//
-} // ----- конец c_—alcParamsTiers() -------------------------------------------
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetNumbOp(INT Numb)
@@ -4956,7 +4872,7 @@ INT __fastcall  c_CalcParamsTLD()
    for( j=1; j<=c_GetCountOpsOnTier(i); j++ ) // по операторам по €русе j
    {
 //
-    APM // дать поработать Wimdows ---------------------------------------------
+    APM // дать поработать Windows ---------------------------------------------
 //
     from_Op = c_GetOpByNumbOnTier( j,i ); // получили номер вершины, из которой ¬џ’ќƒя“ дуги
     to_Op   = c_GetOpByMaxTierLowerPreset( from_Op ); // если выходных дуг нет вообще - возвращаетс€ ERR_COMMON
@@ -4966,12 +4882,13 @@ INT __fastcall  c_CalcParamsTLD()
     if( max_to_Tier >= iBottomOfGap ) // €рус конца дуги более или равен €русу Ќ»«ј интервала
     {
      if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ¬’ќƒЌџ’ данных
-      snprintf( sW,sizeof(sW), " %c%d|%d->%d", SS_04, from_Op, i, max_to_Tier ) ; // SS_04 = "\xAB" = "<<"
+//      snprintf( sW,sizeof(sW), " %1s%d|%d->%d", _IN, from_Op, i, max_to_Tier ) ; // _IN = "\xAB" = "<<"
+      snprintf( sW,sizeof(sW), " " _IN "%d|%d->%d", from_Op, i, max_to_Tier ) ; // _IN = "\xAB" = "<<"
      else
-     if( !c_GetCountOutEdgesByOp( from_Op ) ) //  // это вершина (оператор) ¬џ’ќƒЌџ’ данных
-       snprintf( sW,sizeof(sW), " %d" SS_03 "|%d->"  SS_02 "", from_Op, i ) ; // SS_03 = "\xBB" = ">>"
+     if( !c_GetCountOutEdgesByOp( from_Op ) ) // это вершина (оператор) ¬џ’ќƒЌџ’ данных
+       snprintf( sW,sizeof(sW), " %d" _OUT "|%d->"  SS_02 "", from_Op, i ) ; // _OUT = "\xBB" = ">>"
      else
-      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op,i, max_to_Tier );
+      snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op, i, max_to_Tier );
 //
      strcat( sN, sW ); // добавл€ем в sN дл€ формировани€ строки вывода
 //
@@ -5224,6 +5141,168 @@ void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
  F1->SB->Repaint(); // перерис”ем...
 //
 } // ----- конец OutRepeatComplete ---------------------------------------------
+
+
+
+
+bool __fastcall c_BruteForce_SPF( char *FileName ); // прототипы функций
+void __fastcall c_CalcSpecOp( INT Op );
+
+INT Var; // счЄтчик рассмотренных вариантов
+REAL minCV = 1.0e100; // пам€ть дл€ min CV
+INT minCV_Var; // номер счЄтчика при CV->min
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool __fastcall c_BruteForce_SPF( char *FileName )
+{ // силовой перебор всех допустимых сочетаний операторов по €русам яѕ‘
+ INT iTier, jOp, Op;
+//
+ c_CreateTiersByEdges( FileName ); // создать яѕ‘ в "верхней" форме по »√ј-файлу FileName
+//
+ c_PutTiersToTextFrame(); // вывод яѕ‘ в текстовое окно
+//
+ Var = 0; // обнул€ем счЄтчик
+//
+ for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
+  for( jOp=1; jOp<=c_GetCountOpsOnTier(iTier); jOp++ ) // по операторам на €русе iTier
+  {
+   Op = c_GetOpByNumbOnTier(jOp,iTier); // получить реальный номер оператора по его положению на €русе
+   c_CalcSpecOp( Op ); // вызывать дл€ данного оператора Op
+  }
+//
+} // ------- конец c_BruteForce_SPF --------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void __fastcall c_CalcSpecOp( INT Op )
+{ // перебор положений всех возможных положений на €русах яѕ‘ операторов начина€ с Op
+ INT minOp, maxOp, // мин и макс €русы возможного положени€ оператора Op
+     iTier;
+//
+ INT oldTier = c_GetTierByOp( Op ); // запомним исходный €рус расположени€ оператора Op
+//
+ minOp = c_GetMinTierMaybeOp( Op );
+ maxOp = c_GetMaxTierMaybeOp( Op );
+ if( minOp == maxOp ) // есkи вариативность оператора Op нулева€...
+  return;
+//
+ t_printf( "\n--- Op=%d Tier=%d #%d ---\n", Op,oldTier, Var  ); // строка-разделитель
+//
+ for( iTier=minOp; iTier<=maxOp; iTier++ ) // по всем возможным положени€м на €русах ZGA оператора Op
+ {
+  c_MoveOpTierToTier( Op, iTier ); // переместили оператор Op на €рус iTier
+//
+  Var ++ ; // счЄтчик вариантов
+//
+  c_CalcParamsTiers(); // вычисл€ем параметры полученной яѕ‘
+  if( StatTiers.CV <= minCV ) // зафиксировали min CV
+  {
+   minCV = StatTiers.CV; // запомнили CV
+   minCV_Var = Var; // запомнили номер опыта
+  }
+//
+  t_printf( "=== %d-%d %d:%d шир.яѕ‘=%.3g CV=%.3g (%.3g|#%d) ===",  // вывод параметров полученной яѕ‘
+             Op,iTier, minOp,maxOp,
+             StatTiers.MaxOpsByTiers, StatTiers.CV,
+             minCV,minCV_Var );
+//
+//  c_PutTiersToTextFrame(); // вывод яѕ‘ в текстовое окно
+ }
+//
+// c_MoveOpTierToTier( Op, oldTier ); // вернуть оператор на исходный €рус яѕ‘
+//
+} // ------- конец c_CalcSpecOp ------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ‘
+{
+//
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+ REAL averWidth =  (REAL)nOps / nTiers, // средн€€ ширина по всем €русам яѕ‘ кроме ¬’ќƒЌќ√ќ (нулевого)
+      sumSqWidth = 0.0 , // суммирование квадратов нев€зок
+      sumOps = 0.0 , // сумма операторов по €русам  яѕ‘
+      sumICL = 0.0 , // сумма дл€ коэффициента неравномерности по кривой Ћоренца
+      xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
+ INT iTier, iOp ,
+     nOpsOnTier, // число операторов на €русе
+     minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
+//
+     sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
+     OpFrom, OpTo, nOutEdges, iOutEdge; // ... то же ...
+//
+// =============================================================================
+ for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
+ {
+//
+  OutRepeatComplete(" * "__FUNC__"(): ", iTier, nTiers, 30, (1.0e2*iTier)/nTiers, "%.0f", "% выполнено"); // индикаци€ готовности выполнени€ части цикла
+//
+  nOpsOnTier = c_GetCountOpsOnTier(iTier); // число операторов на €русе iTier
+//
+  minOpsByTiers = min( minOpsByTiers, nOpsOnTier ) ; // ищем min / max
+  maxOpsByTiers = max( maxOpsByTiers, nOpsOnTier ) ;
+//
+  sumSqWidth += ( averWidth - nOpsOnTier ) * ( averWidth - nOpsOnTier ) ; // сумма квадратов нев€зок
+// -----------------------------------------------------------------------------
+//
+  sumOps += nOpsOnTier ; // накопленное число операторов по €русам яѕ‘
+  xAxis = (REAL)iTier / nTiers ; // ось абсцисс  (доли единицы)
+  yAxis = sumOps / nOps ; // ось ординат  (доли единицы)
+//
+  sumICL += 0.5 * ( yAxis + yAxis_old ) * ( xAxis - xAxis_old ) ; // площадь трапеции
+//
+  xAxis_old = xAxis ; yAxis_old = yAxis ; // запомним предыдущие значени€
+//
+// =============================================================================
+//
+  for( iOp=1; iOp<=nOpsOnTier; iOp++ ) // по номерам операторов на €русе iTier
+  {
+//
+   OpFrom = c_GetOpByNumbOnTier( iOp, iTier ); // номер оператора по его номеру iOp на €русе iTier
+   nOutEdges = c_GetCountOutEdgesByOp( OpFrom ); // число »—’ќƒяў»’ дуг у оператора OpFrom
+//
+   for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ ) // цикл по всем »—’ќƒяў»ћ дугам
+   {
+    OpTo = c_GetNumbOutEdgeByOp( iOutEdge, OpFrom ); // номер оператора, к которому идЄт дуга iOutEdge от оператора OpFrom
+    sumDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#€руса оператора OpFrom) - (#€руса оператора OpTo)
+    sumEdges += 1; // сумма числа проанализированных дуг
+    // t_printf( "-= %d %d=%d %d-%d", iTier, OpFrom,OpTo, sumDump,sumEdges );
+   } // конец цикла for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ )
+//
+// =============================================================================
+  } // конец for( iOp=1; iOp<=nOpsOnTier; iOp++ )
+//
+ } // конец for( iTier=1; iTier<=nTiers; iTier++ )
+//
+ StatTiers.averWidth  = averWidth ;  // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
+ StatTiers.sumSqWidth = sumSqWidth ; // сумма квадратов нев€зок
+ StatTiers.SD = nTiers>1 ? sqrt(sumSqWidth/(nTiers-1.0)) : ERR_CALC ; // — ќ (Standard Deviation)
+ StatTiers.CV = nTiers>1 ? StatTiers.SD/averWidth : ERR_CALC ; // коэффициент вариации CV (несмещЄнный)
+//
+// IC = max/min операторов по €русам яѕ‘ ( Irregularity Coefficient, коэффициент неравномерности )
+ StatTiers.IC = (REAL)maxOpsByTiers / minOpsByTiers ;
+//
+// неравномерность распределени€ операторов по €русам яѕ‘ по кривой Ћоренца
+ StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
+//
+ StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическа€ длина дуги (Average Arc Length)
+// t_printf( "-= %d %d   %f =-", sumDump,sumEdges, StatTiers.AAL );
+//
+ StatTiers.MinOpsByTiers = minOpsByTiers; // мин. операторов по €русам
+ StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
+//
+} // ----- конец c_—alcParamsTiers() -------------------------------------------
+
+
+
 
 
 

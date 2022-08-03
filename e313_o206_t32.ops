@@ -1,9 +1,8 @@
 
-=1/50: -Float 100 
-=51/150: -Double 10
-=151/210: -Vect 50
-
-=Def:   -Float 10
+=1/50:    -Float 100 
+=51/150:  -Double 10
+=151/300: -Vect 50
+=Def:     -Float 10
 
 
 
