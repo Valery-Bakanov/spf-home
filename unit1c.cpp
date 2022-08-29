@@ -1,4 +1,4 @@
-        //
+//
 // настройка Advanced Compiler: - Pentium, Word
 //
 #define DEBUG 0 // вызов stackDump для отладки, если DEBUG # 0
@@ -103,7 +103,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 //
 //#include "pcre.h" // библиотека регулярных выражений от Borland C++ RTL
 //
-#define REAL float // тип вещественных чисел при вычислениях (32 бит)
+#define REAL double // тип вещественных чисел при вычислениях (64 бит)
 #define INT  signed long int // тип целых (32 бит)
 //
 #define ULI unsigned long int // длинное целое без знака (32 бит)
@@ -141,6 +141,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 #define ERR_COMMON -123456789 // код ошибки общий
 #define ERR_UNCERTAIN -1 // код ошибки непонятный
 //#define nDef -134 // фиктивные номера операторов по "=Def:^"
+#define RETURN_OK 0 // успех выполнения 
 ////////////////////////////////////////////////////////////////////////////////
 //#define NOT_LIMITS_OPS 1111111 // нет ограничений по параметрам ОПЕРАТОРА
 //#define NOT_LIMITS_CALCS 2222222 // нет ограничений по параметрам ВЫЧИСЛИТЕЛЯ
@@ -153,11 +154,11 @@ TStringList *paramsTLD = new( TStringList ) ;
 ////////////////////////////////////////////////////////////////////////////////
 extern "C" // Lua - исходные тексты на "чистом С"
 {
-#include "./lua_5-3-0/src/lua.h"
-#include "./lua_5-3-0/src/lauxlib.h"
-#include "./lua_5-3-0/src/lualib.h"
+#include "./lua-5.3.0/src/lua.h"
+#include "./lua-5.3.0/src/lauxlib.h"
+#include "./lua-5.3.0/src/lualib.h"
 }
-#include "./lua_5-3-0/src/lua_src.c" // все С-исходники Lua...
+#include "./lua-5.3.0/src/lua_src.c" // все С-исходники Lua...
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
 void  __fastcall stackDump( lua_State *L, char *s ); // выдаёт содержимое стека Lua
@@ -1054,8 +1055,8 @@ void __fastcall TF1::AboutAlgoWiki(TObject *Sender)
 void __fastcall DisplayMessage( char* Level, char* funcName, char* Text, INT Err )
 { // показывает сообщение
 //
- Err ? t_printf( "\n-%s- %s(): %s [err: %d] -%s-", Level, funcName, Text, Err, Level ) :
-       t_printf( "\n-%s- %s(): %s -%s-", Level, funcName, Text, Level ) ; 
+// Err ? t_printf( "\n-%s- %s(): %s [err: %d] -%s-", Level, funcName, Text, Err, Level ) :
+//       t_printf( "\n-%s- %s(): %s -%s-", Level, funcName, Text, Level ) ;
 } // --- конец DisplayMessage---------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2575,7 +2576,7 @@ label_StopSessionLua: // сюда переходим по longjmp -----------------------------
   lua_close( L ); // закрыть экземпляр Lua
   L = NULL;
 //
-  tpe_printf( "\n-I- %s: Выполнение скрипта [%s] завершено успешно..! -I-\n",
+  tpe_printf( "\n-I- %s: Выполнение скрипта [%s] завершено. Виртуальная Lua-машина остановлена... -I-\n",
               PutDateTimeToString(0), FileNameLua );
  }
  catch( ... )

@@ -593,7 +593,7 @@ INT __fastcall c_IsOpsHaveEdge(INT Op1, INT Op2)
    return ( true );
 //
  return ( false );
-// 
+//
 } // --- конец c_IsOpsHaveEdge -------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -879,7 +879,7 @@ INT __fastcall c_GetTierFirstMaxOps(INT Tier1, INT Tier2)
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- if( ( Tier1 < 1 ) || ( Tier1 > nTiers ) ||
+ if( ( Tier1 < 1 ) || ( Tier1 > nTiers ) || // "или"
      ( Tier2 < 1 ) || ( Tier2 > nTiers ) )
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
@@ -888,7 +888,6 @@ INT __fastcall c_GetTierFirstMaxOps(INT Tier1, INT Tier2)
 //
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
-//  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
@@ -928,7 +927,6 @@ INT __fastcall c_GetTierLastMaxOps(INT Tier1, INT Tier2)
 //
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
-//  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
@@ -967,7 +965,6 @@ INT __fastcall c_GetTierFirstMinOps(INT Tier1, INT Tier2)
 //
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
-//  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
@@ -1006,7 +1003,6 @@ INT __fastcall c_GetTierLastMinOps(INT Tier1, INT Tier2)
 //
  if( Tier2 < Tier1 ) // неверен диапазон Tier1 - Tier2
  {
-//  t_printf( "\n-E- %s(): %s {%d-%d}, [%d] -E-", __FUNC__, messParams2, Tier1,Tier2, ERR_RANGE_IN );
   DisplayMessage( "E", __FUNC__, messParams2, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
@@ -1207,9 +1203,11 @@ INT __fastcall c_GetMinTierMaybeOp(INT Op)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
-{ // --- переносит оператор Op на ярус toTier с проверкой корректности действия
-// ----- ни ярус первоначального нахождения Op ни toTier не могут быть ярусами первым или последним
-// ----- если удалось благополучно перенести - возвращается true и глобальная iMove
+{ // переносит оператор Op на ярус toTier с проверкой корректности действия
+// ни ярус первоначального нахождения Op ни toTier не могут быть ярусами первым или последним
+// если удалось благополучно перенести - возвращается true и глобальное nMoves инкрементируется на 1
+// попытка перемещения на ярус расположения оператора Op ошибкой не считается ..!
+// если всё нормально - возвращается 0
 //
  if( !flagExistsTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
  {
@@ -1219,18 +1217,8 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 //
  INT fromTier = c_GetTierByOp( Op ); // ярус первоначального нахождения оператора Op
 //
- if( ( fromTier < 1 ) || // с первого яруса оператор перенести можно, а с нулевого - нельзя!
-     ( fromTier > nTiers ) ) // с последнего яруса оператор перести можно, а с более низкого - нельзя!
- {
-  DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
-  return ERR_RANGE_IN ;
- }
-//
- if( fromTier == toTier ) // не желаем-с делать глупостев-с... НИКАКОГО ПЕРЕНОСА !!!
- {
-//  DisplayMessage( "E", __FUNC__, messParams2, false ); // выдать сообщение
-  return ERR_RANGE_IN ;
- }
+ if( fromTier == toTier ) // формально никакой ошибки нет ..!
+  return RETURN_OK ;
 //
  if( ( toTier < c_GetMinTierMaybeOp( Op ) ) || // проверка допустИмости переноса
      ( toTier > c_GetMaxTierMaybeOp( Op ) ) )
@@ -1247,7 +1235,7 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
   if( IncreaseOpsOnTier( toTier, _maxOpsOnTier * stockMem, 111 ) == false ) // неудача перераспределения памяти
   {
    flagExistsTiers = false ; // массив Tiers[][] не создан...
-   return false ;
+   return ERR_NOT_MEMORY ;
   }
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -1272,7 +1260,7 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 //
    flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
-   return true ;
+   return RETURN_OK ;
 //
   } // конец if
 //
@@ -1291,7 +1279,7 @@ INT __fastcall c_AddTier(INT Tier)
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- if( ( Tier <  0 ) ||  // этого нельзя...  а всё остальное МОЖНО !
+ if( ( Tier <  1 ) ||  // этого нельзя...  а всё остальное МОЖНО !
      ( Tier > nTiers ) )
  {
   DisplayMessage( "E", __FUNC__, messParams1, ERR_RANGE_IN ); // выдать сообщение
@@ -1342,7 +1330,7 @@ INT __fastcall c_AddTier(INT Tier)
 //
  flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
- return true ; // успешно выполнено
+ return RETURN_OK ; // успешно выполнено
 //
 } // --- конец c_AddTier -------------------------------------------------------
 
@@ -1392,8 +1380,7 @@ INT __fastcall c_GetCountEdges()
 //
  return nEdges ;
 } // --- конец c_GetCountEdges -------------------------------------------------
-
-
+     
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetCountTiers()
@@ -4223,7 +4210,7 @@ ended: flag_Busy = false; // выполнение CallLuaThread закончено...
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
 { // --- меняет местами операторы Op1 и Op2, находящиеся на РАЗНЫХ ярусах
-// ----- если удалось благополучно перенести - возвращается true и глобальная iMove
+// ----- если удалось благополучно перенести - возвращается RETURN_OK и глобальная iMove
 //
  if( !flagExistsTiers ) // если массива Tiers[][] ещё не существует - выходим с ошибкой
  {
@@ -4231,46 +4218,37 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- INT Tier1 = c_GetTierByOp( Op1 ), // ярус нахождения первого из обмениваемых операторов
-     Tier2 = c_GetTierByOp( Op2 ); // ...второго...
-//
- if( Op1 == Op2 ||  // не желаем-с делать глупостев-с... НИКАКОГО ПЕРЕНОСА !!!
-     Tier1 == Tier2 )
+ if( Op1 == Op2 )  // не желаем-с делать глупостев-с... НИКАКОГО ПЕРЕНОСА !!!
  {
-//  DisplayMessage( "E", __FUNC__, messParams2, false ); // выдать сообщение
-  return true ;
+  DisplayMessage( "E", __FUNC__, messParams2, false ); // выдать сообщение
+  return RETURN_OK ;
  }
 //
- if( Tier1 == ERR_COMMON || // проверка на корректность определения Tier1
-     Tier2 == ERR_COMMON ) // ...tier2
+ INT TierOp1,TierOp2 ;
+// 
+ if( ( TierOp1 = c_GetTierByOp( Op1 ) ) == ERR_COMMON || // проверка на корректность определения Tier1 "ИЛИ"
+     ( TierOp2 = c_GetTierByOp( Op2 ) ) == ERR_COMMON ) // ...tier2
  {
   DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
-  return false ;
+  return ERR_IN_DATA ;
  }
 //
- if( ( Tier1 < 1 && Tier1 > nTiers ) || // с нулевого и с яруса ниже последнего перенести нельзя...
-     ( Tier2 < 1 && Tier2 > nTiers ) )  // то же...
- {
-  DisplayMessage( "E", __FUNC__, messParams1, false ); // выдать сообщение
-  return false ;
- }
-//
- if( ( Tier1 < c_GetMinTierMaybeOp( Op1 ) ) || // проверка допустИмости переноса оператора Op1
-     ( Tier1 > c_GetMaxTierMaybeOp( Op1 ) ) ||
-     ( Tier2 < c_GetMinTierMaybeOp( Op2 ) ) || // проверка допустИмости переноса оператора Op2
-     ( Tier2 > c_GetMaxTierMaybeOp( Op2 ) ) )
+ if( ( TierOp1 < c_GetMinTierMaybeOp( Op2 ) ) || // проверка допуст.расп.опер. Op1 на ярусах Op2 "ИЛИ"
+     ( TierOp1 > c_GetMaxTierMaybeOp( Op2 ) ) ||
+     ( TierOp2 < c_GetMinTierMaybeOp( Op1 ) ) || // проверка допуст.расп.опер. Op2 на ярусах Op1 "ИЛИ"
+     ( TierOp2 > c_GetMaxTierMaybeOp( Op1 ) ) )
  {
   DisplayMessage( "E", __FUNC__, messParams3, ERR_RANGE_IN ); // выдать сообщение
   return ERR_RANGE_IN ;
  }
 //
- if( c_MoveOpTierToTier( Op1, Tier2 ) == true ) // успешный перенос Оp1 на ярус нахождения Op2
-  if( c_MoveOpTierToTier( Op2, Tier1 ) == true ) // успешен перенос Оp2 на ярус нахождения Op1
-   return true ;
+ if( c_MoveOpTierToTier( Op1, TierOp2 ) == RETURN_OK && // успешный перенос Оp1 на ярус нахождения Op2 "И"
+     c_MoveOpTierToTier( Op2, TierOp1 ) == RETURN_OK )  // успешный перенос Оp2 на ярус нахождения Op1
+   return RETURN_OK ;
 //
  flagCalcTLD = false ; // paramsTLD не соответствует Tiers[][]
 //
- return false ;
+ return ERR_IN_DATA ;
 //
 } // ----- конец c_SwapOpsTierToTier -------------------------------------------
 
@@ -5142,80 +5120,6 @@ void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
 //
 } // ----- конец OutRepeatComplete ---------------------------------------------
 
-
-
-
-bool __fastcall c_BruteForce_SPF( char *FileName ); // прототипы функций
-void __fastcall c_CalcSpecOp( INT Op );
-
-INT Var; // счётчик рассмотренных вариантов
-REAL minCV = 1.0e100; // память для min CV
-INT minCV_Var; // номер счётчика при CV->min
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-bool __fastcall c_BruteForce_SPF( char *FileName )
-{ // силовой перебор всех допустимых сочетаний операторов по ярусам ЯПФ
- INT iTier, jOp, Op;
-//
- c_CreateTiersByEdges( FileName ); // создать ЯПФ в "верхней" форме по ИГА-файлу FileName
-//
- c_PutTiersToTextFrame(); // вывод ЯПФ в текстовое окно
-//
- Var = 0; // обнуляем счётчик
-//
- for( iTier=1; iTier<=nTiers; iTier++ ) // по всем ярусам ЯПФ
-  for( jOp=1; jOp<=c_GetCountOpsOnTier(iTier); jOp++ ) // по операторам на ярусе iTier
-  {
-   Op = c_GetOpByNumbOnTier(jOp,iTier); // получить реальный номер оператора по его положению на ярусе
-   c_CalcSpecOp( Op ); // вызывать для данного оператора Op
-  }
-//
-} // ------- конец c_BruteForce_SPF --------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall c_CalcSpecOp( INT Op )
-{ // перебор положений всех возможных положений на ярусах ЯПФ операторов начиная с Op
- INT minOp, maxOp, // мин и макс ярусы возможного положения оператора Op
-     iTier;
-//
- INT oldTier = c_GetTierByOp( Op ); // запомним исходный ярус расположения оператора Op
-//
- minOp = c_GetMinTierMaybeOp( Op );
- maxOp = c_GetMaxTierMaybeOp( Op );
- if( minOp == maxOp ) // есkи вариативность оператора Op нулевая...
-  return;
-//
- t_printf( "\n--- Op=%d Tier=%d #%d ---\n", Op,oldTier, Var  ); // строка-разделитель
-//
- for( iTier=minOp; iTier<=maxOp; iTier++ ) // по всем возможным положениям на ярусах ZGA оператора Op
- {
-  c_MoveOpTierToTier( Op, iTier ); // переместили оператор Op на ярус iTier
-//
-  Var ++ ; // счётчик вариантов
-//
-  c_CalcParamsTiers(); // вычисляем параметры полученной ЯПФ
-  if( StatTiers.CV <= minCV ) // зафиксировали min CV
-  {
-   minCV = StatTiers.CV; // запомнили CV
-   minCV_Var = Var; // запомнили номер опыта
-  }
-//
-  t_printf( "=== %d-%d %d:%d шир.ЯПФ=%.3g CV=%.3g (%.3g|#%d) ===",  // вывод параметров полученной ЯПФ
-             Op,iTier, minOp,maxOp,
-             StatTiers.MaxOpsByTiers, StatTiers.CV,
-             minCV,minCV_Var );
-//
-//  c_PutTiersToTextFrame(); // вывод ЯПФ в текстовое окно
- }
-//
-// c_MoveOpTierToTier( Op, oldTier ); // вернуть оператор на исходный ярус ЯПФ
-//
-} // ------- конец c_CalcSpecOp ------------------------------------------------
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯПФ
@@ -5302,12 +5206,7 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
 
 
-
-
-
-
-
-
-
-
+//
+#include "BruteForce_SPF.cpp" // полный перебор всех возможных ЯПФ (не документировано)
+//
 

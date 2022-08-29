@@ -988,7 +988,7 @@ static int LuaCallByTimer(lua_State *L) // описываем функцию LuaCallByTimer на С
  strNcpy(arg1, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
  INT arg2 = luaL_checkinteger(L, 2); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_LuaCallByTimer(\"%s\",%d,)", arg1, arg2 );
+ sp_printf(" Lua call c_LuaCallByTimer(\"%s\",%d)", arg1, arg2 );
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
  lua_pushnumber(L, c_LuaCallByTimer( arg1, arg2 )); // вызовем FuncCallTimer и результат -> стек
@@ -1017,7 +1017,7 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
    lua_pushnumber(L, StatTiers.averWidth ); // среднеарифметическая ширина ЯПФ (кроме 0-го уровня)
    lua_pushnumber(L, StatTiers.sumSqWidth); // сумма квадратов невязок
    lua_pushnumber(L, StatTiers.SD); // СКО (Standard Deviation)
-   lua_pushnumber(L, StatTiers.CV); // коэфиициент корреляции числа операторов по ярусам ЯПФ
+   lua_pushnumber(L, StatTiers.CV); // коэфиициент вариации числа операторов по ярусам ЯПФ
    lua_pushnumber(L, StatTiers.IC); // коэффициент неравномерности (max/min)
    lua_pushnumber(L, StatTiers.ICL); // коэффициент неравномерности (по кривой Лоренца)
    lua_pushnumber(L, StatTiers.AAL); // среднеарифметическая длина дуги (Average Arc Length)
@@ -1057,13 +1057,15 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
 ////////////////////////////////////////////////////////////////////////////////
 static int BruteForce_SPF(lua_State *L) // описываем функцию BruteForce_SPF
 {
- char arg[_4096];
- strNcpy(arg, luaL_checkstring(L, 1)); // получим один аргумент (с проверкой "на строку")
+ int arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на bool")
+     arg2 = luaL_checkinteger(L, 2),
+     arg3 = luaL_checkinteger(L, 3);
+ INT arg4 = luaL_checkinteger(L, 4); // получим аргумент (с проверкой "на целое")
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_BruteForce_SPF(\"%s\")", arg);
+ sp_printf(" Lua call c_BruteForce_SPF(%d,%d,%d,%d)", arg1, arg2, arg3, arg4 );
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_BruteForce_SPF(arg)); // вызовем BruteForce_SPF и результат -> стек
+ lua_pushboolean(L, c_BruteForce_SPF( arg1, arg2, arg3, arg4 )); // вызовем BruteForce_SPF и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец c_BruteForce_SPF ==============================================
 
@@ -1182,7 +1184,6 @@ void __fastcall RegisterFunctions(lua_State *L)
  } ;
 //
 // luaL_setfuncs( L, lr, 80 ) ; // регистрация всех C-функций из списка lr[]
-//
 // luaL_register( L, NULL, lr ) ;
 //
  for( int i=0; ; i++ ) // по всем функциям из списка lr[]
