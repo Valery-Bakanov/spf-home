@@ -4,7 +4,7 @@
 --projectName = "abc_r" -- им€ проекта 
 --
 --projectName = "squa_equ_2"  -- им€ проекта 
-projectName = "squa_equ_2.pred"
+--projectName = "squa_equ_2.pred"
 --
 --projectName = "polinom_10-1"
 --projectName = "polinom_10-2"
@@ -31,7 +31,7 @@ projectName = "squa_equ_2.pred"
 --projectName = "m_matr_vec_3"
 --projectName = "m_matr_vec_5"
 --projectName = "m_matr_vec_7"
---projectName = "m_matr_vec_10"
+projectName = "m_matr_vec_10"
 --
 --projectName = "fibonn_10"
 --projectName = "tribonn_10"
@@ -75,7 +75,7 @@ end -- конец функции f_Visual()
 ClearTextFrame() -- очистка тестового экрана
 --
 CreateTiersByEdges( projectName .. ".gv" ) -- создать яѕ‘ по »√ј в ¬≈–’Ќ≈… форме
---CreateTiersByEdges_Bottom( projectName .. ".gv" ) -- создать яѕ‘ по »√ј в ¬≈–’Ќ≈… форме
+CreateTiersByEdges_Bottom( projectName .. ".gv" ) -- создать яѕ‘ по »√ј в ¬≈–’Ќ≈… форме
 f_Visual()
 --
 OutLine("\n")
@@ -91,7 +91,7 @@ for iTier=1,GetCountTiers() do -- по всем €русам яѕ‘
 end end
 --]]
 --
-BruteForce_SPF( 0,0,0,1, 1000000, 1 ) -- полный перебор всех положений операторов на €русах яѕ‘
+BruteForce_SPF( 0,0,0,0, 1000000, 1000000 ) -- полный перебор всех положений операторов на €русах яѕ‘
 -- 0/#0 - выдача яѕ‘ по €русам
 -- 0/#0 - выдача параметров яѕ‘ в нижнюю часть текстового окна
 -- 0/#0 - выдача линейчатого графика ширин €русов яѕ‘;
