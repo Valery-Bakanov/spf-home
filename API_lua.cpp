@@ -1057,15 +1057,17 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
 ////////////////////////////////////////////////////////////////////////////////
 static int BruteForce_SPF(lua_State *L) // описываем функцию BruteForce_SPF
 {
- int arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на bool")
+ int arg1 = luaL_checkinteger(L, 1), // получим аргумент (с проверкой "на целое")
      arg2 = luaL_checkinteger(L, 2),
-     arg3 = luaL_checkinteger(L, 3);
- INT arg4 = luaL_checkinteger(L, 4); // получим аргумент (с проверкой "на целое")
+     arg3 = luaL_checkinteger(L, 3),
+     arg4 = luaL_checkinteger(L, 4);
+ INT arg5 = luaL_checkinteger(L, 5), // получим аргумент (с проверкой "на целое")
+     arg6 = luaL_checkinteger(L, 6);
  APM //-------------------------------------------------------------------------
- sp_printf(" Lua call c_BruteForce_SPF(%d,%d,%d,%d)", arg1, arg2, arg3, arg4 );
+ sp_printf(" Lua call c_BruteForce_SPF(%d,%d,%d,%d,%d,%d)", arg1, arg2, arg3, arg4, arg5, arg6 );
  APM //-------------------------------------------------------------------------
  lua_settop(L, 0); // сброcим стек Lua
- lua_pushboolean(L, c_BruteForce_SPF( arg1, arg2, arg3, arg4 )); // вызовем BruteForce_SPF и результат -> стек
+ lua_pushboolean(L, c_BruteForce_SPF( arg1, arg2, arg3, arg4, arg5, arg6 )); // вызовем BruteForce_SPF и результат -> стек
  return 1 ; // число результатов выполнения функции
 } // ===== конец c_BruteForce_SPF ==============================================
 

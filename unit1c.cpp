@@ -2479,7 +2479,7 @@ bool __fastcall RunLuaScript()
 //
  } // конец if( !L )
 //
- lua_gc( L, LUA_GCCOLLECT, 0 ); // закладываем полный цикл уборки мусора
+ lua_gc( L, LUA_GCCOLLECT, 200 ); // закладываем полный цикл уборки мусора
 //
  luaExecute = true; // установ»ћ флаг "Lua выполн€етс€"...
 //
@@ -2649,8 +2649,8 @@ static int errorHandler(lua_State* L)
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall GetFileFromServer( char FileNameServer[] )
 { // получить файл с HTTP-сервера ( FileNameInServer - полное им€ файла на сервере,
- char FileNameOnServer[_512]="\0", // полные имена файла на сервере и клиенте
-      FileNameOnClient[_512]="\0"; // полные имена файла на сервере и клиенте
+ char FileNameOnServer[_512]="\0", // полное им€ файла на сервере
+      FileNameOnClient[_512]="\0"; // полное им€ файла на клиенте
 //
  TMemoryStream *fs = new TMemoryStream();  // создаЄм поток дл€ сохранени€ вџгруженного из —ети файла
 //

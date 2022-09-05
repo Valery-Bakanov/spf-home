@@ -185,10 +185,10 @@ bool  __fastcall c_IsOpContainOnTiers(INT Op); // если оператор Op присутствует 
 INT   __fastcall c_GetOpByMaxTierLowerPreset(INT Op); // выдаёт оператор, информационно зависимый от заданного и находящийся на ярусе
 // с максимальным номером (если таких оператор несколько - выдаётся последний по списку)
 //
-INT  __fastcall c_WinExec( char *cmdLine, INT cmdShow ); // выполнить WinExec
-INT  __fastcall c_ShellExecute( char *Operation, char *File, char *Parameters, char *Directory, INT cmdShow ); // выполнить ShellExecute
+INT   __fastcall c_WinExec( char *cmdLine, INT cmdShow ); // выполнить WinExec
+INT   __fastcall c_ShellExecute( char *Operation, char *File, char *Parameters, char *Directory, INT cmdShow ); // выполнить ShellExecute
 //
-INT  __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMessage); // запуск процесса-потомка
+INT   __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMessage); // запуск процесса-потомка
 //==============================================================================
 bool __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[][]
 bool __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет дуги в общий массив дуг
@@ -205,6 +205,9 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в
 char* __fastcall CreateUniqueFileName(char* FileName); // создание уникального имени файла при существовании файла с именем, заданным FileName
 //
 void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di, REAL Value, char* Fmt, char* s_After);
+//
+INT  __fastcall c_CountOfMemoryLuaUse(); // количество байт, используемых Lua
+INT  __fastcall c_CountOfFreeMemory(); // получение и вывод размеров физической памяти
 //
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1217,6 +1220,7 @@ INT __fastcall c_MoveOpTierToTier(INT Op, INT toTier)
 //
  INT fromTier = c_GetTierByOp( Op ); // ярус первоначального нахождения оператора Op
 //
+// t_printf( "- Op= #%d fromTier= %d toTier= %d =", Op,fromTier,toTier );
  if( fromTier == toTier ) // формально никакой ошибки нет ..!
   return RETURN_OK ;
 //
@@ -5204,6 +5208,37 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
  StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
 //
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_CountOfMemoryLuaUse() // количество байт, используемых Lua
+{
+ return lua_gc( L, LUA_GCCOUNT, 0 ) * 1024 + lua_gc( L, LUA_GCCOUNTB, 0 ) ;
+} // ----- конец c_CountOfMemoryLuaUse -----------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+INT __fastcall c_CountOfFreeMemory() // получение и вывод размеров физической памяти
+{
+//
+#define WIDTH 10 // ширина поля для вывода чисел
+#define DIV 1024 // перевод байт в килобайты
+//
+ MEMORYSTATUSEX stat_ex;
+ stat_ex.dwLength = sizeof( stat_ex );
+//
+ GlobalMemoryStatusEx( &stat_ex );
+//
+ t_printf("\nИспользуется %*ld %% памяти.",              WIDTH, stat_ex.dwMemoryLoad);
+ t_printf("Всего        %*I64d kB физической памяти",    WIDTH, stat_ex.ullTotalPhys / DIV);
+ t_printf("Свободно     %*I64d kB физической памяти",    WIDTH, stat_ex.ullAvailPhys / DIV);
+ t_printf("Всего        %*I64d kB в файле подкачки",     WIDTH, stat_ex.ullTotalPageFile / DIV);
+ t_printf("Свободно     %*I64d kB в файле подкачки",     WIDTH, stat_ex.ullAvailPageFile / DIV);
+ t_printf("Всего        %*I64d kB виртуальной памяти",   WIDTH, stat_ex.ullTotalVirtual / DIV);
+ t_printf("Свободно     %*I64d kB виртуальной памяти",   WIDTH, stat_ex.ullAvailVirtual / DIV);
+ t_printf("Свободно     %*I64d kB расширенной памяти\n", WIDTH, stat_ex.ullAvailExtendedVirtual / DIV);
+//
+} // ----- конец c_CountOfFreeMemory -------------------------------------------
 
 
 //
