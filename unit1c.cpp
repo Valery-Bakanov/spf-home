@@ -444,8 +444,10 @@ bool luaExecute = false; // флаг времени выполнения Lua (при выполнеЕнии true, и
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest))-strlen(dest)-5) // безопасное добавление src к dest
 //
-char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel.on 06 Jan 2015\n--\n", // начальная строка для Lua
-     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel.on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
+char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel. on 06 Jan 2015\n--\n", // начальная строка для Lua
+     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel. on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
+//char first_F1[] = "-- %s: скрипт на языке Lua ver.5.4.4 rel. on 13 Jan 2022\n--\n", // начальная строка для Lua
+//     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.4.4 rel. on 13 Jan 2022 -I-\n"; // на
 //
 #include "API_c.cpp" // С-ишные функции API (начинаются с "c_")
 #include "API_lua.cpp" // описание на С вызовов Lua

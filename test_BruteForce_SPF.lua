@@ -1,5 +1,5 @@
 --
--- 03.07.2022 [10-02.09.2022]
+-- 03.07.2022 [10-06.09.2022]
 --
 --projectName = "abc_r" -- имя проекта 
 --
@@ -29,9 +29,9 @@
 --
 --projectName = "m_matr_vec_2"
 --projectName = "m_matr_vec_3"
---projectName = "m_matr_vec_5"
+projectName = "m_matr_vec_5"
 --projectName = "m_matr_vec_7"
-projectName = "m_matr_vec_10"
+--projectName = "m_matr_vec_10"
 --
 --projectName = "fibonn_10"
 --projectName = "tribonn_10"
