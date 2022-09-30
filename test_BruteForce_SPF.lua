@@ -4,7 +4,7 @@
 --projectName = "abc_r" -- им€ проекта 
 --
 --projectName = "squa_equ_2"  -- им€ проекта 
---projectName = "squa_equ_2.pred"
+projectName = "squa_equ_2.pred"
 --
 --projectName = "polinom_10-1"
 --projectName = "polinom_10-2"
@@ -29,7 +29,7 @@
 --
 --projectName = "m_matr_vec_2"
 --projectName = "m_matr_vec_3"
-projectName = "m_matr_vec_5"
+--projectName = "m_matr_vec_5"
 --projectName = "m_matr_vec_7"
 --projectName = "m_matr_vec_10"
 --
@@ -47,7 +47,7 @@ projectName = "m_matr_vec_5"
 --projectName = "mnk-2_15"
 --projectName = "mnk-2_20"
 --
---projectName = "korr_5" 
+projectName = "korr_5" 
 --projectName = "korr_10"
 --projectName = "korr_15"
 --projectName = "korr_20"
@@ -91,8 +91,9 @@ for iTier=1,GetCountTiers() do -- по всем €русам яѕ‘
 end end
 --]]
 --
-BruteForce_SPF( 0,0,0,0, 1000000, 1000000 ) -- полный перебор всех положений операторов на €русах яѕ‘
--- 0/#0 - выдача яѕ‘ по €русам
+BruteForce_SPF( 0, 0,0,0,0, 1000000, 1000000 ) -- полный перебор всех положений операторов на €русах яѕ‘
+-- 0/#0 - диапазон вариативности вычисл€етс€ или принимаетс€ равным высоте яѕ‘
+-- 0/#0 - выдавать ли  яѕ‘ по €русам
 -- 0/#0 - выдача параметров яѕ‘ в нижнюю часть текстового окна
 -- 0/#0 - выдача линейчатого графика ширин €русов яѕ‘;
 -- 0/#0 - перебор операторов с var#0 "снизу вверх" / "сверху вниз"
