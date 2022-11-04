@@ -5017,6 +5017,7 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
 %sоператоров на €русе/€рус (min:max)= %d/%d:%d/%d\
 %sвариативность яѕ‘: Vn|Vt|Vnt= %.4g|%s|%s\
 %sср.арифм.длин дуг= %.4g €русов\
+%sср.арифм.совм.исп.опер.= %.4g\
 %s\0";
 //
  snprintf( szOut,sizeof(szOut), szFormat, // вывод по формату szFormat в строку szOut
@@ -5040,11 +5041,13 @@ calc_TLD : // --- проще, чем разбиратьс€ в куче фигурных скобок ----------------
  SS_01,
 //
  StatTiers.AAL, // среднеарифметическа€ длина дуги
+ SS_01,
+ StatTiers.averCOP, // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelismf)
 //
  PutParamsTLDOnTextFrame ? szStatTLD : "" ); // данные статистики времени жизни локальных данных (ParamsTLD) ... ќѕ÷»ќЌјЋ№Ќќ !!!
 //
  F2->L_GP->Caption = szOut; // вывод основных параметров яѕ‘ графа
- F2->L_GP->Repaint(); // принудительно перерисовываем
+ F2->L_GP->Repaint(); // принудительно перерисовываем поле L_GP
 //
  strcpy( szStatTLD, "\n" );
  strcat( szStatTLD, szTemp ); // подготовили строку дл€ вывода в файл протокола
@@ -5139,7 +5142,8 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
       sumSqWidth = 0.0 , // суммирование квадратов нев€зок
       sumOps = 0.0 , // сумма операторов по €русам  яѕ‘
       sumICL = 0.0 , // сумма дл€ коэффициента неравномерности по кривой Ћоренца
-      xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0 ;
+      xAxis,yAxis, xAxis_old = 0.0,yAxis_old = 0.0,
+      averCOP = 0.0 ; // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
  INT iTier, iOp ,
      nOpsOnTier, // число операторов на €русе
      minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
@@ -5188,7 +5192,9 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
 // =============================================================================
   } // конец for( iOp=1; iOp<=nOpsOnTier; iOp++ )
 //
- } // конец for( iTier=1; iTier<=nTiers; iTier++ )
+ averCOP += (REAL)c_GetCountOpsOnTier(iTier) * ((REAL)c_GetCountOpsOnTier(iTier)-1.0); // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
+// 
+ } // конец for( iTier=1; iTier<=nTiers; iTier++ ) // конец по всем €русам яѕ‘
 //
  StatTiers.averWidth  = averWidth ;  // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
  StatTiers.sumSqWidth = sumSqWidth ; // сумма квадратов нев€зок
@@ -5202,10 +5208,11 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
  StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
 //
  StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическа€ длина дуги (Average Arc Length)
-// t_printf( "-= %d %d   %f =-", sumDump,sumEdges, StatTiers.AAL );
 //
  StatTiers.MinOpsByTiers = minOpsByTiers; // мин. операторов по €русам
  StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
+//
+ StatTiers.averCOP = averCOP / (REAL)nOps; // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
 //
 } // ----- конец c_—alcParamsTiers() -------------------------------------------
 

@@ -1021,6 +1021,8 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
    lua_pushnumber(L, StatTiers.IC); // коэффициент неравномерности (max/min)
    lua_pushnumber(L, StatTiers.ICL); // коэффициент неравномерности (по кривой Лоренца)
    lua_pushnumber(L, StatTiers.AAL); // среднеарифметическая длина дуги (Average Arc Length)
+   lua_pushnumber(L, StatTiers.averCOP); // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
+//
    return sizeof(StatTiers)/sizeof(REAL) ; // число чисел на стеке Lua
 //
   case 1:
@@ -1050,7 +1052,10 @@ static int CalcParamsTiers(lua_State *L) // описываем функцию c_CalcParamsTiers 
   case 9:
    lua_pushnumber(L, StatTiers.AAL);
    return 1 ;
-  } // конец  switch( arg1 )
+  case 10:
+   lua_pushnumber(L, StatTiers.averCOP);
+   return 1 ;
+  } // конец switch( arg1 )
 //
 } // ===== конец  CalcParamsTiers ==============================================
 
