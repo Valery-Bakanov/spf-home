@@ -185,7 +185,7 @@ pattern_02[] = "[=][0-9]{1,}[/][0-9]{1,}[:]" // =n1/n2: -name1 minVal1 maxval1 -
 //
 #define GetRand(a,b) ( rand() % ( (b)-(a)+1)+(a) ) // случайное число от a до b (включительно)
 //
-char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2022\n \
+char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2023\n \
 Автор программного продукта Валерий Баканов не является ярым сторонником Объектно-Ориентированного Программирования \
 (внутри автора точно сидит Линус Торвальдс!) и поэтому большая часть кода не использует ООП\n \
 The author of the software Valery Bakanov is not an ardent supporter of Object-Oriented Programming \
