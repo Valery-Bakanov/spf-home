@@ -3655,6 +3655,55 @@ INT __fastcall c_PutTLDToTextFrame()
  for( INT i=1; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
   t_printf( "%s", paramsTLD->Strings[i] ) ;
 //
+// === начало обработки информации о времени жизни данных между €русами яѕ‘ ====
+//
+ INT iGap,nGaps, n1,n2, CountTLD, // n1,n2 - номера промежутков между €русами яѕ‘, CountTLD - число данных в этом промежутке
+     maxCountTLD = _minINT, minCountTLD = _maxINT, // max/min данных
+     n1x,n2x, n1n,n2n; //  диапазоны €русов выше и ниже рассматриваеиого промежутка
+ REAL averTLD=0.0; // средне-арифметическое времени жизни данных между €русами яѕ‘ (ParamsTLD)
+//
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
+//
+ sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число промежутков (Gap) €русов в яѕ‘
+//
+ for( iGap=1; iGap<=nGaps; iGap++ ) // по числу промежутков (Gap) между €русами яѕ‘
+ {
+  if( iGap < nGaps ) // кроме последней строки с $
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний / нижний €рус / число данных в этом промежутке
+  else // последн€€ строка формата "n/$|m"
+  {
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:", &n1,&CountTLD ); // верхний €рус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  if( CountTLD >= maxCountTLD ) // ищем мах число живых данных
+  { maxCountTLD = max(maxCountTLD,CountTLD); n1x=n1; n2x=n2; } // запомнили €рус выше | запомнили €рус ниже (избыточно вообще-то...)
+//
+  if( CountTLD < minCountTLD ) // ищем мin число ParamsTLD
+  { minCountTLD = min(minCountTLD,CountTLD); n1n=n1; n2n=n2; } // запомнили €рус выше | запомнили €рус ниже (избыточно вообще-то...)
+//
+  averTLD += (REAL)CountTLD; // средне-арифметическое времени жизни данных
+ } // конец цикла по промежуткам между €русами яѕ‘
+//
+// дополнение строки информацией о времени жизни данных
+//
+ char szStatTLD[_512], // строка данных о времени жизни локальных данных (ParamsTLD)
+      szTemp[_128] ;
+//
+ n2n==nGaps ? sprintf( szStatTLD,"»тог: min=%d(%d/" SS_02 "), ", minCountTLD,n1n ) :
+              sprintf( szStatTLD,"»тог: min=%d(%d/%d), ",        minCountTLD,n1n, n2n ) ;
+//
+ n2x==nGaps ? sprintf( szTemp, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g", maxCountTLD,n1x, averTLD / nGaps ) :
+              sprintf( szTemp, "max=%d(%d/%d), ср.арифм.=%.4g", maxCountTLD,n1x, n2x,   averTLD / nGaps ) ;
+//
+ strcat( szStatTLD, szTemp ); // подготовили строку дл€ вывода на F2
+//
+ t_printf( "\n%s\n", szStatTLD ); // вывод TLD-данных в текстовый фрейм
+//
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
 

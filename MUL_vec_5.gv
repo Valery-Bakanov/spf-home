@@ -1,0 +1,26 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 18
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file MUL_VEC_5.SET */
+#
+digraph MUL_VEC_5 {
+100 -> 105 ; [[100]MUL A0,B0,A0B0,true; A0C0 <- A0 х B0] -> [[105]ADD A0B0,A1B1,W1,true; W1 - временная переменная для суммирования]
+101 -> 105 ; [[101]MUL A1,B1,A1B1,true;  ] -> [[105]ADD A0B0,A1B1,W1,true; W1 - временная переменная для суммирования]
+102 -> 106 ; [[102]MUL A2,B2,A2B2,true;  ] -> [[106]ADD A2B2,A3B3,W2,true;  ]
+103 -> 106 ; [[103]MUL A3,B3,A3B3,true;  ] -> [[106]ADD A2B2,A3B3,W2,true;  ]
+104 -> 108 ; [[104]MUL A4,B4,A4B4,true;  ] -> [[108]ADD W,A4B4,Result,true; Result -  решение]
+105 -> 107 ; [[105]ADD A0B0,A1B1,W1,true; W1 - временная переменная для суммирования] -> [[107]ADD W1,W2,W,true;  ]
+106 -> 107 ; [[106]ADD A2B2,A3B3,W2,true;  ] -> [[107]ADD W1,W2,W,true;  ]
+107 -> 108 ; [[107]ADD W1,W2,W,true;  ] -> [[108]ADD W,A4B4,Result,true; Result -  решение]
+109 -> 100 ; [[109]SET 0,,A0,true; A0 <- 0] -> [[100]MUL A0,B0,A0B0,true; A0C0 <- A0 х B0]
+110 -> 101 ; [[110]SET 1,,A1,true; ] -> [[101]MUL A1,B1,A1B1,true;  ]
+111 -> 102 ; [[111]SET 2,,A2,true; ] -> [[102]MUL A2,B2,A2B2,true;  ]
+112 -> 103 ; [[112]SET 3,,A3,true; ] -> [[103]MUL A3,B3,A3B3,true;  ]
+113 -> 104 ; [[113]SET 4,,A4,true; ] -> [[104]MUL A4,B4,A4B4,true;  ]
+114 -> 100 ; [[114]SET 10,,B0,true; B0 <- 0] -> [[100]MUL A0,B0,A0B0,true; A0C0 <- A0 х B0]
+115 -> 101 ; [[115]SET 11,,B1,true; ] -> [[101]MUL A1,B1,A1B1,true;  ]
+116 -> 102 ; [[116]SET 12,,B2,true; ] -> [[102]MUL A2,B2,A2B2,true;  ]
+117 -> 103 ; [[117]SET 13,,B3,true; ] -> [[103]MUL A3,B3,A3B3,true;  ]
+118 -> 104 ; [[118]SET 14,,B4,true; ] -> [[104]MUL A4,B4,A4B4,true;  ]
+}
