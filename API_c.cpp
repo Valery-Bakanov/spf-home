@@ -3657,10 +3657,12 @@ INT __fastcall c_PutTLDToTextFrame()
 //
 // === начало обработки информации о времени жизни данных между ярусами ЯПФ ====
 //
- INT iGap,nGaps, n1,n2, CountTLD, // n1,n2 - номера промежутков между ярусами ЯПФ, CountTLD - число данных в этом промежутке
-     maxCountTLD = _minINT, minCountTLD = _maxINT, // max/min данных
-     n1x,n2x, n1n,n2n; //  диапазоны ярусов выше и ниже рассматриваеиого промежутка
- REAL averTLD=0.0; // средне-арифметическое времени жизни данных между ярусами ЯПФ (ParamsTLD)
+ INT iGap,nGaps, n1, n2, CountTLD, // n1,n2 - номера промежутков между ярусами ЯПФ, CountTLD - число данных в этом промежутке
+     maxCountTLD_0 = _minINT, minCountTLD_0 = _maxINT, // max/min данных - диапазон 0/$
+     maxCountTLD_1 = _minINT, minCountTLD_1 = _maxINT, // max/min данных - диапазон 1/$
+     n1x_0,n1x_1, n2x_0,n2x_1, n1n_0,n1n_1, n2n_0,n2n_1; //  диапазоны ярусов выше и ниже рассматриваеиого промежутка
+ REAL averTLD_0=0.0, // средне-арифметическое времени жизни данных в диапазоне промежутков ярусов 0/$
+      averTLD_1=0.0; // то же в диапазоне промежутков ярусов 1/$
 //
  if( !flagCalcTLD ) // если paramsTLD не вычислен...
  {
@@ -3679,30 +3681,53 @@ INT __fastcall c_PutTLDToTextFrame()
    sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:", &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
    n2=n1+1;
   }
+// вычисляем статистику TLD в диапазоне промежутков ярусов 0/$ =================
 //
-  if( CountTLD >= maxCountTLD ) // ищем мах число живых данных
-  { maxCountTLD = max(maxCountTLD,CountTLD); n1x=n1; n2x=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+// ищем мах TLD в диапазоне промежутков ярусов 0/$ -----------------------------
+  if( CountTLD >= maxCountTLD_0 )
+  { maxCountTLD_0 = max(maxCountTLD_0,CountTLD); n1x_0=n1; n2x_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+// ищем мin TLD в диапазоне промежутков ярусов 0/$ -----------------------------
+  if( CountTLD < minCountTLD_0 )
+  { minCountTLD_0 = min(minCountTLD_0,CountTLD); n1n_0=n1; n2n_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
-  if( CountTLD < minCountTLD ) // ищем мin число ParamsTLD
-  { minCountTLD = min(minCountTLD,CountTLD); n1n=n1; n2n=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+  averTLD_0 += (REAL)CountTLD; // средне-арифметическое времени жизни данных
+// конец обработки TLD в диапазоне 0/$ -----------------------------------------
 //
-  averTLD += (REAL)CountTLD; // средне-арифметическое времени жизни данных
+// вычисляем статистику TLD в диапазоне промежутков ярусов 1/$ =================
+  if( iGap == 1 )
+   continue; // не обрабатываем 1-й промежуток (яруса 0-1) ---------------------
+//
+// ищем мах TLD в диапазоне промежутков ярусов 1/$ -----------------------------
+  if( CountTLD >= maxCountTLD_1 )
+  { maxCountTLD_1 = max(maxCountTLD_1,CountTLD); n1x_1=n1; n2x_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+// ищем мin TLD в диапазоне промежутков ярусов 1/$ -----------------------------
+  if( CountTLD < minCountTLD_1 )
+  { minCountTLD_1 = min(minCountTLD_1,CountTLD); n1n_1=n1; n2n_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+//
+  averTLD_1 += (REAL)CountTLD; // средне-арифметическое времени жизни данных
+//
  } // конец цикла по промежуткам между ярусами ЯПФ
 //
 // дополнение строки информацией о времени жизни данных
 //
  char szStatTLD[_512], // строка данных о времени жизни локальных данных (ParamsTLD)
-      szTemp[_128] ;
+      szTemp_0[_128], szTemp_1[_128] ;
+// работаем со строками статистики TLD в диапазоне ярусов 0/$ -------------------
+ n2n_0==nGaps ? sprintf( szStatTLD,"Итого:\n0/$: min=%d(%d/" SS_02 "), ", minCountTLD_0,n1n_0 ) :
+                sprintf( szStatTLD,"Итого:\n0/$: min=%d(%d/%d), ",        minCountTLD_0,n1n_0, n2n_0 ) ;
+ n2x_0==nGaps ? sprintf( szTemp_0, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g; сумма(TLD)=%.4g", maxCountTLD_0,n1x_0,        averTLD_0 / nGaps, averTLD_0 ) :
+                sprintf( szTemp_0, "max=%d(%d/%d), ср.арифм.=%.4g; сумма(TLD)=%.4g",        maxCountTLD_0,n1x_0, n2x_0, averTLD_0 / nGaps, averTLD_0 ) ;
+ strcat( szStatTLD, szTemp_0 ); // подготовили строку для вывода на F2
+ t_printf( "\n%s", szStatTLD ); // вывод TLD-данных в диапазоне ярусов 0/$ в текстовый фрейм
 //
- n2n==nGaps ? sprintf( szStatTLD,"Итог: min=%d(%d/" SS_02 "), ", minCountTLD,n1n ) :
-              sprintf( szStatTLD,"Итог: min=%d(%d/%d), ",        minCountTLD,n1n, n2n ) ;
+// работаем со строками статистики TLD в диапазоне ярусов 1/$ -------------------
+ n2n_1==nGaps ? sprintf( szStatTLD,"1/$: min=%d(%d/" SS_02 "), ", minCountTLD_1,n1n_1 ) :
+                sprintf( szStatTLD,"1/$: min=%d(%d/%d), ",        minCountTLD_1,n1n_1, n2n_1 ) ;
+ n2x_1==nGaps ? sprintf( szTemp_1, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g; сумма(TLD)=%.4g", maxCountTLD_1,n1x_1,        averTLD_1 / (nGaps-1.0), averTLD_1 ) :
+                sprintf( szTemp_1, "max=%d(%d/%d), ср.арифм.=%.4g; сумма(TLD)=%.4g",        maxCountTLD_1,n1x_1, n2x_1, averTLD_1 / (nGaps-1.0), averTLD_1 ) ;
 //
- n2x==nGaps ? sprintf( szTemp, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g", maxCountTLD,n1x, averTLD / nGaps ) :
-              sprintf( szTemp, "max=%d(%d/%d), ср.арифм.=%.4g", maxCountTLD,n1x, n2x,   averTLD / nGaps ) ;
-//
- strcat( szStatTLD, szTemp ); // подготовили строку для вывода на F2
-//
- t_printf( "\n%s\n", szStatTLD ); // вывод TLD-данных в текстовый фрейм
+ strcat( szStatTLD, szTemp_1 );
+ t_printf( "%s\n", szStatTLD ); // вывод TLD-данных в диапазоне ярусов 1/$ в текстовый фрейм
 //
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
@@ -5042,8 +5067,8 @@ INT __fastcall c_PutParamsTiers()
  char szStatTLD[_512], // строка данных о времени жизни локальных данных (ParamsTLD)
       szTemp[_128] ;
 //
- n2n==nGaps ? sprintf( szStatTLD,"" SS_01 "TLD: min=%d(%d/" SS_02 "), ", minCountTLD,n1n ) :
-              sprintf( szStatTLD,"" SS_01 "TLD: min=%d(%d/%d), ",        minCountTLD,n1n, n2n ) ;
+ n2n==nGaps ? sprintf( szStatTLD,"" SS_01 "TLD: 0/$: min=%d(%d/" SS_02 "), ", minCountTLD,n1n ) :
+              sprintf( szStatTLD,"" SS_01 "TLD: 0/$: min=%d(%d/%d), ",        minCountTLD,n1n, n2n ) ;
 //
  n2x==nGaps ? sprintf( szTemp, "max=%d(%d/" SS_02 "), ср.арифм.=%.4g", maxCountTLD,n1x, averTLD / nGaps ) :
               sprintf( szTemp, "max=%d(%d/%d), ср.арифм.=%.4g", maxCountTLD,n1x, n2x,   averTLD / nGaps ) ;

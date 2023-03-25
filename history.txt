@@ -195,7 +195,7 @@ COP (Cooperative Operators Parallelism).
 всему яѕ‘.
             
 
-* –азмер выполн€емого модул€ 2886 кЅайт 
+* –азмер выполн€емого модул€ 2887 кЅайт 
 (компил€ци€ Release, Pentium, Word).
 
 
