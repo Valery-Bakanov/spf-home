@@ -389,8 +389,8 @@ void  __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ 
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
 bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
-bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаЄт (на основе »√ј из массива FileName яѕ‘ в "верхней" канонической форме
-bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаЄт (на основе »√а из файла FileName яѕ‘ в "нижней" канонической форме
+bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаЄт (на основе »√ј из массива FileName яѕ‘ в "верхней" форме
+bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаЄт (на основе »√а из файла FileName яѕ‘ в "нижней" форме
 void  __fastcall GetFileFromServer( char FileName[] ); // получить файл с сервера
 void  __fastcall Copy_Stdout_To_Memo(); // дл€ вывода stdout в M0_stdout
 void  __fastcall SaveLuaScript( char *FileName ); // сохранить скрипт в файл без вопросов
@@ -1594,12 +1594,12 @@ void __fastcall TF1::CreateUpperSPFAndPutToTextFrame(TObject *Sender)
   return ;
  }
 //
-  c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" канонической форме в окно текстовых данных
+  c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" форме в окно текстовых данных
 //
   c_ClearDiagrArea(); // очистить графическое представление я
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
-  c_PutTiersToTextFrame(); // вывод яѕ‘ в "верхней" канонической форме в окно текстовых данных
+  c_PutTiersToTextFrame(); // вывод яѕ‘ в "верхней" форме в окно текстовых данных
   c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
 //
   flagExistsEdges = true;
@@ -1635,18 +1635,18 @@ void __fastcall TF1::CreateBottomSPFAndPutToTextFrame(TObject *Sender)
 //
 // ---- ур-р€... со считыванием данных всЄ OK...................................
 //
-  c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" канонической форме в окно текстовых данных
+  c_CreateTiersByEdges( FileNameEdges ); // вычисление яѕ‘ в "верхней" форме в окно текстовых данных
   c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
 //==============================================================================
 //
-  c_CreateTiersByEdges_Bottom( FileNameEdges ); // вычисление яѕ‘ в "нижней" канонической форме в окно текстовых данных
+  c_CreateTiersByEdges_Bottom( FileNameEdges ); // вычисление яѕ‘ в "нижней" форме в окно текстовых данных
 //
   c_ClearDiagrArea(); // очистить графическое представление
   c_DrawDiagrTiers(); // выдать яѕ‘ в графическом виде
 //
-  c_PutTiersToTextFrame(); // вывод яѕ‘ в "нижней" канонической форме в окно текстовых данных
+  c_PutTiersToTextFrame(); // вывод яѕ‘ в "нижней" форме в окно текстовых данных
   c_PutParamsTiers(); // вывод параметров графа и его яѕ‘ на главную форму и в файл протокола
 //
   flagExistsEdges = true;
@@ -1880,7 +1880,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
  nOpsInput  = Tiers( 0, 0 ); // число ¬’ќƒЌџ’ вершин (операторов)
  nOpsOutput = Tiers( nTiers, 0 ); // число ¬џ’ќƒЌџ’ вершин (операторов)
 //
- t_printf( "\n-I- %s(): яѕ‘ графа в \"верхней\" канонической форме по файлу [%s] успешно построена -I-", __FUNC__, FileNameEdges );
+ t_printf( "\n-I- %s(): яѕ‘ графа в \"верхней\" форме по файлу [%s] успешно построена -I-", __FUNC__, FileNameEdges );
 //
  flagExistsTiers = true ; // массив Tiers[][] сформирован..!
 //
@@ -1891,7 +1891,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 //
  nMoves = old_nMoves; // восстановили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
 //
- return true ; // всЄ нормально - массив Tiers[][] в "верхней" канонической форме построен
+ return true ; // всЄ нормально - массив Tiers[][] в "верхней" форме построен
 //
 } // --- конец c_CreateTiersByEdges---------------------------------------------
 
@@ -1899,7 +1899,7 @@ bool __fastcall c_CreateTiersByEdges( char* FileName )
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
-{ // создаЄт (на основе »√ј из файла FileName  первоначальную (в "нижней" канонической форме)
+{ // создаЄт (на основе »√ј из файла FileName  первоначальную (в "нижней" форме)
 // - €русно-параллельную форму (яѕ‘) графа в массиве Tiers[][]
 // - вычисл€ет общее количество операторов в информационном графе алгоритма
 // - верифицирует корректность "нижней" формы яѕ‘ (условие невозможности перенќса ¬—≈’ операторов "вверх")
@@ -1907,7 +1907,7 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 //
  INT old_nMoves = nMoves; // запомнили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
 //
- if( !c_CreateTiersByEdges( FileName ) ) // читает »√ј-файл и создаЄт яѕ‘ в "верхней" канонической форме
+ if( !c_CreateTiersByEdges( FileName ) ) // читает »√ј-файл и создаЄт яѕ‘ в "верхней" форме
   return false ; // не удалось..!
 //
  for( iTier=nTiers; iTier>=1; iTier-- ) // по €русам яѕ‘ снизу вверх
@@ -1940,7 +1940,7 @@ bool __fastcall c_CreateTiersByEdges_Bottom( char* FileName )
 //
  nMoves = old_nMoves; // восстановили значение счЄтчика перемещений операторов с €руса на €рус яѕ‘
 //
- return true ; // всЄ нормально - массив Tiers[][] в "нижней" канонической форме построен
+ return true ; // всЄ нормально - массив Tiers[][] в "нижней" форме построен
 //
 } // --- конец c_CreateTiersByEdges_Bottom--------------------------------------
 
