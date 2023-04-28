@@ -382,9 +382,9 @@ void  __fastcall DisplayMessage(char* Level, char* funcName, char* Text, INT Err
 void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в позиции курсора
 char* __fastcall ReplaceManySpacesOne( char *pszStr ); // заменяет кратные пробелы на единственным
 void  __fastcall DeleteSpacesTabsAround( char *str ); // удаляет пробелы и Tabs слева и справа строки str
-void  __fastcall DeleteAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
+char* __fastcall DeleteAllSpaces(char *str); // удаляет ВСЕ пробелы в строке str
 void  __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
-void  __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке ыек
+char* __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке ыек
 //
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
@@ -678,7 +678,7 @@ void safe_printf(int rule, char *fmt, ...)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall DeleteAllSpaces(char *str)
+char* __fastcall DeleteAllSpaces( char *str )
 { // удаляет ВСЕ пробелы в строке str
 //
 // для использования AnsiReplaceStr ytj,[jlbvj #include <vcl/StrUtils.hpp>
@@ -686,6 +686,8 @@ void __fastcall DeleteAllSpaces(char *str)
 //
 // нижеприведённое взято с http://www.quizful.net/interview/cpp/VbW07kq70NCY
  for ( register INT i=0,j=0; str[i]; (str[j++]=str[i]!=' '?str[i]:(j--,str[j]),i++,(!str[i]?(str[j]=0):0)) );
+//
+ return str;
 //
 } // ------ конец DeleteAllSpaces ----------------------------------------------
 
@@ -764,7 +766,7 @@ void __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, c
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall DeleteSymbolAll( char str[], char symb )
+char* __fastcall DeleteSymbolAll( char str[], char symb )
 { // удаляет все вхождения заданного символа
  register INT i, j;
 //
@@ -774,9 +776,11 @@ void __fastcall DeleteSymbolAll( char str[], char symb )
 //
  str[j] = '\0';
 //
+ return str;
+//
 } // ----- конец DeleteSymbolAll -----------------------------------------------
 
-     
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall TF1::OnClose_F1(TObject *Sender, TCloseAction &Action)
