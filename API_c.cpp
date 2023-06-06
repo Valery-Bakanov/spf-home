@@ -4994,10 +4994,10 @@ INT __fastcall c_PutParamsTiers()
  char szStatTiers[_256]="\0"; // данные статистики ярусов ЯПФ
 //
  if( nTiers != 1 )
-  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, СКО= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g",
-            StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL ) ;
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, СКО= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g, DC= %.4g",
+            StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL, StatTiers.DC ) ;
  else
-  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %,4g, СКО= x.x, CV= x.x, IC= x.x, ICL= x.x",
+  snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %,4g, СКО= x.x, CV= x.x, IC= x.x, ICL= x.x, DC= х.х",
             StatTiers.averWidth ) ;
 //
 // --- вычисляем ВАРИАТИВНОСТЬ -------------------------------------------------
@@ -5287,7 +5287,7 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 //
  StatTiers.averCOP = averCOP / (REAL)nOps; // ср.ариф. совместного параллелизма операторов (Cooperative Operators Parallelism)
 //
- StatTiers.DensityCode = sumOps / ( (REAL)nTiers * maxOpsByTiers ); // плотность кода
+ StatTiers.DC = sumOps / ( (REAL)nTiers * maxOpsByTiers ); // плотность кода (DensityCode)
 //
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
 
