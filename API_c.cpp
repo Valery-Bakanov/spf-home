@@ -32,8 +32,8 @@ char Test_symb[] = "=/: |";
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-INT  __fastcall c_CalcParamsTLD(); // вычисляет (но не выводит!) данные времени жизни внутренних данных в ЯПФ
-INT  __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
+INT   __fastcall c_CalcParamsTLD(); // вычисляет (но не выводит!) данные времени жизни внутренних данных в ЯПФ
+INT   __fastcall c_PutTLDToTextFrame(); // выдать диаграмму времени жизни данных в текстовое окно
 char* __fastcall c_SaveTLD( char FileName[] ); // выдать диаграмму времени жизни данных в файл
 //
 INT  __fastcall c_GetCountTiers(); // возвращает общее число ярусов в ЯПФ информационного графа алгоритма (ИГА)
@@ -190,13 +190,13 @@ INT   __fastcall c_ShellExecute( char *Operation, char *File, char *Parameters, 
 //
 INT   __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMessage); // запуск процесса-потомка
 //==============================================================================
-bool __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[][]
-bool __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет дуги в общий массив дуг
-bool __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
-INT  __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
-void __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
+bool  __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[][]
+bool  __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет дуги в общий массив дуг
+bool  __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
+INT   __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
+void  __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
 char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать имя файла
-INT  __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
+INT   __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
 //
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
 void __fastcall tuneFlagsIfEqual( bool FLAG, INT FromTo, INT Value ); // устанавливает FLAG и Value у операторов массива дуг From/To=0/1 списка Edges[][]
@@ -5260,7 +5260,6 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
     OpTo = c_GetNumbOutEdgeByOp( iOutEdge, OpFrom ); // номер оператора, к которому идёт дуга iOutEdge от оператора OpFrom
     sumDump  += c_GetTierByOp( OpTo) - c_GetTierByOp( OpFrom ); // (#яруса оператора OpFrom) - (#яруса оператора OpTo)
     sumEdges += 1; // сумма числа проанализированных дуг
-    // t_printf( "-= %d %d=%d %d-%d", iTier, OpFrom,OpTo, sumDump,sumEdges );
    } // конец цикла for( iOutEdge=1; iOutEdge<=nOutEdges; iOutEdge++ )
 //
 // =============================================================================
@@ -5281,12 +5280,14 @@ INT __fastcall c_CalcParamsTiers() // расчёт статистических параметров ярусов ЯП
 // неравномерность распределения операторов по ярусам ЯПФ по кривой Лоренца
  StatTiers.ICL = ( sumICL - 0.5 ) / 0.5 ; // (минус полуплощадь квадрата) по отношению к полуплощади
 //
- StatTiers.AAL = (REAL)sumDump / sumEdges ; // среднеарифметическая длина дуги (Average Arc Length)
+ StatTiers.AAL = (REAL)sumDump / sumEdges ; // ср.арифм. длина дуги (Average Arc Length)
 //
  StatTiers.MinOpsByTiers = minOpsByTiers; // мин. операторов по ярусам
  StatTiers.MaxOpsByTiers = maxOpsByTiers; // макс. ...
 //
- StatTiers.averCOP = averCOP / (REAL)nOps; // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
+ StatTiers.averCOP = averCOP / (REAL)nOps; // ср.ариф. совместного параллелизма операторов (Cooperative Operators Parallelism)
+//
+ StatTiers.DensityCode = sumOps / ( (REAL)nTiers * maxOpsByTiers ); // плотность кода
 //
 } // ----- конец c_СalcParamsTiers() -------------------------------------------
 

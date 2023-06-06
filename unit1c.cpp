@@ -287,7 +287,8 @@ REAL averWidth, // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)
      AAL, // среднеарифметическа€ длина дуги (Average Arc Length)
      MinOpsByTiers, // мин. число операторов по €русам (исключа€ нулевой)
      MaxOpsByTiers, // макс. -.-.-.-.
-     averCOP; // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
+     averCOP, // ср.арифм. совсестного параллелизма операторов (Cooperative Operators Parallelism)
+     DensityCode; // плотность кода
 } StatTiers; // структура параметров статистики SPF
 ////////////////////////////////////////////////////////////////////////////////
 INT nEdges, // всего число дуг в графе (включа€ нулевой €рус)
@@ -408,7 +409,7 @@ void  __fastcall Unload_Install(); // загрузить с сервера инсталл€ционную версию
 void  __fastcall Upload_Data( int Rule ); // вџгрузить файлы на сервер (в зависимости от pyfxtybz Rule )
 void  __fastcall Work_LogInOut( int Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE
 void  __fastcall PutParamsAboutSelectOp( INT Op ); // выдать параметры оператора Op
-void Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
+void  __fastcall Set_FileNames_All_Protocols(); // настраиваем имена всех файлов протоколов (дл€ Out!Data)
 void  __fastcall OutOpsMoveLowerTier(); // все выходные операторы перенести на самый нижний €рус
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -2191,7 +2192,7 @@ int luaPanic( lua_State* L )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void Set_FileNames_All_Protocols()
+void __fastcall Set_FileNames_All_Protocols()
 { // определ€ет имена всех файлов протоколов расчЄтов (в подкаталоге Out!Data)
 // генерим уникальную строку Data-Time -----------------------------------------
  strNcpy( uniqueStr, PutDateTimeToString(1) ); // уникальна€ строка ( дата + врем€ до мсек )
