@@ -81,10 +81,10 @@ INT  __fastcall c_GetCountOutEdgesByOp(INT Op); // вернуть число дуг, ¬¬џ’ќƒяў»’
 INT  __fastcall c_GetNumbInEdgeByOp(INT Numb, INT Op); // вернуть #опер., наход€щегос€ на Numb ¬’ќƒяў≈… в Op дуге
 INT  __fastcall c_GetNumbOutEdgeByOp(INT Numb,INT Op); // вернуть #опер., наход€щегос€ на Numb ¬џ’ќƒяў≈… из Op дуге
 //
-bool __fastcall c_ReadEdges(char FileName[]); // читает из FileName дуги описани€ графа
-char* __fastcall c_SaveEdges(char FileName[]); // вывод в FileName дуг описани€ графа + Tiers[0/nTiers][*]
-bool __fastcall c_ReadTiers(char FileName[]); // читает из FileName яѕ‘ графа
-char* __fastcall c_SaveTiers(char FileName[]); // вывод в FileName яѕ‘ графа
+bool   __fastcall c_ReadEdges(char FileName[]); // читает из FileName дуги описани€ графа
+char*  __fastcall c_SaveEdges(char FileName[]); // вывод в FileName дуг описани€ графа + Tiers[0/nTiers][*]
+bool   __fastcall c_ReadTiers(char FileName[]); // читает из FileName яѕ‘ графа
+char*  __fastcall c_SaveTiers(char FileName[]); // вывод в FileName яѕ‘ графа
 //
 char* __fastcall c_SaveTiersVizu(char FileName[]); // сохранение файла операторов по €русам
 char* __fastcall c_SaveEdgesVizu(char FileName[]); // сохранение файла зависимостей (дуг) операторов
@@ -298,7 +298,7 @@ char* __fastcall c_SaveEdgesVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extGv,extVizu))).c_str() ) ); // преобразованное им€ файла
+ strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extGv,extVizu))).c_str() ) ); // преобразованное им€ файла
  strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли дл€ записи
@@ -340,8 +340,8 @@ char* __fastcall c_SaveInOutOpVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extIno,extVizu))).c_str() ) ); // преобразованное им€ файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует... 
+ strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extIno,extVizu))).c_str() ) ); // преобразованное им€ файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли дл€ записи
  {
@@ -405,7 +405,7 @@ char* __fastcall c_SaveParamsVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extPrm,extVizu))).c_str() ) ); // преобразованное им€ файла
+ strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extPrm,extVizu))).c_str() ) ); // преобразованное им€ файла
  strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли дл€ записи
@@ -2039,7 +2039,7 @@ INT __fastcall c_GetCountParamsInString( char* str )
 char* __fastcall c_GetNumbParamInString(INT Numb, char* str)
 { // --- возвращает подстроку Numb строки параметров в строке str --------------
 // --- ищем двухсимвольный ЎјЅЋќЌ [-]+[лат.буква] ==============================
- char s_ret[_2048]="\0";
+ char s_ret[_2048];
  register INT k,j,i;
  INT //m = 0,
      rep=0, // номер подстроки ЎјЅЋќЌј
@@ -3740,7 +3740,7 @@ char* __fastcall c_SaveTLD( char FileName[] )
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extTld) ); // преобразованное им€ файла
+ strcpy( NewFileName, ReformFileName(FileName,extTld) ); // преобразованное им€ файла
  strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли дл€ записи
@@ -3889,7 +3889,7 @@ char* __fastcall c_SaveEdges(char FileName[])
  FILE *fptr = NULL; // рабочий указатель на файл
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName( FileName,extGv ) ); // преобразованное им€ файла
+ strcpy( NewFileName, ReformFileName( FileName,extGv ) ); // преобразованное им€ файла
  strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
 //
  if(!(fptr = fopen(NewFileName, "w"))) // открыли дл€ записи
@@ -4389,7 +4389,7 @@ cont:
 // t_printf( "\nѕреобразованное им€ файла/расширени€: |%s|%s|\n", NewFileName,Ext );
  return NewFileName ;
 //
-} // --- конец ReformFileName --------------------------------------------------
+} // --- конец c_ReformFileName ------------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4749,7 +4749,7 @@ bool __fastcall c_DrawDiagrTLD()
      H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
      B_rect, // ширина горизонтальной полоски в пикселах
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
- char str[_256]="\0";
+ char str[_256];
 //
  if( !flagExistsTiers ) // массива Tiers[][] ещЄ нет...
  {
@@ -4896,7 +4896,7 @@ INT __fastcall  c_CalcParamsTLD()
 // дл€ хранени€/передачи данных между оператораи на €русах яѕ‘
 // полагаем, что файл регистров ќЅў»… дл€ всех параллельных вычислителей
 //
- char sN[_8192]="\0", sS[_8192]="\0", sW[_128]="\0";
+ char sN[_8192], sS[_8192], sW[_128];
  INT k,l, from_Op,to_Op, to_Tier, max_to_Tier;
  register INT i,j;
 //
@@ -4968,7 +4968,7 @@ INT __fastcall  c_CalcParamsTLD()
 ////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_PutParamsTiers()
 { // --- вывод основных параметров »√ј и его яѕ‘ -------------------------------
- char szOut[_4096]="\0"; // строка дл€ выдачи интегрированных данных
+ char szOut[_4096]; // строка дл€ выдачи интегрированных данных
  REAL AverWidth, // средн€€ ширина по €русам кроме первого и последнего
       SumSqWidth = 0.0, // сумма квадратов нев€зок ширины по €русам
       AverSqDevWidth = 0.0; // ср.кв.отклонение ширины €русов яѕ‘ (кроме €русов 1 и nTiers)
@@ -4991,7 +4991,7 @@ INT __fastcall c_PutParamsTiers()
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
- char szStatTiers[_256]="\0"; // данные статистики €русов яѕ‘
+ char szStatTiers[_256]; // данные статистики €русов яѕ‘
 //
  if( nTiers != 1 )
   snprintf( szStatTiers,sizeof(szStatTiers), "ср.арифм.шир.= %.4g, — ќ= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g, DC= %.4g",
@@ -5160,7 +5160,7 @@ char* __fastcall CreateUniqueFileName(char* FileName)
  if( !FileExists( FileName ) ) // файл не cуществует...
   return FileName ;
 //
- char OldFileName[_512], NewFileName[_512]="\0", Comma[]=".\0";
+ char OldFileName[_512], NewFileName[_512], Comma[]=".\0";
 //
  Delay( 100 ); // ждЄм 0,1 дл€ гарантированного дистижени€ уникальности нового имени файла
 //
@@ -5223,7 +5223,9 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
      minOpsByTiers = _maxINT, maxOpsByTiers = _minINT , // дл€ поиска min/max операторов по €русам яѕ‘
 //
      sumDump = 0, sumEdges = 0 , // дл€ вычислени€ —–≈ƒЌ≈… ƒЋ»Ќџ ƒ”√»;;
-     OpFrom, OpTo, nOutEdges, iOutEdge; // ... то же ...
+     OpFrom, OpTo, nOutEdges, iOutEdge, // ... то же ...
+//
+     sumTime = 0; // суммарное врем€ выполнени€ по €русам
 //
 // =============================================================================
  for( iTier=1; iTier<=nTiers; iTier++ ) // по всем €русам яѕ‘
@@ -5266,7 +5268,7 @@ INT __fastcall c_CalcParamsTiers() // расчЄт статистических параметров €русов яѕ
   } // конец for( iOp=1; iOp<=nOpsOnTier; iOp++ )
 //
  averCOP += (REAL)c_GetCountOpsOnTier(iTier) * ((REAL)c_GetCountOpsOnTier(iTier)-1.0); // среднеарифметическое совсестного параллелизма операторов (Cooperative Operators Parallelism)
-// 
+//
  } // конец for( iTier=1; iTier<=nTiers; iTier++ ) // конец по всем €русам яѕ‘
 //
  StatTiers.averWidth  = averWidth ;  // среднеарифметичеса€ ширина яѕ‘ (кроме 0-го уровн€)

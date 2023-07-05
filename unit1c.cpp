@@ -2204,6 +2204,7 @@ void __fastcall Set_FileNames_All_Protocols()
    strNcpy( PathToSubDirOutData, '\0' ); // обнул€ем путь к подкаталогу PathToSubDirOutData
 // далее генер»м уникальные имена файлов дл€ данного конкректного расчЄта ------
  char tmp[_512], cnst[_512];
+//
  sprintf( cnst, "!%s!%s.txt", ExtractFileName(FileNameLua), uniqueStr ); // посто€нна€ часть имени
 //
  snprintf( tmp, sizeof(tmp), "%s%s%s", PathToSubDirOutData, "stdin",  cnst ); // полный путь к stdin
@@ -2657,8 +2658,8 @@ static int errorHandler(lua_State* L)
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall GetFileFromServer( char FileNameServer[] )
 { // получить файл с HTTP-сервера ( FileNameInServer - полное им€ файла на сервере,
- char FileNameOnServer[_512]="\0", // полное им€ файла на сервере
-      FileNameOnClient[_512]="\0"; // полное им€ файла на клиенте
+ char FileNameOnServer[_512], // полное им€ файла на сервере
+      FileNameOnClient[_512]; // полное им€ файла на клиенте
 //
  TMemoryStream *fs = new TMemoryStream();  // создаЄм поток дл€ сохранени€ вџгруженного из —ети файла
 //

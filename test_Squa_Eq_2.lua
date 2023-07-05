@@ -1,5 +1,5 @@
 --
--- модификация aqua_eq_2.gv
+-- модификация squa_eq_2.gv
 --
 projectName = "squa_equ_2" 
 --
