@@ -381,30 +381,30 @@ bool  __fastcall CloseAndRenameFileProtocol(); // дать окончательное им€ файла п
 void  __fastcall PutFileNameLua(); // выдаЄт им€ файла скрипта на форму
 void  __fastcall DisplayMessage(char* Level, char* funcName, char* Text, INT Err); // выдать сообщение Text уровн€ Level
 void  __fastcall IndicateColRowNumberOfEV0(); // номер строки и номер символа в позиции курсора
-char* __fastcall ReplaceManySpacesOne( char *pszStr ); // замен€ет кратные пробелы на единственным
-void  __fastcall DeleteSpacesTabsAround( char *str ); // удал€ет пробелы и Tabs слева и справа строки str
-char* __fastcall DeleteAllSpaces(char *str); // удал€ет ¬—≈ пробелы в строке str
-void  __fastcall ReplaceEqualLengthSubstring( char *String, char *OldSubstring, char *NewSubstring );
+char* __fastcall ReplaceManySpacesOne( char* pszStr ); // замен€ет кратные пробелы на единственным
+void  __fastcall DeleteSpacesTabsAround( char* str ); // удал€ет пробелы и Tabs слева и справа строки str
+char* __fastcall DeleteAllSpaces(char* str); // удал€ет ¬—≈ пробелы в строке str
+void  __fastcall ReplaceEqualLengthSubstring( char* String, char* OldSubstring, char* NewSubstring );
 char* __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке ыек
 //
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
-bool  __fastcall StartByCommandLine( char *s ); // начало работы в режиме командной строки
+bool  __fastcall StartByCommandLine( char* s ); // начало работы в режиме командной строки
 bool  __fastcall c_CreateTiersByEdges( char* FileName ); // создаЄт (на основе »√ј из массива FileName яѕ‘ в "верхней" форме
 bool  __fastcall c_CreateTiersByEdges_Bottom( char* FileName ); // создаЄт (на основе »√а из файла FileName яѕ‘ в "нижней" форме
 void  __fastcall GetFileFromServer( char FileName[] ); // получить файл с сервера
 void  __fastcall Copy_Stdout_To_Memo(); // дл€ вывода stdout в M0_stdout
-void  __fastcall SaveLuaScript( char *FileName ); // сохранить скрипт в файл без вопросов
+void  __fastcall SaveLuaScript( char* FileName ); // сохранить скрипт в файл без вопросов
 //
-void  __fastcall ShowBreakpoint( char *str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
+void  __fastcall ShowBreakpoint( char* str ); // показать точку проверки (Breakpoint) в текстовом редакторе Lua
 //
 void  __fastcall stdoutToMemo(); // вывод stdout в M0_stdout
 //
 void  __fastcall CopyStdoutToTextProtocol(); // копировать stdout текстовое подокно TM0_stdout и в файл протокола
 void  __fastcall CopyStderrToProtocol(); // копировать stderr в файл протокола
 //
-void  __fastcall GetFileFromServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // вз€ть файл с сервера
-void  __fastcall PutFileToServer(  char *FileNameSource, char *FileNameDestination, bool Replace  ); // вџгрузить файл на сервер
+void  __fastcall GetFileFromServer(  char* FileNameSource, char* FileNameDestination, bool Replace  ); // вз€ть файл с сервера
+void  __fastcall PutFileToServer(  char* FileNameSource, char* FileNameDestination, bool Replace  ); // вџгрузить файл на сервер
 void  __fastcall Unload_Install(); // загрузить с сервера инсталл€ционную версию продукта
 void  __fastcall Upload_Data( int Rule ); // вџгрузить файлы на сервер (в зависимости от pyfxtybz Rule )
 void  __fastcall Work_LogInOut( int Rule); // сообщить о начале/конце работы программы SPF_CLIENT.EXE

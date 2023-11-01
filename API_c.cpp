@@ -193,9 +193,9 @@ INT   __fastcall c_CreateProsess(char* CommandLine, byte RuleParent, byte Priori
 bool  __fastcall TestAndAddMemoryForEdges( INT nEdges ); // попытка увеличения памяти для Mem_Edges[][]
 bool  __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет дуги в общий массив дуг
 bool  __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
-INT   __fastcall c_LuaCallByTimer( char *CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
-void  __fastcall CallLuaThread( char *CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
-char* __fastcall ReformFileName( char Filename[], char Ext[] ); // нужным образом преобразовать имя файла
+INT   __fastcall c_LuaCallByTimer( char* CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
+void  __fastcall CallLuaThread( char* CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
+char* __fastcall ReformFileName( char* Filename, char* Ext ); // нужным образом преобразовать имя файла
 INT   __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
 //
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
@@ -4333,67 +4333,6 @@ INT __fastcall c_SwapOpsTierToTier(INT Op1, INT Op2)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char* __fastcall ReformFileName( char FileName[], char Ext[] )
-{ // преобразует FileName в нужную форму с учётом необходимого расширения (".ext")
-//
- char wF[_512],wE[_256],*p,
-      NewFileName[_512],extFile[_128], // новое имя файла, расширение без '>'
-      Comma[]=".\0",Space[]=" \0",Unknown_Name[]="Unknown_Name\0", // точка, пробел, неопределенность
-      UnacceptableSymbols[]="\/\\:*?\"<>|\0"; // недопустимые символы '/\:*?"<>|'
-//
- if( strpbrk( ExtractFileName(FileName).c_str(),UnacceptableSymbols ) ) // проверка на недопустимые символы UnacceptableSymbols в имени файла
- {
-  TVarRec Vr[]={ FileName,Unknown_Name,ExtractFileExt(FileName).c_str() }; // открытый массив для последующей форматной печати
-  DisplayMessage( "W", __FUNC__, TrimRight(Format("Недопустимое имя файла: %s , файл переименован в: %s%s",Vr,2)).c_str(),
-                   ERR_UNCERTAIN );
-//
-  strcpy( FileName,Unknown_Name ) ;
-  strcat( FileName,ExtractFileExt(FileName).c_str() );
- }
-//
- DeleteSpacesTabsAround( FileName ); // удаляем пробелы и Tabs с начала и с конца строки
- DeleteSpacesTabsAround( Ext );
-//
- if( FileName[0] == Comma[0] ) // имя начинается с '.'
- {
-  strcpy( NewFileName, Unknown_Name ) ; // в начале внесли 'Unknown_Name'
-  strcat( NewFileName, ExtractFileExt(FileName).c_str() ); // прибавили расширение
-  goto cont ;
- }
-//
- strcpy( wF, ExtractFileName(FileName).c_str() ); // получили строку вида "xxx.zzz"
- if( !strchr(wF,Comma[0]) ) // если '.' в имени файла не найдено...
-  strcat(wF,Comma); // добавили в конец имени
-//
- p = strrchr( wF,Comma[0] ); // ищем ПОСЛЕДНЕЕ вхождение '.' в wF
- if( p ) // нашли ПОСЛЕДНЕЕ вхождение '.' в wF
- {
-  strcpy( NewFileName, wF ); // скопировали
-  NewFileName[p-wF+1] = '\0'; // ограничили следующим за '.' символом (сам '.' оставили)
- }
-//
- strcpy( wE, ExtractFileExt( FileName).c_str() ); // получили строку вида ".zzz"
-//
- if( wE[0] == Comma[0] ) // начальный символ wE=='.'
- {
-  wE[0] = Space[0]; // начальный символ wE заменяем на пробел
-  DeleteSpacesTabsAround( wE); // чистим от пробелов
- }
-//
- if( !strlen( wE ) ) // если пусто...
-  strcat( NewFileName,Ext ); // добавим заданное расширение...
- else
-  strcat( NewFileName,wE ); // расширение как было...
-//
-cont:
-// t_printf( "\nПреобразованное имя файла/расширения: |%s|%s|\n", NewFileName,Ext );
- return NewFileName ;
-//
-} // --- конец c_ReformFileName ------------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 INT __fastcall c_GetNumbOp(INT Numb)
 { // возвращает номер Numb оператора (исключая входные) по мере вхождения в файл дуг
 // убираем повторы номеров операторов
@@ -5323,6 +5262,29 @@ INT __fastcall c_CountOfFreeMemory() // получение и вывод размеров физической па
  t_printf("Свободно     %*I64d kB расширенной памяти\n", WIDTH, stat_ex.ullAvailExtendedVirtual / DIV);
 //
 } // ----- конец c_CountOfFreeMemory -------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall ReformFileName( char* FileName, char* Ext )
+{ // преобразует FileName в нужную форму с учётом необходимого расширения Ext (с точкой  в начале)
+//
+ char NewFileName[_1024];
+//
+ strcpy( NewFileName, FileName ); // имя файла запомнили в NewFileName
+ ChangeFileExt( NewFileName, Ext ); // изменили на ".Ext"
+//
+ if( !FileExists( NewFileName ) ) // файл не существует...
+ {
+  DisplayMessage( "W", __FUNC__,
+                   Format("Файл %s не существует (исходное имя: %s)",OPENARRAY(TVarRec,(NewFileName,FileName)) ).c_str(),
+                   ERR_UNCERTAIN );
+  return "''None''"; // недопустимое имя файла
+ }
+//
+ return NewFileName ;
+//
+} // --- конец ReformFileName --------------------------------------------------
 
 
 //

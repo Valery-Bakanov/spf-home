@@ -171,7 +171,6 @@ DelayMS(  -10 )-- задержка 10 сек
 ::retry::
 --
 CreateTiersByEdges(  projectName .. ".gv" )  -- создать ЯПФ по ИГА
-CreateTiersByEdges(  projectName  )  -- создать ЯПФ по ИГА
 --
 Visual() -- визуализация состояния ЯПФ
 --

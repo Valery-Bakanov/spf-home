@@ -202,7 +202,7 @@ COP (Cooperative Operators Parallelism).
 выдачи данных (переменна€ DC = Density Code).
             
 
-* –азмер выполн€емого модул€ 2863 кЅайт 
+* –азмер выполн€емого модул€ 2860 кЅайт 
 (компил€ци€ Release, Pentium, Word).
 
 

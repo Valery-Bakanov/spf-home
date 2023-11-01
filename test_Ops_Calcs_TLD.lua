@@ -2,9 +2,9 @@
 --выполнение программы на гетерогенном поле вычислителей
 --оптимизированный вариант 03 (апрель 2017)
 --   ]
---projectName = "abc_r" -- имя проекта 
+projectName = "abc_r" -- имя проекта 
 --
-projectName = "squa_equ_2"  -- имя проекта 
+--projectName = "squa_equ_2"  -- имя проекта 
 --projectName = "squa_equ_2.pred"
 --
 --projectName = "polinom_10-1"
