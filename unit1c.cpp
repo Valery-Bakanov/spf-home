@@ -2725,3 +2725,17 @@ void __fastcall OutOpsMoveLowerTier()
 //
 #include "FTP_GetPost_SPF.cpp" // обмен с сервером vbakanov.ru по FTP (Indy 8.0.25)
 //
+void __fastcall TF1::OnKeyUp_F1(TObject *Sender, WORD &Key,
+                                TShiftState Shift)
+{ // вызывается при нажатии клавиш на главной форме
+ if( Key == VK_F1 ) // нажали F1 (контекстная помощь)
+ {
+  WinExec( "hh.exe spf@home.chm::/main_form.html", SW_SHOWNORMAL );
+//  MessageBeep( MB_ICONASTERISK ); // Внимание..!
+ }
+//
+ Key = NULL; // очистили код нажатой кнопки
+//
+}
+// -----------------------------------------------------------------------------
+

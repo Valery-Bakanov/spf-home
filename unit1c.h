@@ -215,6 +215,8 @@ __published: // IDE-managed Components
         void __fastcall actBreakDeleteAllExecute(TObject *Sender);
         void __fastcall On_Master_Timer(TObject *Sender);
         void __fastcall N5_OutOpsDown(TObject *Sender);
+        void __fastcall OnKeyUp_F1(TObject *Sender, WORD &Key,
+          TShiftState Shift);
 //
 private:	// User declarations
         TLMDEditSearchDlgOptions FSearchOptions;
