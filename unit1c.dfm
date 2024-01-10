@@ -6,7 +6,7 @@ object F1: TF1
   HorzScrollBar.Visible = False
   VertScrollBar.Visible = False
   BorderIcons = [biSystemMenu, biMinimize, biHelp]
-  Caption = ' SPF@home client ver. 4.4 (2015-2023)'
+  Caption = ' SPF@home client ver. 4.4 (2015-2024)'
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -1976,38 +1976,53 @@ object F1: TF1
         Caption = #1042' '#1087#1086#1084#1086#1097#1100' '#1048#1089#1089#1083#1077#1076#1086#1074#1072#1090#1077#1083#1102' (API_User.pdf)'
         Hint = #1055#1086#1083#1091#1095#1080#1090#1100' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1102' '#1087#1086' '#1087#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100#1089#1082#1080#1084' '#1092#1091#1085#1082#1094#1080#1103#1084
         ShortCut = 16496
-        OnClick = GetUserAPI
+        OnClick = About_Common
+      end
+      object DATAFLOW1: TMenuItem
+        Tag = 1
+        Caption = #1055#1088#1086#1077#1082#1090' DATA-FLOW'
+        OnClick = About_Common
       end
       object N19: TMenuItem
-        Caption = #1058#1077#1084#1072#1090#1080#1095#1077#1089#1082#1072#1103' WEB-'#1089#1090#1088#1072#1085#1080#1094#1072
+        Tag = 2
+        Caption = #1048#1089#1089#1083#1077#1076#1086#1074#1072#1090#1077#1083#1100#1089#1082#1080#1081' '#1087#1088#1086#1077#1082#1090' SPF@home'
         Hint = #1050' WEB-'#1089#1090#1088#1072#1085#1080#1094#1077' '#1086' '#1087#1088#1086#1077#1082#1090#1077' SPF@home'
-        OnClick = GetWebPage
+        OnClick = About_Common
       end
       object N21: TMenuItem
-        Caption = '-'
+        Tag = 3
+        Caption = #1057#1090#1080#1093#1086#1090#1074#1086#1088#1085#1099#1077' '#1087#1088#1086#1080#1079#1074#1077#1076#1077#1085#1080#1103' '#1087#1086' '#1090#1077#1084#1077
+        OnClick = About_Common
       end
-      object WEB_AlgoWiki: TMenuItem
-        Caption = 'WEB-'#1089#1072#1081#1090' '#1087#1088#1086#1077#1082#1090#1072' AlgoWiki'
-        Hint = #1056#1086#1089#1089#1080#1103', '#1052#1043#1059', '#1087#1088#1086#1077#1082#1090' AlgoWiki'
-        ShortCut = 8304
-        OnClick = AboutAlgoWiki
-      end
-      object N20: TMenuItem
+      object N13: TMenuItem
         Caption = '-'
       end
       object Lua1: TMenuItem
+        Tag = 4
         Caption = #1054' '#1074#1089#1090#1088#1072#1080#1074#1072#1077#1084#1086#1084' '#1089#1082#1088#1080#1087#1090#1086#1074#1086#1084' '#1103#1079#1099#1082#1077' Lua'
         Hint = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086' '#1089#1082#1088#1080#1087#1090#1086#1074#1086#1084' '#1103#1079#1099#1082#1077' Lua'
-        OnClick = AboutLua
-      end
-      object Lua2: TMenuItem
-        Caption = #1054' '#1103#1079#1099#1082#1077' Lua '#1095#1091#1090#1100' '#1087#1086#1076#1088#1086#1073#1085#1077#1077' ...'
-        Hint = #1063#1091#1090#1086#1082' '#1087#1086#1076#1088#1086#1073#1085#1077#1077' '#1086' '#1103#1079#1099#1082#1077' Lua'
-        OnClick = AboutLuaDetail
+        OnClick = About_Common
       end
       object Lua531: TMenuItem
+        Tag = 5
         Caption = #1054' '#1103#1079#1099#1082#1077' Lua '#1074#1077#1088#1089#1080#1080' 5.3'
-        OnClick = AboutLua53
+        OnClick = About_Common
+      end
+      object N30: TMenuItem
+        Caption = '-'
+      end
+      object N12: TMenuItem
+        Tag = 6
+        Caption = 'WEB-'#1088#1077#1089#1091#1088#1089' AlgoWiki'
+        OnClick = About_Common
+      end
+      object N15: TMenuItem
+        Caption = '-'
+      end
+      object LitResru1: TMenuItem
+        Tag = 7
+        Caption = #1050#1085#1080#1075#1072' '#1072#1074#1090#1086#1088#1072' '#1085#1072' LitRes.ru'
+        OnClick = About_Common
       end
     end
   end

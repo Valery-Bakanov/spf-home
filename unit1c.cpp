@@ -185,11 +185,22 @@ pattern_02[] = "[=][0-9]{1,}[/][0-9]{1,}[:]" // =n1/n2: -name1 minVal1 maxval1 -
 //
 #define GetRand(a,b) ( rand() % ( (b)-(a)+1)+(a) ) // случайное число от a до b (включительно)
 //
-char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2023\n \
+char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2024\n \
 Автор программного продукта Валерий Баканов не является ярым сторонником Объектно-Ориентированного Программирования \
 (внутри автора точно сидит Линус Торвальдс!) и поэтому большая часть кода не использует ООП\n \
 The author of the software Valery Bakanov is not an ardent supporter of Object-Oriented Programming \
 (Linus Torvalds definitely sits inside the author!) and therefore most of the code does not use OOP";
+//
+char *Info_CommonStr[] = { // информационные вызовы посредством ShellExecute(...)
+"API_User.pdf", // [#0]
+"http://vbakanov.ru/dataflow", // [#1]
+"http://vbakanov.ru/spf@home", // [#2]
+"http://vbakanov.ru/poems_04.htm#spf@home", // [#3]
+"http://ru.wikipedia.org/wiki/Lua", // [#4]
+"http://www.lua.org/manual/5.3/", // [#5]
+"https://algowiki-project.org/ru/", // [#6]
+"https://www.litres.ru/book/v-m-bakanov/prakticheskiy-analiz-algoritmov-i-effektivnost-parallelnyh-vyc-70184365/" // книга автора на LitRes.ru [#7]
+} ;
 //
 struct {
 INT nOpMinIn,  nEdgesMinIn,  // # опер. с MIN входящих дуг и число этих дуг (кроме nInput)
@@ -1017,46 +1028,10 @@ void __fastcall TF1::CopyToNotepad(TObject *Sender)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::AboutLua(TObject *Sender)
-{ // о языке Lua в InterNet'е
- ShellExecute( F1->Handle, NULL, "http://ru.wikipedia.org/wiki/Lua", NULL, NULL, SW_SHOWNORMAL );
+void __fastcall TF1::About_Common(TObject *Sender)
+{ // вызов ShellExecute по строке Info_CommonStr[ Info_Common->Tag ]
+ ShellExecute(0, NULL, Info_CommonStr[ ((TMenuItem*)Sender)->Tag ], NULL, NULL,SW_SHOWNORMAL);
 } //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::AboutLuaDetail(TObject *Sender)
-{ // о языке Lua в InterNet'е малость подробнее
- ShellExecute( F1->Handle, NULL, "http://www.lua.ru/doc/", NULL, NULL, SW_SHOWNORMAL );
-} //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::AboutLua53(TObject *Sender)
-{ // о языке Lua ver 5.3 в InterNet'е
- ShellExecute( F1->Handle, NULL, "http://www.lua.org/manual/5.3/", NULL, NULL, SW_SHOWNORMAL );
-} //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::GetWebPage(TObject *Sender)
-{ // WEB-страница о проекте SPF@home
- ShellExecute( F1->Handle, NULL, "http://vbakanov.ru/spf@home/spf@home.htm", NULL, NULL, SW_SHOWNORMAL );
-} //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::GetUserAPI(TObject *Sender)
-{ // получить информацию о функциях пользовательского API
- ShellExecute( F1->Handle, NULL, "API_User.pdf", NULL, NULL, SW_SHOWNORMAL );
-} //----------------------------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-void __fastcall TF1::AboutAlgoWiki(TObject *Sender)
-{ // WEB-страница сайта AlgoWiki
- ShellExecute( F1->Handle, NULL, "https://algowiki-project.org/ru/", NULL, NULL, SW_SHOWNORMAL );
-}
-//---------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2736,6 +2711,8 @@ void __fastcall TF1::OnKeyUp_F1(TObject *Sender, WORD &Key,
 //
  Key = NULL; // очистили код нажатой кнопки
 //
-}
-// -----------------------------------------------------------------------------
+} // ---------------------------------------------------------------------------
+
+
+
 

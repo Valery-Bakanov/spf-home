@@ -54,10 +54,8 @@ __published: // IDE-managed Components
         TMenuItem *mnuInfo;
         TMenuItem *N18;
         TMenuItem *N19;
-        TMenuItem *N20;
         TMenuItem *Lua1;
         TMenuItem *Lua531;
-        TMenuItem *Lua2;
         TPanel *PN;
         TSpeedButton *SB_OpenScript;
         TSpeedButton *SB_SaveScripr;
@@ -69,7 +67,6 @@ __published: // IDE-managed Components
         TLabel *L_RC;
         TFontDialog *FD0;
         TMenuItem *N21;
-        TMenuItem *WEB_AlgoWiki;
         TPopupMenu *PM_SelectColorsEV0;
         TMenuItem *N22;
         TMenuItem *API1;
@@ -152,6 +149,12 @@ __published: // IDE-managed Components
         TIdIPWatch *IPWatch;
         TMenuItem *N5;
         TMenuItem *N11;
+        TMenuItem *N12;
+        TMenuItem *LitResru1;
+        TMenuItem *DATAFLOW1;
+        TMenuItem *N13;
+        TMenuItem *N30;
+        TMenuItem *N15;
         void __fastcall OnClose_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall OnClose_1_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall CloseSpfAtHome(TObject *Sender);
@@ -164,15 +167,10 @@ __published: // IDE-managed Components
         void __fastcall StopLuaScript(TObject *Sender);
         void __fastcall SaveScriptToCurrentFile(TObject *Sender);
         void __fastcall CreateUpperSPFAndPutToTextFrame(TObject *Sender);
-        void __fastcall GetWebPage(TObject *Sender);
-        void __fastcall GetUserAPI(TObject *Sender);
-        void __fastcall AboutLua(TObject *Sender);
-        void __fastcall AboutLua53(TObject *Sender);
-        void __fastcall AboutLuaDetail(TObject *Sender);
+        void __fastcall About_Common(TObject *Sender);
         void __fastcall MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
         void __fastcall OnShow_F1(TObject *Sender);
         void __fastcall SelectFont(TObject *Sender);
-        void __fastcall AboutAlgoWiki(TObject *Sender);
         void __fastcall OnResize_F1(TObject *Sender);
         void __fastcall OnCreate_F1(TObject *Sender);
         void __fastcall FD0_Show(TObject *Sender);
