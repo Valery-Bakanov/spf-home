@@ -1,8 +1,14 @@
---
+-- найти в алгоритме "цепочки операторов" (÷”√ по ЅјЅ'у)
 -- июнь 2021
 --
+-- "ћы тогда много думали на эту тему с ¬олодей ¬олконским и придумали 
+-- Ђцугиї Ч параллельные потоки исполнени€ внутри одного €дра" 
+-- это здесь: https://habr.com/ru/articles/214377/
+--
+-- также неплохо здесь: https://habr.com/ru/articles/596193/ (изображени€, схемы)
+--
 --projectName = "abc_r" -- им€ проекта 
-projectName = "abc1_r" 
+--projectName = "abc1_r" 
 --
 --projectName = "squa_equ_2"
 --projectName = "squa_equ_2.pred"
@@ -56,7 +62,7 @@ projectName = "abc1_r"
 --projectName = "e17_o11_t6"
 --projectName = "e313_o206_t32"
 --projectName = "e2367_o1397_t137"
---projectName = "e451_o271_t30"
+projectName = "e451_o271_t30"
 --projectName = "e916_o624_t89" 
 --projectName = "e17039_o9853_t199"
 --
@@ -79,7 +85,7 @@ local COE = GetCountOutEdgesByOp( Op ) -- число выход€щих дуг из оператора Op
 local nex_CIE,naxt_COI
 -- ищем оператор - начало операторной цепочки
 if not ((Tier==1 and COE==1) or -- если 1-й €рус яѕ‘
-           (Tier~=1 and COE==1 and CIE~=1)) then -- если не 1-й €рус яѕ‘
+        (Tier~=1 and COE==1 and CIE~=1)) then -- если не 1-й €рус яѕ‘
  do return end
 end 
 --
@@ -95,7 +101,7 @@ next_COE = GetCountOutEdgesByOp( next_Op ) -- число выход€щих дуг из оператора n
 outStr = outStr .. string.format(" => %d(%d/%d)", next_Op,next_CIE,next_COE) -- цепочка
 OutLine( outStr )
 --
-if  next_CIE==1 and  next_COE==1 then -- продолжим цепочку
+if next_CIE==1 and next_COE==1 then -- продолжим цепочку
  Op = next_Op
  goto contin
 end

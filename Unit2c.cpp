@@ -138,7 +138,8 @@ void __fastcall TF2::OnResize_F2(TObject *Sender)
  L_GP->Top   = F2->Height - 99; // текст внизу слева
  L_GP->Width = IM_Logo->Left - L_GP->Left - 5 ; // ширина этого текста
 //
- L_OM->Left = PN1->Left ; // текст вверху cправа
+// L_OM->Left = PN1->Left ; // текст вверху cправа *********************
+ L_OM->Left = F2->Width - L_OM->Width - 22; // прав.сторона на 22 px левее F2->Width
 //
  IM_Logo->Left = PN1->Left + PN1->Width - IM_Logo->Width ;  // логотип - √–ј‘ќ¬џ∆»ћаЋ ј
  IM_Logo->Top  = PN1->Top  + PN1->Height + 3 ;
@@ -207,13 +208,6 @@ void __fastcall TF2::M1_OneClick(TObject *Sender)
 //
  PutParamsAboutSelectOp( n0 ); // выдать в текстовое окно параметры оператора Op
 //
-/*
- L_GP->Caption = IntToStr(Col) + ":" + IntToStr(Row) + "|" + IntToStr(n0) + "| " +
-                 AnsiString( symb ) + "[" +
-                 AnsiString( &str[n1] ) + "]     ||" +
-                 AnsiString( tmp ) + "||" +
-                 IntToStr( atoi(tmp) ) + "||" ;
-*/
  free( str ); // деаллокируем пам€ть под временную строку
  return; // конец успешной обработки
 //

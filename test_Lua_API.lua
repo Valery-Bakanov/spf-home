@@ -1,7 +1,7 @@
 --
--- весна 2021
+-- весна 2021 / февраль 2024
 --
-projectName = "abc_r" -- имя проекта 
+--projectName = "abc_r" -- имя проекта 
 --
 projectName = "squa_equ_2"
 --projectName = "squa_equ_2.pred"
@@ -110,7 +110,21 @@ for i=1,GetCountOutEdgesByOp(Op)  do
  OutLine(  "#" .. i .. ". Вершина: " .. GetNumbOutEdgeByOp(i,Op) )
 end
 --
-SoundPlay("rooster.wav")-- петух возвещает, что работа сделана
+ClearDiagrArea() -- очистить область вывода
+DrawDiagrTLD() -- вывод TLD в ленточную диаграмму 
+--PutTLDToTextFrame() -- вывод TLD в текстовое окно
+--
+OutLine( "\nВсе файлы сохранены..!\n====================" )
+--
+SaveEdges( "a1.gv" ) -- + ОБЯЗАТЕЛЬНО РАСШИРЕНИЕ
+SaveTiers( "a2.trs" ) -- +
+SaveTLD ( "a3.tld" ) -- +
+SaveEdgesVizu( "a4.gv_vz" ) -- +
+SaveTiersVizu( "a5.trs_vz" )
+SaveInOutOpVizu( "a6.ino_vz" )
+SaveParamsVizu( "a7.prm_vz" )
+--
+SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
 --
 -- конец main
 

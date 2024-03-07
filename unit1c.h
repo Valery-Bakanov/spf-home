@@ -155,6 +155,8 @@ __published: // IDE-managed Components
         TMenuItem *N13;
         TMenuItem *N30;
         TMenuItem *N15;
+        TMenuItem *N17;
+        TMenuItem *N20;
         void __fastcall OnClose_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall OnClose_1_F1(TObject *Sender, TCloseAction &Action);
         void __fastcall CloseSpfAtHome(TObject *Sender);
