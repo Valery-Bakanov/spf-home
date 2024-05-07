@@ -91,22 +91,12 @@ PutTiersToTextFrame() -- вывести яѕ‘ как текст
 ClearDiagrArea() -- очистить поле графики
 DrawDiagrTiers() -- вывести яѕ‘ в виде линейной диаграммы
 --
---SaveEdgesVizu("a0")
---SaveEdges("a00")
---SaveInOutOpVizu("a000")
---SaveParamsVizu("a0000")
+SaveTiersVizu("a11.trs")
 --
-for i=1,100 do
-OutLine( SaveTiers("a123") )
-end
+ReadTiers("a11.trs");
+PutTiersToTextFrame() -- вывести яѕ‘ как текст
 --
---SaveTiersVizu("a11")
---
---ReadTiers("a2");
---PutTiersToTextFrame() -- вывести яѕ‘ как текст
---
---ReadEdges("a2")
---PutEdgesToTextFrame()
+
 --
 SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
 --

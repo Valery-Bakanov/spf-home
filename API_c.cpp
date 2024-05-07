@@ -3168,9 +3168,9 @@ int __fastcall c_MessageDialog( char *sCaption, char *sText, char *Buttons, INT 
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_DrawDiagrTiers()
 { // строит графическое изображение (диаграмму)
- INT MinOpsOnTier, // минимум операторов на ярусе
-     MaxOpsOnTier, // максимум операторов на ярусе
-     OpsOnTier,
+ INT minOpsOnTier, // минимум операторов на ярусе
+     maxOpsOnTier, // максимум операторов на ярусе
+     OpsOnTier, // операторов на ярусе
      H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
      B_rect, // ширина горизонтальной полоски в пикселах
      x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
@@ -3181,8 +3181,8 @@ bool __fastcall c_DrawDiagrTiers()
   return ERR_NOT_MASSIVE_TIERS ;
  }
 //
- MinOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMinOps(1, nTiers) ); // минимум ...
- MaxOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMaxOps(1, nTiers) ); // максимум операторов на ярус
+ minOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMinOps(1, nTiers) ); // минимум ...
+ maxOpsOnTier = c_GetCountOpsOnTier( c_GetTierFirstMaxOps(1, nTiers) ); // максимум операторов на ярус
 //
 ////////////////////////////////////////////////////////////////////////////////
  TIM1->Picture->Bitmap->Height = TIM1->Height; // настроить размеры Сanvas по размерам Image
@@ -3192,9 +3192,7 @@ bool __fastcall c_DrawDiagrTiers()
  B_pix = TIM1->Width;
 //
  REAL dH_pix = (REAL)H_pix / nTiers, // единиц в px по высоте и ширине области отрисовки диаграммы
-      dB_pix = (REAL)B_pix / MaxOpsOnTier;
-//
- dH_pix = max( dH_pix, 1.0 ); // высота должна быть <= 1 , иначе отрисовка невозможна...
+      dB_pix = (REAL)B_pix / maxOpsOnTier;
 //
 // --- настройка параметров кисти и карандаша (пера) ---------------------------
  TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
@@ -3205,29 +3203,30 @@ bool __fastcall c_DrawDiagrTiers()
 //
  TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1 !!!
 //
- for(INT iTier=1; iTier<=nTiers; iTier++) // цикл по всем ярусам ЯПФ для построения графика
+ for( INT iTier=1; iTier<=nTiers; iTier++ ) // цикл по всем ярусам ЯПФ для построения графика
  {
-  F2->L_OM->Repaint(); // нужно для синхронизации... !!!!!!!!!!!!!!!!!!!!!!!!!!!
-//
-  OpsOnTier = c_GetCountOpsOnTier( iTier ); // взяли число операторов на ярусе
-  B_rect = dB_pix * OpsOnTier; // ширина горизонтальной полоски
-//
+  OpsOnTier = c_GetCountOpsOnTier( iTier ); // число операторов на на яруск
 // --- устанавливаем цвета графика ---------------------------------------------
-  if( OpsOnTier == MinOpsOnTier )
-   TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
+  if( OpsOnTier == minOpsOnTier )
+  { TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
+    TIM1->Canvas->Pen->Color   = brush_draw_color_MIN; } // цвет пера соответствующий
   else
-  if( OpsOnTier == MaxOpsOnTier )
-   TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
+  if( OpsOnTier == maxOpsOnTier )
+  { TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
+    TIM1->Canvas->Pen->Color   = brush_draw_color_MAX; } // цвет пера соответствующий
   else
-   TIM1->Canvas->Brush->Color = brush_draw_color_TIERS; // цвет кисти обычный
+  { TIM1->Canvas->Brush->Color = brush_draw_color_TIERS; // цвет кисти обычный для Tiers
+    TIM1->Canvas->Pen->Color   = brush_draw_color_TIERS; } // цвет пера соответствующий
 ////////////////////////////////////////////////////////////////////////////////
   x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
   y1 = dH_pix * ( iTier-1 );
 //
+  B_rect = dB_pix * OpsOnTier; // ширина горизонтальной полоски
   x2 = x1 + B_rect; // правая нижняя точка горизонтальной полоски ( Rectangle, Rect )
   y2 = y1 + dH_pix;
 //
-// --- рисуем прямоугольники длиной, пропорциональной числу операторов на ярусе
+  if( y2-y1 < 1 )
+   y2 ++ ;
   TIM1->Canvas->FillRect( TRect( x1,y1, x2,y2 ) ); // прямоугольник заданной кистью
 //
   APM // дать поработать Windows
@@ -5179,13 +5178,7 @@ bool __fastcall c_DrawDiagrTLD()
   flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
  }
 //
-
  sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // общее число межярусных промежутков в ЯПФ
-
-// t_printf( "->%d", nGaps );
-// for( iGap=0; iGap<=nGaps; iGap++ )
-//  t_printf( "=>%s", paramsTLD->Strings[iGap].c_str() );
-
 //
 // ищем экстремумы числа данных ------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
@@ -5230,7 +5223,7 @@ bool __fastcall c_DrawDiagrTLD()
  TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
  TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
  TIM1->Canvas->Pen->Style   = psSolid; // сплошной
- TIM1->Canvas->Pen->Mode    = pmNotXor; //pmCopy;  // режим цвет = color
+ TIM1->Canvas->Pen->Mode    = pmCopy;  // режим цвет = color
  TIM1->Canvas->Pen->Width   = 1; // толщина 1 пиксель
 //
  TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1 !!!
