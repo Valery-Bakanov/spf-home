@@ -195,7 +195,7 @@ bool  __fastcall ParseStringAndAddEdges( char *str ); // парсит str и добавляет 
 bool  __fastcall ReadAndPrimWorkOpsCalcsVertEdgeFiles( char FileName[] ); // чтение и предв.обработка файлов настроек
 INT   __fastcall c_LuaCallByTimer( char* CommandLine, INT d_Ticks ); // вызов Lua-команд с задержкой d_Ticks
 void  __fastcall CallLuaThread( char* CommandLine ); // вызов CommandLine во вновь созданном потоке Lua
-char* __fastcall ReformFileName( char* Filename, char* Ext ); // нужным образом преобразовать имя файла
+char* __fastcall ReformFileName( char* FileName, char* Ext ); // нужным образом преобразовать имя файла
 INT   __fastcall c_CalcParamsTiers(); // расчёт статистики ярусов ЯПФ
 //
 void __fastcall tuneFlagsAll( bool FLAG, INT FromTo ); // устанавливает FLAG у операторов массива дуг From/To=0/1 списка Edges[][]
@@ -204,7 +204,7 @@ void __fastcall clearFlagsDuplicateOps( INT FromTo, INT Op ); // устанавливает в
 //
 char* __fastcall CreateUniqueFileName(char* FileName); // создание уникального имени файла при существовании файла с именем, заданным FileName
 //
-void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di, REAL Value, char* Fmt, char* s_After);
+void  __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di, REAL Value, char* Fmt, char* s_After);
 //
 INT  __fastcall c_CountOfMemoryLuaUse(); // количество байт, используемых Lua
 INT  __fastcall c_CountOfFreeMemory(); // получение и вывод размеров физической памяти
@@ -249,13 +249,13 @@ char* __fastcall c_SaveTiersVizu(char FileName[])
  }
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extTiers,extVizu))).c_str() ) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
+ strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extTiers,extVizu))).c_str() ) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
-  t_printf( "\n-E- Невозможно записать файл %s содержания ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
+  t_printf( "\n-E- Невозможно записать файл %s содержания ЯПФ -E-\n%s",
+                   NewFileName, alarmStr );
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
@@ -299,12 +299,12 @@ char* __fastcall c_SaveEdgesVizu(char FileName[])
 //
  char NewFileName[_512];
  strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extGv,extVizu))).c_str() ) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
-  t_printf( "\n-E- Невозможно записать файл %s содержания ИГА -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
+  t_printf( "\n-E- Невозможно записать файл %s содержания ИГА -E-\n%s",
+                   NewFileName, alarmStr );
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
@@ -341,12 +341,12 @@ char* __fastcall c_SaveInOutOpVizu(char FileName[])
 //
  char NewFileName[_512];
  strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extIno,extVizu))).c_str() ) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
-  t_printf( "\n-E- Невозможно записать файл %s входящих и исходящих дуг по операторам -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
+  t_printf( "\n-E- Невозможно записать файл %s входящих и исходящих дуг по операторам -E-\n%s",
+                   NewFileName, alarmStr );
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
@@ -406,12 +406,12 @@ char* __fastcall c_SaveParamsVizu(char FileName[])
 //
  char NewFileName[_512];
  strcpy( NewFileName, ReformFileName(FileName,Format("%s%s",OPENARRAY(TVarRec,(extPrm,extVizu))).c_str() ) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
 //
  if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
-  t_printf( "\n-E- Невозможно сохранить файл %s числа входящих и выходящих дуг по операторам -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
+  t_printf( "\n-E- Невозможно сохранить файл %s числа входящих и выходящих дуг по операторам -E-\n%s",
+                   NewFileName, alarmStr );
   return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
 //
@@ -434,67 +434,6 @@ char* __fastcall c_SaveParamsVizu(char FileName[])
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char* __fastcall c_SaveTiers(char FileName[])
-{  // вывод операторов по ярусам для полного описания графа в виде ЯПФ
- char str[_16384], tmp[_256];
- FILE *fptr = NULL; // рабочий указатель на файл
-//
- if( !flagExistsTiers ) // массива Tiers[][] не существует...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
- }
-//
- char NewFileName[_512];
- strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя яфайла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
-//
- if(!(fptr = fopen( NewFileName, "w" ))) // открыли для записи
- {
-  t_printf( "\n-E- Невозможно записать файл %s полного описания ИГА в ЯПФ -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
-  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
- }
-//
-// setbuf( fptr, NULL ); // отключили буфферизацию при записи
-//
-////////////////////////////////////////////////////////////////////////////////
-// определяем максимум числа операторов на ярусе и номер этого яруса (включая нулевой)
-//
- INT MaxOpsOnTier = -1, TierWithMaxOps = -1; // начальные значения
-//
- for(INT iTiers=0; iTiers<nTiers; iTiers++) // по ярусам ЯПФ графа
-  if( Tiers(iTiers,0) > MaxOpsOnTier ) // если больше...
-  {
-   MaxOpsOnTier   = Tiers(iTiers,0);
-   TierWithMaxOps = iTiers;
-  }
-//
-////////////////////////////////////////////////////////////////////////////////
-//
- fprintf(fptr, "%d %d %d\n", nTiers+1, MaxOpsOnTier, TierWithMaxOps); // вывод первой строки
- for(INT iTiers=0; iTiers<=nTiers; iTiers++) // по ярусам ЯПФ графа
- {
-  strNcpy(str, ""); // очистили строку перед заполнением
-//
-  for(INT j=0; j<=Tiers(iTiers,0); j++) // по номерам операторов на ярусе iTiers
-  {
-   snprintf( tmp,sizeof(tmp), "%d ", Tiers(iTiers,j) ); // по элементам строки уровня iTiers
-   strcat(str, tmp); // прибавили для формирования строки
-  } // конец цикла по j
-//
-  fprintf(fptr, "%s\n", str); // вывели в файл готовую строку
-//
- } // конец цикла по iTiers
-//
- fclose(fptr); // закрыли файл
-//
- return NewFileName ; // венули действительное имя файла
-//
-} // --- конец SaveTiers -------------------------------------------------------
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_ReadTiers(char FileName[])
 {  // чтение операторов по ярусам для полного описания графа в виде ЯПФ
  char str[_16384], *p;
@@ -505,7 +444,7 @@ bool __fastcall c_ReadTiers(char FileName[])
      TierWithMaxOps; // на каком (сверху) ярусе этот мах реализуется (включая нулевой)
 //
  char NewFileName[_512];
- strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя яфайла
+ strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя файла
 //
  if(!(fptr = fopen(NewFileName, "r"))) // открыли для чтения
  {
@@ -608,13 +547,13 @@ INT __fastcall c_GetTierByOp(INT Op)
   DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
-
+//
  for(INT iTier=0; iTier<=nTiers; iTier++) // по всем ярусам
   if( c_IsOpExistOnTier( Op, iTier ) == true ) // оператор Op имеет честь присутствовать на ярусе iTier
    return iTier ;
-
+//
  return ERR_COMMON ; // не удалось найти оператор Op...
-
+//
 } // --- конец c_GetTierByOp -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -626,24 +565,24 @@ INT __fastcall GetParamsGraph()
      Op, nEdgesInOp,  // In  по всем операторам...
          nEdgesOutOp; // Out по всем операторам...
  char w[_256];
-
+//
 // PG - глобальная ! -----------------------------------------------------------
-
+//
  if( !flagExistsEdges && !flagExistsTiers ) // нет массивов Mem_Edges[][] и Tiers[][]
  {
   DisplayMessage( "E", __FUNC__, "массивы ДУГ и ЯРУСОВ не сформированы", ERR_NOT_MASSIVE_EDGES ); // выдать сообщение
   return ERR_NOT_MASSIVE_EDGES ;
  }
-
+//
  PG.nEdgesMinIn  =        // инициализация по числу ВХОДЯЩИХ дуг... (MIN)
  PG.nEdgesMinOut =  Extr; // инициализация по числу ВЫХОДЯЩИХ дуг... (MIN)
-
+//
  PG.nEdgesMaxIn  =    // то же самое (MAX)
  PG.nEdgesMaxOut = - Extr; // то же самое (MAX)
-
+//
  PG.AveIn  =       // для суммирования числа дуг
  PG.AveOut = 0.0;
-
+//
 // --- ищем ВХОДяЩИЕ ( to ) в операторы дуги -----------------------------------
  for(INT iTier=2; iTier<=nTiers; iTier++) // по всем ярусам от 2 до nTiers
   for(INT j=1; j<=Tiers(iTier,0); j++) // по номерам операторов на ярусе слева направо
@@ -654,25 +593,25 @@ INT __fastcall GetParamsGraph()
    for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по всем дугам графа
     if( Edges(1,iEdge) == Op ) // нашли дугу, ВХОДЯЩУЮ ( to ) в нужный оператор...
      nEdgesInOp ++ ; // суммируем дуги, ВХОДЯЩИЕ ( to ) для оператора Op
-
+//
    PG.AveIn += nEdgesInOp ;  // сумма числа дуг In для оператора Op
-
+//
    if(nEdgesInOp < PG.nEdgesMinIn) // ищем MIN входящих...
    {
     PG.nEdgesMinIn = nEdgesInOp;
     PG.nOpMinIn    = Op; // запомнили соответствующий Op
    }
-
+//
    if(nEdgesInOp > PG.nEdgesMaxIn) // ищем NAX входящих...
    {
     PG.nEdgesMaxIn = nEdgesInOp;
     PG.nOpMaxIn    = Op; // запомнили соответствующий Op
    }
-
+//
   } // конец цикла по j
-
+//
 ////////////////////////////////////////////////////////////////////////////////
-
+//
 // --- ищем ВЫХОДяЩИЕ ( from ) в операторы дуги --------------------------------
  for(INT iTier=1; iTier<nTiers; iTier++) // по всем ярусам от 1 до nTiers-1
   for(INT j=1; j<=Tiers(iTier,0); j++) // по номерам операторов на ярусе слева направо
@@ -738,7 +677,7 @@ INT __fastcall GetOpByMinInOnTiers(INT minTier, INT maxTier)
    nEdgesInOp = sumEdgesIn;
    iOpMinIn = iOp; // запомнили номер оператора
   }
-
+//
  } // конец цикла по i
    // конец цикла по j
 //
@@ -1025,13 +964,13 @@ INT __fastcall c_GetTierLastMinOps(INT Tier1, INT Tier2)
 ////////////////////////////////////////////////////////////////////////////////
 bool __fastcall c_IsOpExistOnTier(INT Op, INT Tier)
 { // возвращает true только если оператор Op присутствует на ярусе Tier
-
+//
  for(INT jOpOnTier=1; jOpOnTier<=Tiers(Tier,0); jOpOnTier++) // по всем операторам яруса Tier
   if( Tiers(Tier,jOpOnTier) == Op ) // нашли искОмый оператор Op !..
    return true;
-
+//
  return false;
-
+//
 } // --- конец  c_IsOpExistOnTier ------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1806,13 +1745,13 @@ INT __fastcall c_GetCountParamsByOp(INT Op)
 { // --- возвращает число параметров оператора Op ------------------------------
  char str[_1024];
  INT k=0;
-
+//
  strNcpy( str, c_GetParamsByOp( Op )  ); // берём всю строку параметров
-
+//
  for(INT i=0; str[i+1] != '\0'; i++) // по строке сравниваем по два символа
   if ( ( str[i] == '-' ) && ( isalpha( str[i+1] ) ) ) // проверка на '-' + лат.буква
    k ++ ; // запомнили, какой раз встречается "'-'+лат.буква"
-
+//
  return ( k ) ;
 } // --- конец c_GetCountParamsByOp --------------------------------------------
 
@@ -1823,14 +1762,14 @@ char* __fastcall c_GetNameNumbParamByCalc(INT Numb, INT Calc)
  char str[_1024],
       sName[_512]; // имя параметра
  REAL minVal,maxVal; // значения параметров
-
+//
  strNcpy( str, c_GetNumbParamByCalc( Numb, Calc ) ); // взяли строку параметра
-
+//
  if( sscanf( str, "-%s %g %g", sName, &minVal, &maxVal ) == 3 ) // если Ok - 3 преобразованных параметра
   return sName ;
  else
   return "\0" ;
-
+//
 } // --- конец c_GetNameNumbParamByCalc ----------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1840,14 +1779,14 @@ char* __fastcall c_GetNameNumbParamByOp(INT Numb, INT Op)
  char str[_1024],
       sName[_1024]; // имя параметра
  REAL Val; // значение параметра
-
+//
  strNcpy( str, c_GetNumbParamByOp( Numb, Op ) ); // взяли строку параметра
-
+//
  if( sscanf( str, "-%s %g", sName, &Val ) == 2 ) // если Ok - 2 преобразованных параметра
   return sName ;
  else
   return "\0" ;
-
+//
 } // --- конец c_GetNameNumbParamByOp ----------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1857,14 +1796,14 @@ REAL __fastcall c_GetValNumbParamByOp(INT Numb, INT Op)
  char str[_1024],
       sName[_1024]; // имя параметра
  REAL Val; // значение параметра
-
+//
  strNcpy( str, c_GetNumbParamByOp( Numb, Op ) ); // взяли строку параметра
-
+//
  if( sscanf( str, "-%s %g", sName, &Val ) == 2 ) // если Ok - 2 преобразованных параметра
   return Val ;
  else
   return ERR_TRANSFORM ;
-
+//
 } // --- конец c_GetValNumbParamByOp -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1910,7 +1849,7 @@ bool  __fastcall c_LoadFileNameParamsCalcs( char FileName[] )
 bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
 { // настроим имя файла и прочитаем файл параметров ОПЕРАТОРОВ
  char str[_2048];
-
+//
  if( !FileExists( FileName ) ) // заданный файл не существует...
  {
   t_printf( "\n-W- Файл %s параметров ОПЕРАТОРОВ не существует -W-\n",
@@ -1922,7 +1861,7 @@ bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
   c_ReadAndCorrectParamsOps( FileNameParamsOps ); // перечитываем и обрабатываем файл параметров ОПЕРАТОРОВ
   return true;
  } // всё нормально с заданным файлом... работаем дальше !
-
+//
 ////////////////////////////////////////////////////////////////////////////////
  if( !FileExists( DefFileNameParamsOps ) ) // файл по умолчанию не существует...
   t_printf( "\n-E- Файл %s параметров ОПЕРАТОРОВ по умолчанию не существует -E-\n",
@@ -1941,9 +1880,9 @@ bool  __fastcall c_LoadFileNameParamsOps( char FileName[] )
 ////////////////////////////////////////////////////////////////////////////////
 // --- не удалось открыть ни заданный файл, ни файл с именем по умолчанию ------
  strNcpy( sOps, "\0" ); // очищаем строку-память параметров ОПЕРАТОРОВ
-
+//
  return false; // проблемы с файлом...
-
+//
 } // --- конец c_LoadFileNameParamsOps =========================================
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2593,7 +2532,7 @@ bool _fastcall c_ReadAndCorrectParamsVertices( char FileNameParamsVertices[] )
   if( sN[0]=='=' && isdigit(sN[1]) ) // готовимся обрабатывать "=n1/n2:"
   {
 // --- начало обработки конструкции '=n1/n2:^' ---------------------------------
-
+//
   if( !Test_n1n2 ) // читаем "=n1/n2:^" из sN (вoзврат !=6 - ошибка )
   {
    iStart = iEnd;
@@ -3252,21 +3191,19 @@ bool __fastcall c_DrawDiagrTiers()
  H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
  B_pix = TIM1->Width;
 //
- REAL dH_pix = (REAL)H_pix / nTiers, // единица в  пикселах по высоте и ширине области отрисовки диаграммы
+ REAL dH_pix = (REAL)H_pix / nTiers, // единиц в px по высоте и ширине области отрисовки диаграммы
       dB_pix = (REAL)B_pix / MaxOpsOnTier;
 //
- dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
+ dH_pix = max( dH_pix, 1.0 ); // высота должна быть <= 1 , иначе отрисовка невозможна...
 //
 // --- настройка параметров кисти и карандаша (пера) ---------------------------
  TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
-//
  TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
-//
  TIM1->Canvas->Pen->Style   = psSolid; // сплошной
  TIM1->Canvas->Pen->Mode    = pmCopy;  // режим цвет = color
  TIM1->Canvas->Pen->Width   = 1; // толщина = 1
 //
- TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1
+ TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1 !!!
 //
  for(INT iTier=1; iTier<=nTiers; iTier++) // цикл по всем ярусам ЯПФ для построения графика
  {
@@ -3293,20 +3230,18 @@ bool __fastcall c_DrawDiagrTiers()
 // --- рисуем прямоугольники длиной, пропорциональной числу операторов на ярусе
   TIM1->Canvas->FillRect( TRect( x1,y1, x2,y2 ) ); // прямоугольник заданной кистью
 //
-//  Delay( 1 ); // задержка 1 msec - без неё отрисовка иногда не получается..!
-//
-  Application->ProcessMessages(); // дать поработать Windows
+  APM // дать поработать Windows
 //
  } // конец цикла по iTier
 //
 ////////////////////////////////////////////////////////////////////////////////
-// ----- рисуем вертикальную линию - средее значение ширин ярусов --------------
+// ----- рисуем вертикальную линию - среднее значение ширин ярусов -------------
   REAL b_average = (REAL)c_GetCountOps() / c_GetCountTiers(); // средняя ширина ЯПФ
 //
   TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по ярусам; // цвет пера
   TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
   TIM1->Canvas->Pen->Style = psDot; // точечная линия
-  TIM1->Canvas->Pen->Width = 1; // толщина пера 3 пикселя
+  TIM1->Canvas->Pen->Width = 1; // толщина пера 1 пиксель
 //
   x1 = x2 = b_average * dB_pix ;
   y1 = 0; y2 = TIM1->Height;
@@ -3314,17 +3249,16 @@ bool __fastcall c_DrawDiagrTiers()
   TIM1->Canvas->MoveTo( x1,   y1 ); // перевести перо в x1,y1
   TIM1->Canvas->LineTo( x1,   y2 ); // провести линию в x1,y2
 //
-  TIM1->Canvas->MoveTo( x1-1, y1 ); // перевести перо в x1-1,y1
+  TIM1->Canvas->MoveTo( x1-1, y1 ); // перевести перо в x1-1,y1 // жирность
   TIM1->Canvas->LineTo( x1-1, y2 ); // провести линию в x1-1,y2
 //
-  TIM1->Canvas->MoveTo( x1+1, y1 ); // перевести перо в x1+1,y1
+  TIM1->Canvas->MoveTo( x1+1, y1 ); // перевести перо в x1+1,y1 // жирность
   TIM1->Canvas->LineTo( x1+1, y2 ); // провести линию в x1+1,y2
-//
-//  TIM1->Repaint(); // принудительно перерисовали
 //
   return true; // всё успешно сделано
 //
 } // --- конец с_DrawDiagrTiers ------------------------------------------------
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -3685,10 +3619,12 @@ INT __fastcall c_PutTLDToTextFrame()
 //
 // ищем мах TLD в диапазоне промежутков ярусов 0/$ -----------------------------
   if( CountTLD >= maxCountTLD_0 )
-  { maxCountTLD_0 = max(maxCountTLD_0,CountTLD); n1x_0=n1; n2x_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+  { maxCountTLD_0 = max(maxCountTLD_0,CountTLD);
+    n1x_0=n1; n2x_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 // ищем мin TLD в диапазоне промежутков ярусов 0/$ -----------------------------
   if( CountTLD < minCountTLD_0 )
-  { minCountTLD_0 = min(minCountTLD_0,CountTLD); n1n_0=n1; n2n_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+  { minCountTLD_0 = min(minCountTLD_0,CountTLD);
+    n1n_0=n1; n2n_0=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
   averTLD_0 += (REAL)CountTLD; // средне-арифметическое времени жизни данных
 // конец обработки TLD в диапазоне 0/$ -----------------------------------------
@@ -3699,10 +3635,12 @@ INT __fastcall c_PutTLDToTextFrame()
 //
 // ищем мах TLD в диапазоне промежутков ярусов 1/$ -----------------------------
   if( CountTLD >= maxCountTLD_1 )
-  { maxCountTLD_1 = max(maxCountTLD_1,CountTLD); n1x_1=n1; n2x_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+  { maxCountTLD_1 = max(maxCountTLD_1,CountTLD);
+    n1x_1=n1; n2x_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 // ищем мin TLD в диапазоне промежутков ярусов 1/$ -----------------------------
   if( CountTLD < minCountTLD_1 )
-  { minCountTLD_1 = min(minCountTLD_1,CountTLD); n1n_1=n1; n2n_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+  { minCountTLD_1 = min(minCountTLD_1,CountTLD);
+    n1n_1=n1; n2n_1=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
 //
   averTLD_1 += (REAL)CountTLD; // средне-арифметическое времени жизни данных
 //
@@ -3731,46 +3669,6 @@ INT __fastcall c_PutTLDToTextFrame()
 //
 } // ----- конец c_PutTLDToTextFrame -------------------------------------------
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-char* __fastcall c_SaveTLD( char FileName[] )
-{ // выдать диаграмму времени жизни данных в файл
-//
- FILE *fptr = NULL; // рабочий указатель на файл
-//
- char NewFileName[_512];
- strcpy( NewFileName, ReformFileName(FileName,extTld) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
-//
- if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
- {
-  t_printf( "\n-E- Невозможно записать файл %s времени жизни внутренних данных -E-\n\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
-  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
- }
-//
-// setbuf( fptr, NULL ); // отключили буфферизацию при записи
-//
- if( !flagCalcTLD ) // если paramsTLD не вычислен...
- {
-  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
-  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
- }
-//
- for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
- {
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_OUT ) ; // уничтожили символ _OUT[0] = ">>" в встроке
-  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_IN ) ; // уничтожили символ _IN[0] = "<<" в строке
-//
-  fprintf( fptr, "%s\n", paramsTLD->Strings[i] ); // печать в файл
- }
-//
- fclose( fptr ) ; // закрыть файл
-//
- return NewFileName ;
-//
-} // ----- конец c_SaveTLD -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -3882,41 +3780,6 @@ c_CreateProcess(char* CommandLine, byte RuleParent, byte Priority, bool RuleMess
 // c_CreateProcess( cmdLine, RuleParent, Priority, RuleMessage );
 //} // ----- конец c_CreateProcess -----------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-char* __fastcall c_SaveEdges(char FileName[])
-{  // вывод дуг для полного описания графа
- FILE *fptr = NULL; // рабочий указатель на файл
-//
- char NewFileName[_512];
- strcpy( NewFileName, ReformFileName( FileName,extGv ) ); // преобразованное имя файла
- strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если MewFileName уже существует...
-//
- if(!(fptr = fopen(NewFileName, "w"))) // открыли для записи
- {
-  t_printf( "\n-E- Невозможно сохранить файл %s списка дуг (комплементарных вершин) ИГА -E-\n-W- проверьте осуществимость записи на заданный носитель данных -W-",
-                   NewFileName );
-  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
- }
-//
-// setbuf( fptr, NULL ); // отключили буфферизацию при записи
-//
- fprintf( fptr, "#\n// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm\n");
- fprintf( fptr, "#  Total edges in this directed graph: %d\n", nEdges ); // число дуг
- fprintf( fptr, "/* This file was automatically created thru program SPF_CLIENT.EXE\n" ); // какой программо создан файл
- fprintf( fptr, "   file name: %s , datа creation: %s */\n#\n", AnsiUpperCase(NewFileName) , uniqueStr );  // дата создания
- fprintf( fptr, "digraph %s {\n", AnsiUpperCase(ChangeFileExt(ExtractFileName(NewFileName),"") )); // имя файла без расширения
-//
- for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по дугам графа
-  fprintf(fptr, "%d -> %d ;\n", Edges(0,iEdge), Edges(1,iEdge)); // оператор "откуда" -> оператор "куда"
-//
- fprintf( fptr, "}\n" ); // последняя строка файла
-//
- fclose( fptr); // закрыли файл
-//
- return NewFileName ;
-//
-} // --- конец c_SaveEdges -----------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -3934,7 +3797,7 @@ bool __fastcall c_ReadEdges(char FileName[])
  flagExistsTiers = false ; // массив Tiers[][] не создан...
 //
  char NewFileName[_512];
- strcpy( NewFileName,ReformFileName(FileName,extGv) ); // преобразованное имя файла
+ strcpy( NewFileName, ReformFileName(FileName,extGv) ); // преобразованное имя файла
 //
  if( !(fptr = fopen(NewFileName, "r")) ) // файл описания графа открыли для чтения
  {
@@ -4682,155 +4545,8 @@ INT __fastcall c_GetOpByMaxTierLowerPreset(INT Op)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-bool __fastcall c_DrawDiagrTLD()
-{ // строит графическое изображение (диаграмму) времён жизни внутренних данных (TLD)
- INT OpsOnTier,
-     H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
-     B_rect, // ширина горизонтальной полоски в пикселах
-     x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
- char str[_256];
-//
- if( !flagExistsTiers ) // массива Tiers[][] ещё нет...
- {
-  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
-  return ERR_NOT_MASSIVE_TIERS ;
- }
-//
-////////////////////////////////////////////////////////////////////////////////
- TIM1->Picture->Bitmap->Height = TIM1->Height; // настроить размеры Сanvas по размерам Image
- TIM1->Picture->Bitmap->Width  = TIM1->Width;  // !!! ОЧЕНЬ ВАЖНО ( инфо 08.02.2017 ) !!!!!!
-//
- H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
- B_pix = TIM1->Width;
-//
-// --- настройка параметров кисти и карандаша (пера) ---------------------------
- TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
-//
- TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
-//
- TIM1->Canvas->Pen->Style   = psSolid; // сплошной
- TIM1->Canvas->Pen->Mode    = pmCopy;  // режим цвет = color
- TIM1->Canvas->Pen->Width   = 1; // толщина = 1
-//
- TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1
-//
-// для экономии кода каркас взят и зc_DrawDiagrTLD(), а функциональная ---------
-// часть аналогична (с частичной избыточностью) блоку в c_PutParamsTiers() -----
-//
- INT n1,n2,CountTLD, // n1,n2 - номера промежутков между ярусами ЯПФ, CountTLD - число данных в этом промежутке
-     maxCountTLD = _minINT, minCountTLD = _maxINT, // max/min данных
-     n1x,n2x, n1n,n2n, // диапазоны ярусов выше и ниже рассмматриваемого промежутка
-     iGap, nGaps ;
- REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
-//
- if( !flagCalcTLD ) // если paramsTLD не вычислен...
- {
-  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
-  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
- }
-//
- sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // число межярусных промежутков в ЯПФ
-//
-// ищем экстремумы числа данных ------------------------------------------------
- for( iGap=1; iGap<=nGaps; iGap++ ) // цикл по всем промежуткам (Gap) ярусов ЯПФ для поисков max/min
- {
-  if( iGap < nGaps ) // кроме последней строки с $
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний ярус / нижний ярус / число данных в этом промежутке
-  else // последняя строка формата "n/$|m"
-  {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
-   n2=n1+1;
-  }
-//
-  if( CountTLD >= maxCountTLD ) // ищем мах число живых данных
-  { maxCountTLD = max(maxCountTLD,CountTLD); n1x=n1; n2x=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
-//
-  if( CountTLD < minCountTLD ) // ищем мin число живых данных
-  { minCountTLD = min(minCountTLD,CountTLD); n1n=n1; n2n=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
-//
- averTLD += (REAL)CountTLD; // суммируем для получения средн.арифметического времени жизни данных между ярусам
-//
- } // конец  for( iGap=1; iGap<=n; iGap++ )
-//
- averTLD /= (REAL)nGaps; // средн.арифметическое времени жизни данных между ярусам
-//
- REAL dH_pix = 1.0 * H_pix / nGaps, // вес единицы в  пикселах по высоте и ширине области отрисовки диаграммы
-      dB_pix = 1.0 * B_pix / maxCountTLD;
-//
- dH_pix = max( dH_pix, 1.0 ); // высота должна быть  <= 1 , иначе отрисовка невозможна...
-//
- snprintf(str,sizeof(str), "H|N/W=%d|/%d/%d-%d", nGaps,maxCountTLD,n1x,n2x ); // число лент / мах данных / ярус сверху - ярус снизу
- F2->L_OM->Caption = str;
- F2->L_OM->Repaint(); // принудительно перерисовываем
-//
- for( iGap=1; iGap<=nGaps; iGap++ ) // цикл по всем промежуткам (Gap) ярусов ЯПФ для построения графика
- {
-//
-  if( iGap < nGaps ) // кроме последней строки с $
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний ярус / нижний ярус / число данных в этом промежутке
-  else // последняя строка формата "n/$|m"
-  {
-   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
-   n2=n1+1;
-  }
-//
-  B_rect = dB_pix * CountTLD; // ширина горизонтальной полоски
-//
-// --- устанавливаем цвета графика ---------------------------------------------
-  if( CountTLD == minCountTLD )
-   TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
-  else
-  if( CountTLD == maxCountTLD )
-   TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
-  else
-   TIM1->Canvas->Brush->Color = brush_draw_color_TLD; // цвет кисти обычный для TLD
-////////////////////////////////////////////////////////////////////////////////
-  x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
-  y1 = dH_pix * ( iGap - 1 );
-//
-  x2 = x1 + B_rect; // правая нижняя точка горизонтальной полоски ( Rectangle, Rect )
-  y2 = y1 + dH_pix;
-//
-// --- рисуем прямоугольники длиной, пропорциональной числу операторов на ярусе
-  TIM1->Canvas->FillRect( TRect( x1,y1, x2,y2 ) ); // прямоугольник заданной кистью
-//
-//  Delay( 1 ); // задержка 1 msec - без неё отрисовка иногда не получается..!
-//
-  Application->ProcessMessages(); // дать поработать Windows
-//
- } // конец цикла  for( iGap=1; iGap<=n; iGap++ )
-//
-////////////////////////////////////////////////////////////////////////////////
-// ----- рисуем вертикальную линию - средн.арифметическое значение -------------
-//
-  TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по ярусам; // цвет пера
-  TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
-  TIM1->Canvas->Pen->Style = psDot; // точечная линия
-  TIM1->Canvas->Pen->Width = 1; // толщина пера 3 пикселя
-//
-  x1 = x2 = averTLD * dB_pix ;
-  y1 = 0; y2 = TIM1->Height;
-//
-  TIM1->Canvas->MoveTo( x1,   y1 ); // перевести перо в x1,y1
-  TIM1->Canvas->LineTo( x1,   y2 ); // провести линию в x1,y2
-//
-  TIM1->Canvas->MoveTo( x1-1, y1 ); // перевести перо в x1-1,y1
-  TIM1->Canvas->LineTo( x1-1, y2 ); // провести линию в x1-1,y2
-//
-  TIM1->Canvas->MoveTo( x1+1, y1 ); // перевести перо в x1+1,y1
-  TIM1->Canvas->LineTo( x1+1, y2 ); // провести линию в x1+1,y2
-//
-//  TIM1->Repaint(); // принудительно перерисовали
-//
-  return true; // всё успешно сделано
-//
-} // --- конец с_DrawDiagrTLD --------------------------------------------------
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 INT __fastcall  c_CalcParamsTLD()
-{ // по массиву Tiers[][] строит и выводит в TLD информацию о времени жижни данных
+{ // по массиву Tiers[][] строит и выводит в TLD информацию о времени жизни данных
 // числа сообщений между ярусами (полезно для определения числа необходимых
 // для хранения/передачи данных между оператораи на ярусах ЯПФ
 // полагаем, что файл регистров ОБЩИЙ для всех параллельных вычислителей
@@ -4877,11 +4593,10 @@ INT __fastcall  c_CalcParamsTLD()
     if( max_to_Tier >= iBottomOfGap ) // ярус конца дуги более или равен ярусу НИЗА интервала
     {
      if( !c_GetCountInEdgesByOp( from_Op ) ) // это вершина (оператор) ВХОДНЫХ данных
-//      snprintf( sW,sizeof(sW), " %1s%d|%d->%d", _IN, from_Op, i, max_to_Tier ) ; // _IN = "\xAB" = "<<"
       snprintf( sW,sizeof(sW), " " _IN "%d|%d->%d", from_Op, i, max_to_Tier ) ; // _IN = "\xAB" = "<<"
      else
      if( !c_GetCountOutEdgesByOp( from_Op ) ) // это вершина (оператор) ВЫХОДНЫХ данных
-       snprintf( sW,sizeof(sW), " %d" _OUT "|%d->"  SS_02 "", from_Op, i ) ; // _OUT = "\xBB" = ">>"
+      snprintf( sW,sizeof(sW), " %d" _OUT "|%d->"  SS_02 "", from_Op, i ) ; // _OUT = "\xBB" = ">>"
      else
       snprintf( sW,sizeof(sW), " %d|%d->%d", from_Op, i, max_to_Tier );
 //
@@ -4896,12 +4611,12 @@ INT __fastcall  c_CalcParamsTLD()
 //
  iBottomOfGap == nTiers+1 ? // SS_02 = "$"
   paramsTLD->Add( Format("%d/" SS_02 "|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(l)),sN))) ) : // выводим строку параметров ИНТЕРВАЛА c нижним ярусом iBottomOfGap
-  paramsTLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(iBottomOfGap)),(int(l)),sN))) );
+//
+ paramsTLD->Add( Format("%d/%d|%d: %s", OPENARRAY(TVarRec, ((int(iBottomOfGap-1)),(int(iBottomOfGap)),(int(l)),sN))) );
 //
  } // конец цикла по iBottomOfGap (iBottomOfGap - нижняя граница ИНТЕРВАЛА в ЯПФ)
 //
 } // ---- конец  c_CalcParamsTLD -----------------------------------------------
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -5090,36 +4805,6 @@ calc_TLD : // --- проще, чем разбираться в куче фигурных скобок ----------------
 //
 } // ----- конец c_PutParamsTiers ----------------------------------------------
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-char* __fastcall CreateUniqueFileName(char* FileName)
-{ // создание уникального имени файла при существовании файла с именем, задданным FileName
-//
- if( !FileExists( FileName ) ) // файл не cуществует...
-  return FileName ;
-//
- char OldFileName[_512], NewFileName[_512], Comma[]=".\0";
-//
- Delay( 100 ); // ждём 0,1 для гарантированного дистижения уникальности нового имени файла
-//
- strcpy( OldFileName, FileName ); // исходное имя файла сохраняем в OldFileName
- OldFileName[ strrchr(OldFileName,Comma[0]) -
-                     &OldFileName[0] ] = '\0'; // вмеcто точки ставим '\0' (отрезаем расширение имени файла)
-//
- strcpy( NewFileName, OldFileName ); // имя файла
- strcat( NewFileName, Comma ); // добавили "." в качестве разделителя к уникальной строке
- strcat( NewFileName, PutDateTimeToString(1) ); // уникальная строка
- strcat( NewFileName, ExtractFileExt(FileName).c_str() ); // расширение исходного файла
-//
- t_printf( "\n-W- Записываемый файл %s уже существует, переименован на %s -W-\n",
-           FileName, NewFileName ); // вывод сообщения в текстовое окно
-//
- return NewFileName ;
-//
-} // ------ конец CreateUniqueFileName -----------------------------------------
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall OutRepeatComplete(char* s_Before, INT i, INT n, INT di,
@@ -5263,28 +4948,356 @@ INT __fastcall c_CountOfFreeMemory() // получение и вывод размеров физической па
 //
 } // ----- конец c_CountOfFreeMemory -------------------------------------------
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-char* __fastcall ReformFileName( char* FileName, char* Ext )
-{ // преобразует FileName в нужную форму с учётом необходимого расширения Ext (с точкой  в начале)
+char* __fastcall c_SaveTLD( char FileName[] )
+{ // выдать диаграмму времени жизни данных в файл
 //
- char NewFileName[_1024];
+ FILE *fptr = NULL; // рабочий указатель на файл
 //
- strcpy( NewFileName, FileName ); // имя файла запомнили в NewFileName
- ChangeFileExt( NewFileName, Ext ); // изменили на ".Ext"
+ char NewFileName[_512];
+ strcpy( NewFileName, ReformFileName(FileName,extTld) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
 //
- if( !FileExists( NewFileName ) ) // файл не существует...
+ if(!(fptr = fopen( NewFileName,"w" ))) // открыли для записи
  {
-  DisplayMessage( "W", __FUNC__,
-                   Format("Файл %s не существует (исходное имя: %s)",OPENARRAY(TVarRec,(NewFileName,FileName)) ).c_str(),
-                   ERR_UNCERTAIN );
-  return "''None''"; // недопустимое имя файла
+  t_printf( "\n-E- Невозможно записать файл %s времени жизни внутренних данных -E-\n%s",
+                   NewFileName, alarmStr );
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
  }
+//
+// setbuf( fptr, NULL ); // отключили буфферизацию при записи
+//
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
+//
+ for( INT i=0; i<=paramsTLD->Count-1; i++ ) // кроме 0-й строки из TLD
+ {
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_OUT ) ; // уничтожили символ _OUT[0] = ">>" в встроке
+  DeleteSymbolAll( paramsTLD->Strings[i].c_str(), *_IN ) ; // уничтожили символ _IN[0] = "<<" в строке
+//
+  fprintf( fptr, "%s\n", paramsTLD->Strings[i] ); // печать в файл
+ }
+//
+ fclose( fptr ) ; // закрыть файл
 //
  return NewFileName ;
 //
+} // ----- конец c_SaveTLD -----------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall c_SaveEdges(char FileName[])
+{  // вывод дуг для полного описания графа
+ FILE *fptr = NULL; // рабочий указатель на файл
+//
+ char NewFileName[_512];
+ strcpy( NewFileName, ReformFileName(FileName,extGv) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
+//
+ if(!(fptr = fopen(NewFileName, "w"))) // открыли для записи
+ {
+  t_printf( "\n-E- Невозможно сохранить файл %s списка дуг (комплементарных вершин) ИГА -E-\n%s",
+                   NewFileName, alarmStr );
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
+ }
+//
+// setbuf( fptr, NULL ); // отключили буфферизацию при записи
+//
+ fprintf( fptr, "#\n// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm\n");
+ fprintf( fptr, "#  Total edges in this directed graph: %d\n", nEdges ); // число дуг
+ fprintf( fptr, "/* This file was automatically created thru program SPF_CLIENT.EXE\n" ); // какой программо создан файл
+ fprintf( fptr, "   file name: %s , datа creation: %s */\n#\n", AnsiUpperCase(NewFileName) , uniqueStr );  // дата создания
+ fprintf( fptr, "digraph %s {\n", AnsiUpperCase(ChangeFileExt(ExtractFileName(NewFileName),"") )); // имя файла без расширения
+//
+ for(INT iEdge=1; iEdge<=nEdges; iEdge++) // по дугам графа
+  fprintf(fptr, "%d -> %d ;\n", Edges(0,iEdge), Edges(1,iEdge)); // оператор "откуда" -> оператор "куда"
+//
+ fprintf( fptr, "}\n" ); // последняя строка файла
+//
+ fclose( fptr); // закрыли файл
+//
+ return NewFileName ;
+//
+} // --- конец c_SaveEdges -----------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall c_SaveTiers(char FileName[])
+{  // вывод операторов по ярусам для полного описания графа в виде ЯПФ
+ char str[_16384], tmp[_256];
+ FILE *fptr = NULL; // рабочий указатель на файл
+//
+ if( !flagExistsTiers ) // массива Tiers[][] не существует...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
+ }
+//
+ char NewFileName[_512];
+ strcpy( NewFileName, ReformFileName(FileName,extTiers) ); // преобразованное имя файла
+ strcpy( NewFileName, CreateUniqueFileName(NewFileName) ); // если NewFileName уже существует...
+//
+ if(!(fptr = fopen( NewFileName, "w" ))) // открыли для записи
+ {
+  t_printf( "\n-E- Невозможно записать файл %s полного описания ИГА в ЯПФ -E-\n%s",
+                   NewFileName, alarmStr );
+  return IntToStr(ERR_NOT_MASSIVE_TIERS).c_str() ; // вернуть число как строку
+ }
+//
+// setbuf( fptr, NULL ); // отключили буфферизацию при записи
+//
+////////////////////////////////////////////////////////////////////////////////
+// определяем максимум числа операторов на ярусе и номер этого яруса (включая нулевой)
+//
+ INT MaxOpsOnTier = -1, TierWithMaxOps = -1; // начальные значения
+//
+ for(INT iTiers=0; iTiers<nTiers; iTiers++) // по ярусам ЯПФ графа
+  if( Tiers(iTiers,0) > MaxOpsOnTier ) // если больше...
+  {
+   MaxOpsOnTier   = Tiers(iTiers,0);
+   TierWithMaxOps = iTiers;
+  }
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+ fprintf(fptr, "%d %d %d\n", nTiers+1, MaxOpsOnTier, TierWithMaxOps); // вывод первой строки
+ for(INT iTiers=0; iTiers<=nTiers; iTiers++) // по ярусам ЯПФ графа
+ {
+  strNcpy(str, ""); // очистили строку перед заполнением
+//
+  for(INT j=0; j<=Tiers(iTiers,0); j++) // по номерам операторов на ярусе iTiers
+  {
+   snprintf( tmp,sizeof(tmp), "%d ", Tiers(iTiers,j) ); // по элементам строки уровня iTiers
+   strcat(str, tmp); // прибавили для формирования строки
+  } // конец цикла по j
+//
+  fprintf(fptr, "%s\n", str); // вывели в файл готовую строку
+//
+ } // конец цикла по iTiers
+//
+ fclose(fptr); // закрыли файл
+//
+ return NewFileName ; // венули действительное имя файла
+//
+} // --- конец SaveTiers -------------------------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall CreateUniqueFileName(char* FileName)
+{ // создание уникального имени файла при существовании файла
+// с именем, заданным FileName
+//
+ if( !FileExists( FileName ) ) // файл не cуществует...
+  return FileName ;
+//
+ char OldFileName[_512], NewFileName[_512], Comma[]=".\0";
+//
+ Delay( 100 ); // ждём 0,1 сек для гарантированного дистижения уникальности нового имени файла
+//
+ strcpy( OldFileName, FileName ); // исходное имя файла сохраняем в OldFileName
+ OldFileName[ strrchr(OldFileName,Comma[0]) -
+                     &OldFileName[0] ] = '\0'; // вмеcто точки ставим '\0' (отрезаем расширение имени файла)
+//
+ strcpy( NewFileName, OldFileName ); // имя файла
+ strcat( NewFileName, Comma ); // добавили "." как разделитель к уникальной строке
+ strcat( NewFileName, PutDateTimeToString(1) ); // уникальная строка
+ strcat( NewFileName, ExtractFileExt(FileName).c_str() ); // расширение исходного файла
+//
+ t_printf( "\n-W- Записываемый файл %s уже существует, переименован на %s -W-\n",
+           FileName, NewFileName ); // вывод сообщения в текстовое окно
+//
+ return NewFileName ;
+//
+} // ------ конец CreateUniqueFileName -----------------------------------------
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+char* __fastcall ReformFileName( char FileName[], char Ext[] )
+{ // преобразует FileName в нужную форму с учётом необходимого
+// расширения Ext (с точкой в начале)
+//
+ AnsiString sNew, sNewFileName, sExt;
+//
+ sNewFileName = AnsiString( FileName ); // конвертируем в AnsiString
+ sExt         = AnsiString( Ext );
+//
+ sNewFileName.SetLength( _512 ); // без принудит. настройки длины строк часто ошибки !!!
+ sExt.SetLength( _16 ); // особенность ChangeFileExt() ???
+ sNew.SetLength( _1024 );
+//
+ sNew = ChangeFileExt( sNewFileName, sExt ); // изменили расширение на ".Ext"
+//
+ return sNew.c_str() ;
+//
+/* t_printf( ")%s(", FileName );
+//
+ if( FileName[strlen(FileName)-1] == '.' ) // если '.' последняя...
+  strcat( &FileName[strlen(FileName)], &Ext[1] ); // то прибавим Ext
+//
+ t_printf( "}%s{", FileName );
+//
+ return FileName ; */
+//
 } // --- конец ReformFileName --------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool __fastcall c_DrawDiagrTLD()
+{ // строит графическое изображение (диаграмму) времён жизни внутренних данных (TLD)
+ INT OpsOnTier,
+     H_pix, B_pix, // высота и ширина области отрисовки IM1 в пикселах
+     B_rect, // ширина горизонтальной полоски в пикселах
+     x1,y1, x2,y2; // координаты горизонтальной полоски в пикселах
+ char str[_256];
+//
+ if( !flagExistsTiers ) // массива Tiers[][] ещё нет...
+ {
+  DisplayMessage( "E", __FUNC__, messNotTiers, ERR_NOT_MASSIVE_TIERS ); // выдать сообщение
+  return ERR_NOT_MASSIVE_TIERS ;
+ }
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// для экономии кода каркас взят из c_DrawDiagTiers(), а функциональная --------
+// часть аналогична (с частичной избыточностью) блоку в c_PutParamsTiers() -----
+//
+ INT n1,n2,CountTLD, // n1,n2 - номера промежутков между ярусами ЯПФ, CountTLD - число данных в этом промежутке
+     maxCountTLD = _minINT, minCountTLD = _maxINT, // max/min данных
+     n1x,n2x, n1n,n2n, // диапазоны ярусов выше и ниже рассмматриваемого промежутка
+     iGap, nGaps ;
+ REAL averTLD=0.0; // средне-арифметическое времени жижниданных между ярусами ЯПФ
+//
+ if( !flagCalcTLD ) // если paramsTLD не вычислен...
+ {
+  c_CalcParamsTLD(); // вычислить диаграмму времени жизни данных по текущему Tiers[][]
+  flagCalcTLD = true ; // установить flag "paramsTLD соответствует текущему Tiers[][]"
+ }
+//
+
+ sscanf( paramsTLD->Strings[0].c_str(), "%d", &nGaps ); // общее число межярусных промежутков в ЯПФ
+
+// t_printf( "->%d", nGaps );
+// for( iGap=0; iGap<=nGaps; iGap++ )
+//  t_printf( "=>%s", paramsTLD->Strings[iGap].c_str() );
+
+//
+// ищем экстремумы числа данных ------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+ for( iGap=1; iGap<=nGaps; iGap++ ) // цикл по всем промежуткам (Gap) ярусов ЯПФ для поисков max/min
+ {
+  if( iGap < nGaps ) // кроме последней строки с $
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний ярус / нижний ярус / число данных в этом промежутке
+  else // последняя строка формата "n/$|m"
+  {
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+  if( CountTLD >= maxCountTLD ) // ищем мах число живых данных
+  { maxCountTLD = max(maxCountTLD,CountTLD);
+    n1x=n1; n2x=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+//
+  if( CountTLD < minCountTLD ) // ищем мin число живых данных
+  { minCountTLD = min(minCountTLD,CountTLD);
+    n1n=n1; n2n=n2; } // запомнили ярус выше | запомнили ярус ниже (избыточно вообще-то...)
+//
+ averTLD += (REAL)CountTLD; // суммируем для получения средн.арифметического времени жизни данных между ярусам
+//
+ } // конец for( iGap=1; iGap<=nGaps; iGap++ )
+//
+ averTLD /= (REAL)nGaps; // средн.арифметическое времени жизни данных между ярусам
+//
+ snprintf(str,sizeof(str), "H|N/W=%d|%d/%d-%d", nGaps,maxCountTLD, n1x,n2x ); // число лент |/ мах данных / ярус_вверху-ярус_внизу
+ F2->L_OM->Caption = str;
+ F2->L_OM->Repaint(); // принудительно перерисовываем
+//
+ TIM1->Picture->Bitmap->Height = TIM1->Height; // настроить размеры Сanvas по размерам Image
+ TIM1->Picture->Bitmap->Width  = TIM1->Width;  // !!! ОЧЕНЬ ВАЖНО ( инфо 08.02.2017 ) !!!!!!
+//
+ H_pix = TIM1->Height; // высота и ширина области отрисовки IM1 в пикселах
+ B_pix = TIM1->Width;
+//
+ REAL dH_pix = (REAL)H_pix / nGaps, // вес единицы в  пикселах по высоте и ширине области отрисовки диаграммы
+      dB_pix = (REAL)B_pix / maxCountTLD;
+//
+// --- настройка параметров кисти и карандаша (пера) ---------------------------
+ TIM1->Canvas->CopyMode     = cmSrcCopy; // запись пикселов поверх существующих
+ TIM1->Canvas->Brush->Style = bsSolid; // сплошная кисть
+ TIM1->Canvas->Pen->Style   = psSolid; // сплошной
+ TIM1->Canvas->Pen->Mode    = pmNotXor; //pmCopy;  // режим цвет = color
+ TIM1->Canvas->Pen->Width   = 1; // толщина 1 пиксель
+//
+ TIM1->Transparent = false; // !!! обязательно !!! Чтобы не было видно, что ПОД IM1 !!!
+//
+////////////////////////////////////////////////////////////////////////////////
+ for( iGap=1; iGap<=nGaps; iGap++ ) // цикл по всем промежуткам (Gap) ярусов ЯПФ для построения графика
+ {
+  if( iGap < nGaps ) // кроме последней строки с $
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/%d|%d:", &n1,&n2,&CountTLD ); // верхний ярус / нижний ярус / число данных в этом промежутке
+  else // последняя строка формата "n/$|m"
+  {
+   sscanf( paramsTLD->Strings[iGap].c_str(), "%d/" SS_02 "|%d:",  &n1,&CountTLD ); // верхний ярус / $ / число данных в этом промежутке
+   n2=n1+1;
+  }
+//
+// --- устанавливаем цвета графика ---------------------------------------------
+  if( CountTLD == minCountTLD )
+  { TIM1->Canvas->Brush->Color = brush_draw_color_MIN; // цвет кисти МИНИМУМ
+    TIM1->Canvas->Pen->Color   = brush_draw_color_MIN; } // цвет пера соответствующий
+  else
+  if( CountTLD == maxCountTLD )
+  { TIM1->Canvas->Brush->Color = brush_draw_color_MAX; // цвет кисти МАКСИМУМ
+    TIM1->Canvas->Pen->Color   = brush_draw_color_MAX; } // цвет пера соответствующий
+  else
+  { TIM1->Canvas->Brush->Color = brush_draw_color_TLD; // цвет кисти обычный для TLD
+    TIM1->Canvas->Pen->Color   = brush_draw_color_TLD; } // цвет пера соответствующий
+////////////////////////////////////////////////////////////////////////////////
+//
+  x1 = 0;  // левая верхняя точка горизонтальной полоски ( Rectangle, Rect )
+  y1 = dH_pix * ( iGap - 1 );
+//
+  B_rect = dB_pix * CountTLD; // ширина горизонтальной полоски
+  x2 = x1 + B_rect; // правая нижняя точка горизонтальной полоски ( Rectangle, Rect )
+  y2 = y1 + dH_pix;
+//
+  if( y2-y1 < 1 )
+   y2 ++ ;
+  TIM1->Canvas->FillRect( TRect( x1,y1, x2,y2 ) ); // прямоугольник заданной кистью
+//
+  APM // дать поработать Windows
+//
+ } // конец цикла for( iGap=1; iGap<=nGaps; iGap++ ) ==========================
+//
+////////////////////////////////////////////////////////////////////////////////
+// ----- рисуем вертикальную линию - средн.арифметическое значение -------------
+//
+  TIM1->Canvas->Pen->Color = pen_draw_b_average; // цвет линии среднего числа операторов по ярусам; // цвет пера
+  TIM1->Canvas->Pen->Mode  = pmCopy; // цвет при взимодействии с фоном
+  TIM1->Canvas->Pen->Style = psDot;  // точечная линия
+  TIM1->Canvas->Pen->Width = 1; // толщина пера 1 пикселя
+//
+  x1 = x2 = averTLD * dB_pix ;
+  y1 = 0; y2 = TIM1->Height;
+//
+  TIM1->Canvas->MoveTo( x1,   y1 ); // перевести перо в x1,y1
+  TIM1->Canvas->LineTo( x1,   y2 ); // провести линию в x1,y2
+//
+  TIM1->Canvas->MoveTo( x1-1, y1 ); // перевести перо в x1-1,y1 // жирность
+  TIM1->Canvas->LineTo( x1-1, y2 ); // провести линию в x1-1,y2
+//
+  TIM1->Canvas->MoveTo( x1+1, y1 ); // перевести перо в x1+1,y1
+  TIM1->Canvas->LineTo( x1+1, y2 ); // провести линию в x1+1,y2 // жирность
+//
+  return true; // всё успешно сделано
+//
+} // --- конец с_DrawDiagrTLD --------------------------------------------------
+
 
 
 //

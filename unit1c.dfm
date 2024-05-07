@@ -1,6 +1,6 @@
 object F1: TF1
-  Left = 488
-  Top = 167
+  Left = 532
+  Top = 185
   Width = 790
   Height = 613
   HorzScrollBar.Visible = False
@@ -2019,8 +2019,16 @@ object F1: TF1
       object N15: TMenuItem
         Caption = '-'
       end
-      object LitResru1: TMenuItem
+      object N17: TMenuItem
         Tag = 7
+        Caption = #1056#1072#1073#1086#1090#1072' '#1063#1077#1088#1085#1099#1093' '#1040'.'#1053'. ('#1048#1057#1055' '#1056#1040#1053')'
+        OnClick = About_Common
+      end
+      object N20: TMenuItem
+        Caption = '-'
+      end
+      object LitResru1: TMenuItem
+        Tag = 8
         Caption = #1050#1085#1080#1075#1072' '#1072#1074#1090#1086#1088#1072' '#1085#1072' LitRes.ru'
         OnClick = About_Common
       end

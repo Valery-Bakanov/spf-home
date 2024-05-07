@@ -1,6 +1,6 @@
 object F2: TF2
-  Left = 394
-  Top = 211
+  Left = 360
+  Top = 159
   Width = 850
   Height = 600
   HorzScrollBar.Visible = False
@@ -46,8 +46,8 @@ object F2: TF2
   PixelsPerInch = 96
   TextHeight = 13
   object L_TMM: TLabel
-    Left = 2
-    Top = 3
+    Left = 5
+    Top = 5
     Width = 4
     Height = 16
     Font.Charset = RUSSIAN_CHARSET
@@ -157,12 +157,13 @@ object F2: TF2
     Transparent = True
   end
   object L_OM: TLabel
-    Left = 748
-    Top = 4
-    Width = 3
+    Left = 675
+    Top = 5
+    Width = 150
     Height = 16
     Hint = #1052#1072#1082#1089#1080#1084#1091#1084' '#1086#1087#1077#1088#1072#1090#1086#1088#1086#1074' '#1087#1086' '#1074#1089#1077#1084' '#1103#1088#1091#1089#1072#1084
-    Alignment = taCenter
+    Alignment = taRightJustify
+    AutoSize = False
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -220,6 +221,7 @@ object F2: TF2
       Align = alClient
       ParentShowHint = False
       ShowHint = True
+      Transparent = True
       OnClick = CopyPictureToClipboard
     end
   end

@@ -44,7 +44,7 @@ short i_env_StopSessionLua = -1; // что возвращает setjmp (вызов longjmp коррект
 #include "SysUtils.hpp"
 //
 #include <mmsystem.hpp> // дл€ PlaySount
-#include "vcl/dstring.h" // дл€ описани€ Length
+#include "vcl/dstring.h" // дл€ описани€ Length и др.
 //
 #include <clocale> // дл€ setlocale()
 //
@@ -113,6 +113,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 #define _maxINT  1073741824
 //
 // определение констант
+#define _16    16
 #define _32    32
 #define _64    64
 #define _128   128
@@ -199,7 +200,8 @@ char *Info_CommonStr[] = { // информационные вызовы посредством ShellExecute(...
 "http://ru.wikipedia.org/wiki/Lua", // [#4]
 "http://www.lua.org/manual/5.3/", // [#5]
 "https://algowiki-project.org/ru/", // [#6]
-"https://www.litres.ru/book/v-m-bakanov/prakticheskiy-analiz-algoritmov-i-effektivnost-parallelnyh-vyc-70184365/" // книга автора на LitRes.ru [#7]
+"https://www.ispras.ru/dcouncil/docs/diss/2021/chernyh/chernyh.php?sphrase_id=5604670", // [#7]
+"https://www.litres.ru/book/v-m-bakanov/prakticheskiy-analiz-algoritmov-i-effektivnost-parallelnyh-vyc-70184365/" // книга автора на LitRes.ru [#8]
 } ;
 //
 struct {
@@ -213,16 +215,16 @@ REAL AveIn, AveOut; // среднее число входов и выходов
 //
 long color_BackGround = clWhite; // цвет фона окна редактировани€
 //
-// ----- цвета дл€ отрисовки диаграммы распр. операторов по €русам яѕ‘ ( DrawDiagrSPF, DrawDiagrTLD )
+// ----- цвета дл€ отрисовки диаграммы распр.операторов по €русам яѕ‘ ( DrawDiagrSPF, DrawDiagrTLD )
 long brush_draw_color_TIERS = clBlack, // цвет кисти обычный дл€ графика яѕ‘ (чЄрный)
      brush_draw_color_TLD   = RGB(0,64,0), // цвет кисти дл€ вывода времени жизни данных (тЄмно-зелЄный)
      brush_draw_color_MIN   = clRed, // цвет кисти ћ»Ќ»ћ”ћ
      brush_draw_color_MAX   = clFuchsia, // цвет кисти ћј —»ћ”ћ
      pen_draw_b_average     = clWhite, // цвет линии среднего числа
      contour_draw_color     = clWhite; // цвет рамки пр€моугольника
-// ----- цвета дл€ очистки диаграммы распр. операторов по €русам яѕ‘ ( ClearDiagrSPF )
+// ----- цвета дл€ очистки диаграммы распр.операторов по €русам яѕ‘ и TLD
 long clear_brush_draw_color = RGB(255,255,255); // clWhite; // цвет кисти обычный (цвет фона)
-
+//
 ////////////////////////////////////////////////////////////////////////////////
 //
 #define _nOpMinIn    (GetParGraph().nOpMinIn) // такого вхожд≈ни€ быть не должно - работает!!!
@@ -238,7 +240,7 @@ long clear_brush_draw_color = RGB(255,255,255); // clWhite; // цвет кисти обычны
  { if (fptr_protocol) fprintf(fptr_protocol,s); } // пишем строку s в файл протокола
 //
 #define c_AddLineToStderr(s) \
- {if (fptr_stderr) fprintf(fptr_stderr,s); } // пишем строку s в stderr
+ { if (fptr_stderr) fprintf(fptr_stderr,s); } // пишем строку s в stderr
 //
 void /*__fastcall*/ t_printf(char *fmt, ...); // форматный вывод в “≈ —“ќ¬ќ≈ ќ Ќќ
 void /*__fastcall*/ p_printf(char *fmt, ...); // форматный вывод в ‘ј…Ћ ѕ–ќ“ќ ќЋј
@@ -256,7 +258,7 @@ struct me {
  INT From, To; // определ€ющие дугу узлы "откуда -> куда"
  char Operators[_512]; // текстовое описание операторов, составл€ющих дугу
  bool flag_From, flag_To; // флаги дл€ вспомогательных действий с дугами
-} M__E, *Mem_Edges=NULL;
+} M__E, *Mem_Edges=NULL; // M_E = e (math.h)
 ULI Max_Edges = _128, // первоначальный захват (будет переопределено в c_ReadEdges)
     Really_Edges = 0; // текущее значение
 #define Edges(i,j)   ( !i ? Mem_Edges[j].From      : Mem_Edges[j].To ) // "откуда/куда" направлена дуга »√ј
@@ -271,7 +273,7 @@ struct ev {
      d_Ticks, // заданна€ задержка
      ev_Ticks; // тик момента вызова событи€
  char CommandLine[_256]; // текст Lua-вызова
-} E_V, *Mem_EV=NULL;
+} E__V, *Mem_EV=NULL;
 INT max_Events = _128, // первоначальный захват
     i_Events = 0; // индекс последнего зан€того элемента в массиве Mem_EV
 //
@@ -318,9 +320,9 @@ char messNotTiers[] = "массив я–”—ќ¬ не сформирован", // сообщени€ об ошибках
      messNotOps[]   = "число ќѕ≈–ј“ќ–ќ¬ не определено",
      messParams1[]  = "некорректен диапазон параметров(1)",
      messParams2[]  = "некорректен диапазон параметров(2)",
-     messParams3[]  = "некорректен диапазон параметров(3)";
-//
-char TitleF2[_256] = " “екстовое представление информации"; // заголовок F2
+     messParams3[]  = "некорректен диапазон параметров(3)",
+     alarmStr[]="-W- проверьте осуществимость записи на заданный носитель данных -W-",
+     TitleF2[_256] = " “екстовое представление информации"; // заголовок F2
 //
 // имена секций файла конфигурации системы
 struct { // ReadWriteConfig (имена секций фала конфигурации системы)
@@ -364,12 +366,13 @@ char FileNameLua[_256]  = "spf_client.lua", // текущее им€ файла Lua-скрипта
      PathToSubDirInData[_256], // полный путь к подкаталогу исходных данных данных
      MySite[] = "http://vbakanov.ru", // адрес моего сайта
 //
-     extGv[]    = "gv",   // расширение имени файла дуг графа дл€ ввода
-     extVizu[]  = "_vz", // дополнение к расширению имени файла дл€ Vizu (вывод/ввод, ".")
-     extTiers[] = "trs", // расширение имени файла яѕ‘ (вывод, без ".")
-     extIno[]   = "ino", // расширение имени файла яѕ‘ (вывод, без ".")
-     extPrm[]   = "prm", // расширение файла параметров яѕ‘ (вывод, без ".")
-     extTld[]   = "tld"; // расширение имени файла времени жизни данных  (вывод, без ".")
+     extGv[]    = ".gv",  // расширение имени файла дуг графа дл€ ввода (вывод/ввод, ".")
+     extVizu[]  = "_vz",  // дополнение к расширению имени файла дл€ Vizu (вывод/ввод, без ".")
+     extTiers[] = ".trs", // расширение имени файла яѕ‘ (вывод, ".")
+     extIno[]   = ".ino", // расширение имени файла яѕ‘ (вывод, ".")
+     extPrm[]   = ".prm", // расширение файла параметров яѕ‘ (вывод, ".")
+     extTld[]   = ".tld"; // расширение имени файла времени жизни данных  (вывод, ".")
+//
 ////////////////////////////////////////////////////////////////////////////////
 FILE *fptr_stdout, *fptr_stderr, *fptr_protocol; // соответствующие файловые структуры
 #define DELAY_PUT_PROTOCOL 0 // ждать миллисекунд при выдаче протокола
@@ -382,7 +385,7 @@ bool flagHook = false; // флаг срабатывани€ "ловушки" (Hook)
 INT ticks = 0; // глобальный счЄтчик тиков
 //
 bool flag_Busy = false; // если true - вызов Lua по Events невозможен
-char busy_CommandLine[_256]; // выполн€юща€с€ в данный момент Lua-строка
+char busy_CommandLine[_512]; // выполн€юща€с€ в данный момент Lua-строка
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool  __fastcall RunLuaScript(); // выполн€ет Lua-скрипты в 'rptvgkzht Lua ( L, глобал )
@@ -1036,8 +1039,7 @@ void __fastcall TF1::About_Common(TObject *Sender)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void __fastcall DisplayMessage( char* Level, char* funcName, char* Text, INT Err )
-{ // показывает сообщение
-//
+{ // показывает сообщение... пока не используетс€..!
 // Err ? t_printf( "\n-%s- %s(): %s [err: %d] -%s-", Level, funcName, Text, Err, Level ) :
 //       t_printf( "\n-%s- %s(): %s -%s-", Level, funcName, Text, Level ) ;
 } // --- конец DisplayMessage---------------------------------------------------

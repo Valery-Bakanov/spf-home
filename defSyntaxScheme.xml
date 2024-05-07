@@ -162,7 +162,6 @@
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetMetricEdgeByName\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bGetOpByMaxTierLowerPreset\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\bPutDataLiveDiagrToTextFrame\b' />
-        <Regex token0 = 'SPF_API_Keywords' regex = '\bSaveDataLiveDiagr\b' />
 
         <Regex token0 = 'SPF_API_Keywords' regex = '\blWinExec\b' />
         <Regex token0 = 'SPF_API_Keywords' regex = '\blShellExecute\b' />
