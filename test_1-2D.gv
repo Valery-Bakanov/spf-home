@@ -1,0 +1,33 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 25
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file TEST_1-2D.SET */
+#
+digraph TEST_1-2D {
+100 -> 110 ; -Ticks 0/100 [[100]SET 3,,A1,true; ] -> [[110]ADD A1,A2,A3,true; ]
+100 -> 111 ; -Ticks 0/100 [[100]SET 3,,A1,true; ] -> [[111]ADD A1,A2,A3,true; ]
+100 -> 112 ; -Ticks 0/100 [[100]SET 3,,A1,true; ] -> [[112]ADD A1,A2,A3,true; ]
+100 -> 113 ; -Ticks 0/100 [[100]SET 3,,A1,true; ] -> [[113]ADD A1,A2,A3,true; ]
+100 -> 114 ; -Ticks 0/100 [[100]SET 3,,A1,true; ] -> [[114]ADD A1,A2,A3,true; ]
+101 -> 110 ; -Ticks 0/100 [[101]SET 6,,A1,true; ] -> [[110]ADD A1,A2,A3,true; ]
+101 -> 111 ; -Ticks 0/100 [[101]SET 6,,A1,true; ] -> [[111]ADD A1,A2,A3,true; ]
+101 -> 112 ; -Ticks 0/100 [[101]SET 6,,A1,true; ] -> [[112]ADD A1,A2,A3,true; ]
+101 -> 113 ; -Ticks 0/100 [[101]SET 6,,A1,true; ] -> [[113]ADD A1,A2,A3,true; ]
+101 -> 114 ; -Ticks 0/100 [[101]SET 6,,A1,true; ] -> [[114]ADD A1,A2,A3,true; ]
+102 -> 110 ; -Ticks 0/100 [[102]SET 9,,A1,true; ] -> [[110]ADD A1,A2,A3,true; ]
+102 -> 111 ; -Ticks 0/100 [[102]SET 9,,A1,true; ] -> [[111]ADD A1,A2,A3,true; ]
+102 -> 112 ; -Ticks 0/100 [[102]SET 9,,A1,true; ] -> [[112]ADD A1,A2,A3,true; ]
+102 -> 113 ; -Ticks 0/100 [[102]SET 9,,A1,true; ] -> [[113]ADD A1,A2,A3,true; ]
+102 -> 114 ; -Ticks 0/100 [[102]SET 9,,A1,true; ] -> [[114]ADD A1,A2,A3,true; ]
+103 -> 110 ; -Ticks 0/100 [[103]SET 12,,A1,true; ] -> [[110]ADD A1,A2,A3,true; ]
+103 -> 111 ; -Ticks 0/100 [[103]SET 12,,A1,true; ] -> [[111]ADD A1,A2,A3,true; ]
+103 -> 112 ; -Ticks 0/100 [[103]SET 12,,A1,true; ] -> [[112]ADD A1,A2,A3,true; ]
+103 -> 113 ; -Ticks 0/100 [[103]SET 12,,A1,true; ] -> [[113]ADD A1,A2,A3,true; ]
+103 -> 114 ; -Ticks 0/100 [[103]SET 12,,A1,true; ] -> [[114]ADD A1,A2,A3,true; ]
+104 -> 110 ; -Ticks 0/100 [[104]SET 15,,A1,true; ] -> [[110]ADD A1,A2,A3,true; ]
+104 -> 111 ; -Ticks 0/100 [[104]SET 15,,A1,true; ] -> [[111]ADD A1,A2,A3,true; ]
+104 -> 112 ; -Ticks 0/100 [[104]SET 15,,A1,true; ] -> [[112]ADD A1,A2,A3,true; ]
+104 -> 113 ; -Ticks 0/100 [[104]SET 15,,A1,true; ] -> [[113]ADD A1,A2,A3,true; ]
+104 -> 114 ; -Ticks 0/100 [[104]SET 15,,A1,true; ] -> [[114]ADD A1,A2,A3,true; ]
+}

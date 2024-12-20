@@ -1,0 +1,157 @@
+--
+-- стратеги€ PackCart ( Packing of Cartridges; ver. oct. 2024 )
+-- аналог "готовности к выполнению операторов" ( Data-Flow )
+--
+--projectName = "abc_r" -- им€ проекта 
+--
+--projectName = "squa_equ_2" 
+--projectName = "squa_equ_2.pred"
+--
+--projectName = "polinom_10-1"
+--projectName = "polinom_10-2"
+--
+--projectName = "max-1_mass-8.pred"
+--projectName = "max-2_mass-8.pred"
+--
+--projectName = "slau_2"
+--projectName = "slau_3"
+--projectName = "slau_4" 
+--projectName = "slau_5"
+--projectName = "slau_7"
+--projectName = "slau_10"
+--
+--projectName = "doubling_32"
+--
+--projectName = "m_matr_2"
+--projectName = "m_matr_3"
+--projectName = "m_matr_5"
+--projectName = "m_matr_7"
+--projectName = "m_matr_10"
+--
+--projectName = "m_matr_vec_2"
+--projectName = "m_matr_vec_3"
+--projectName = "m_matr_vec_5"
+--projectName = "m_matr_vec_7"
+--projectName = "m_matr_vec_10"
+--
+--projectName = "fibonn_10"
+--projectName = "tribonn_10"
+--projectName = "quadronn_10"
+--
+--projectName = "mnk_5"
+--projectName = "mnk_10"
+--projectName = "mnk_15"
+--projectName = "mnk_20"
+--
+projectName = "mnk-2_5"
+--projectName = "mnk-2_10"
+--projectName = "mnk-2_15"
+--projectName = "mnk-2_20"
+--
+--projectName = "korr_5" 
+--projectName = "korr_10"
+--projectName = "korr_15"
+--projectName = "korr_20"
+--
+--projectName = "e17_o11_t6"
+--projectName = "e313_o206_t32"
+--projectName = "e2367_o1397_t137"
+--projectName = "e451_o271_t30"
+--projectName = "e916_o624_t89" 
+--projectName = "e17039_o9853_t199"
+--
+----------------------------------------------------------------------------------------------------------------------------------------------
+Ops={ Numb={}, nInOper={}, Time={}, Used={} }  -- global
+-- номер оператора, число входов, длительность, использован ли в плане (расписании)
+local Ticks = 1234567 -- default
+---------------------------------------------------------------------------------------------------------------------------------------------
+-- MAIN - функци€ -------------------------------------
+--=================================
+ClearTextFrame() -- очистить текстовое окно
+--
+ReadEdges( projectName .. ".gv" ) -- читаем файл дуг
+-- PutEdgesToTextFrame() -- вывод дуг в текстовое окно
+--
+ OutLine( " " )
+ OutLine( "#    ќператор ¬ходов ƒлит »спользование" )
+--
+for iOp=1,GetCountOps() do -- по всем операторам графа алгоритма
+--
+ nOps = GetNumbOp( iOp ) -- реальный номер оператора
+--
+ table.insert( Ops.Numb, nOps ) -- добавим номер оператора
+ table.insert( Ops.nInOper, GetCountInEdgesByOp( nOps) )  -- добавим число операндов данного оператора 
+ table.insert( Ops.Used, 0 ) -- оператор не использован при составлении плана выполнени€
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+local Opers, Ticks, str
+-- открываем  файл projectName,gv дл€ поиска длительности оператора nOps
+local fptr = assert ( io.open( projectName .. ".gv", "r" ) )  -- открываем файл projectName.gv дл€ чтени€
+--
+while(1) do -- по всем строкам файла ===============================================
+--
+ str =  fptr:read( "*l" ) -- читаем строку str из файла projectName
+ if str == nil then break end
+-- 
+-- OutLine(  str )
+--
+--=============================================================================
+-- ищем в строке str подстроку "NNN -> MMM" и присваиваем знчение MMM переменной Opers
+ s,e = string.find( str, "%s%-%>%s", 1 ) -- в str ищем подстроку "^->^"
+ if Opers == nil then goto continue end  -- идти к чтению новой строки
+ print( s,e, 555555 )
+ s,e1 = string.find( str, "%s", e+1 ) -- ищем первое вхождение пробела после  числа MMM
+-- print( s,e1, 666666 )
+ Opers = tonumber( string.sub(str, e+1, e1-1 ) ) -- вык”сываем число после MMM
+-- print( Opers, 777777 )
+ if Opers == nil then goto continue end  -- идти к чтению новой строки
+--=============================================================================
+-- ищем в строке str подстроку "-Ticks NNN/MMM" и присваиваем знчение MMM переменной Ticks
+ s,e = string.find( str, "%-Ticks", 1 ) -- в str ищем подстроку "-Ticks"
+  if Opers == nil then goto continue end  -- идти к чтению новой строки
+-- print( s,e, 111111 )
+ s1,e = string.find( str, "%/", e ) -- ищем первое вхождение "/" после "- Ticks"
+-- print( s1,e, 222222 )
+ s,e = string.find( str,  "%s", e ) -- "вык”сываем" подстроку между "/" и пробелом
+-- print( s,e, 333333 )
+ Ticks = tonumber( string.sub(str, s1+1, e-1)  ) -- вык”сываем число MMM
+-- print( Ticks, 444444 )
+ if Ticks == nil then goto continue end  -- идти к чтению новой строки
+--=============================================================================
+--
+ if Opers == nOps then -- нашли Opers==nOps
+  table.insert( Ops.Time,  Ticks ) -- врем€ выполнени€ оператора nOps
+  break -- после нахожд≈ни€ 1-го совпадени€ больше не сравниваем..!
+ end 
+--
+::continue:: -- читать новую строку
+end -- конец while(1) =============================================================
+--
+fptr:close() -- закрываем файл fptr
+--=============================================================================
+--
+OutLine( string.format("%-10d %-10d %-12d %-10d %-10d",
+                                          iOp,Ops.Numb[iOp],Ops.nInOper[iOp],
+                                          Ops.Time[iOp], Ops.Used[iOp]) )
+--print( Ops.Numb[iOp], Ops.nInOper[iOp], Ops.Time[iOp], Ops.Used[iOp] ) 
+
+end  -- конец for iOp=1,GetCountOps() do -- по всем операторам графа алгоритма
+--================================================================
+--[[
+WidthMax = 10 -- число параллельных вычислителей
+WidthMax = tonumber ( InputDialog( "„исло параллельных вычислителей", "¬водите целое больше нул€ как строку", tostring( WidthMax  )))
+OutLine ( "\n«адано WidthMax= " .. WidthMax  )
+--
+Plan = {} -- 1-D массив
+-- создаЄм WidthMax строкам в 2-D массиве Plan
+for iRaw=1, WidthMax do
+ Plan[ iRaw ] = {} -- обращение Plan[i]j[]
+end 
+--]]
+-----------------------------------------------------------------------------------------------------------------------
+--
+--SoundPlay("rooster.wav") -- петух возвещает, что работа сделана
+--
+-- конец main
+
+
+

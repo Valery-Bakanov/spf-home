@@ -207,8 +207,11 @@ COP (Cooperative Operators Parallelism).
 42).январь 2024 - в главном меню добавлена ссылка на книгу автора на 
 https://www.litres.ru/book/v-m-bakanov/prakticheskiy-analiz-algoritmov-i-effektivnost-parallelnyh-vyc-70184365/ .
 
+43).25.11.2024 осуществлЄн переход на Lua 5.4.7 от 
+13.06.2024 (ранее использовалс€ 5.3 от 06.01.2015).
 
-* –азмер выполн€емого модул€ 2861 кЅайт 
+
+* –азмер выполн€емого модул€ 2902 кЅайт 
 (компил€ци€ Release, Pentium, Word).
 
 

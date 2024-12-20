@@ -5,10 +5,10 @@
    from the original data file ABC_R.SET */
 #
 digraph ABC_R {
-100 -> 102 ; [[100]MUL A,B,AB,true; AB <- AxB] -> [[102]ADD AB,AC,R,true; R <- AB+AC]
-101 -> 102 ; [[101]DIV A,C,AC,true; AC <- A/C] -> [[102]ADD AB,AC,R,true; R <- AB+AC]
-103 -> 100 ; [[103]SET 1,,A,true; 1 -> A] -> [[100]MUL A,B,AB,true; AB <- AxB]
-103 -> 101 ; [[103]SET 1,,A,true; 1 -> A] -> [[101]DIV A,C,AC,true; AC <- A/C]
-104 -> 100 ; [[104]SET 2,,B,true; 2 -> B] -> [[100]MUL A,B,AB,true; AB <- AxB]
-105 -> 101 ; [[105]SET 3,,C,true; 3 -> C] -> [[101]DIV A,C,AC,true; AC <- A/C]
+100 -> 102 ; -Ticks 100/100 [[100]MUL A,B,AB,true; AB <- AxB] -> [[102]ADD AB,AC,R,true; R <- AB+AC]
+101 -> 102 ; -Ticks 100/100 [[101]DIV A,C,AC,true; AC <- A/C] -> [[102]ADD AB,AC,R,true; R <- AB+AC]
+103 -> 100 ; -Ticks 0/100 [[103]SET 1,,A,true; 1 -> A] -> [[100]MUL A,B,AB,true; AB <- AxB]
+103 -> 101 ; -Ticks 0/100 [[103]SET 1,,A,true; 1 -> A] -> [[101]DIV A,C,AC,true; AC <- A/C]
+104 -> 100 ; -Ticks 0/100 [[104]SET 2,,B,true; 2 -> B] -> [[100]MUL A,B,AB,true; AB <- AxB]
+105 -> 101 ; -Ticks 0/100 [[105]SET 3,,C,true; 3 -> C] -> [[101]DIV A,C,AC,true; AC <- A/C]
 }

@@ -1,0 +1,26 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 18
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file FIBONN_N_10.SET */
+#
+digraph FIBONN_N_10 {
+100 -> 102 ; -Ticks 0/100 [[100]SET 0,,fib_0,true; значение 0-го числа Фибоначчи] -> [[102]SUB fib_0,fib_1,fib_2,true; fib_N суть N-ное число Фибоначчи]
+101 -> 102 ; -Ticks 0/100 [[101]SET 1,,fib_1,true; значение 1-го числа Фибоначчи] -> [[102]SUB fib_0,fib_1,fib_2,true; fib_N суть N-ное число Фибоначчи]
+101 -> 103 ; -Ticks 0/100 [[101]SET 1,,fib_1,true; значение 1-го числа Фибоначчи] -> [[103]SUB fib_1,fib_2,fib_3,true;  ]
+102 -> 103 ; -Ticks 100/100 [[102]SUB fib_0,fib_1,fib_2,true; fib_N суть N-ное число Фибоначчи] -> [[103]SUB fib_1,fib_2,fib_3,true;  ]
+102 -> 104 ; -Ticks 100/100 [[102]SUB fib_0,fib_1,fib_2,true; fib_N суть N-ное число Фибоначчи] -> [[104]SUB fib_2,fib_3,fib_4,true;  ]
+103 -> 104 ; -Ticks 100/100 [[103]SUB fib_1,fib_2,fib_3,true;  ] -> [[104]SUB fib_2,fib_3,fib_4,true;  ]
+103 -> 105 ; -Ticks 100/100 [[103]SUB fib_1,fib_2,fib_3,true;  ] -> [[105]SUB fib_3,fib_4,fib_5,true;  ]
+104 -> 105 ; -Ticks 100/100 [[104]SUB fib_2,fib_3,fib_4,true;  ] -> [[105]SUB fib_3,fib_4,fib_5,true;  ]
+104 -> 106 ; -Ticks 100/100 [[104]SUB fib_2,fib_3,fib_4,true;  ] -> [[106]SUB fib_4,fib_5,fib_6,true;  ]
+105 -> 106 ; -Ticks 100/100 [[105]SUB fib_3,fib_4,fib_5,true;  ] -> [[106]SUB fib_4,fib_5,fib_6,true;  ]
+105 -> 107 ; -Ticks 100/100 [[105]SUB fib_3,fib_4,fib_5,true;  ] -> [[107]SUB fib_5,fib_6,fib_7,true;  ]
+106 -> 107 ; -Ticks 100/100 [[106]SUB fib_4,fib_5,fib_6,true;  ] -> [[107]SUB fib_5,fib_6,fib_7,true;  ]
+106 -> 108 ; -Ticks 100/100 [[106]SUB fib_4,fib_5,fib_6,true;  ] -> [[108]SUB fib_6,fib_7,fib_8,true;  ]
+107 -> 108 ; -Ticks 100/100 [[107]SUB fib_5,fib_6,fib_7,true;  ] -> [[108]SUB fib_6,fib_7,fib_8,true;  ]
+107 -> 109 ; -Ticks 100/100 [[107]SUB fib_5,fib_6,fib_7,true;  ] -> [[109]SUB fib_7,fib_8,fib_9,true;  ]
+108 -> 109 ; -Ticks 100/100 [[108]SUB fib_6,fib_7,fib_8,true;  ] -> [[109]SUB fib_7,fib_8,fib_9,true;  ]
+108 -> 110 ; -Ticks 100/100 [[108]SUB fib_6,fib_7,fib_8,true;  ] -> [[110]SUB fib_8,fib_9,fib_10,true; etc etc etc...]
+109 -> 110 ; -Ticks 100/100 [[109]SUB fib_7,fib_8,fib_9,true;  ] -> [[110]SUB fib_8,fib_9,fib_10,true; etc etc etc...]
+}

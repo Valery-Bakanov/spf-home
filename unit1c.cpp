@@ -153,13 +153,17 @@ TStringList *paramsTLD = new( TStringList ) ;
 ////////////////////////////////////////////////////////////////////////////////
 //==============================================================================
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" // Lua - исходные тексты на "чистом С"
+#define l_likely // предсказание ветвлений для GCC/LLVM
+#define l_unlikely // (для Linix'ов в основном)
+#define LUA_NOBUILTIN // не использовать «__builtin_expect» в коде
+//
+extern "C" // Lua - исходные тексты на "чистом С" (ANSI C)
 {
-#include "./lua-5.3.0/src/lua.h"
-#include "./lua-5.3.0/src/lauxlib.h"
-#include "./lua-5.3.0/src/lualib.h"
+#include "./lua-5.4.7/src/lua.h"
+#include "./lua-5.4.7/src/lauxlib.h"
+#include "./lua-5.4.7/src/lualib.h"
 }
-#include "./lua-5.3.0/src/lua_src.c" // все С-исходники Lua...
+#include "./lua-5.4.7/src/lua_src.c" // все С-исходники Lua...
 lua_State *L = NULL; // глобАльный указатель - указывает на экземпляр Lua !!!!!!
 //
 void  __fastcall stackDump( lua_State *L, char *s ); // выдаёт содержимое стека Lua
@@ -186,7 +190,7 @@ pattern_02[] = "[=][0-9]{1,}[/][0-9]{1,}[:]" // =n1/n2: -name1 minVal1 maxval1 -
 //
 #define GetRand(a,b) ( rand() % ( (b)-(a)+1)+(a) ) // случайное число от a до b (включительно)
 //
-char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2024\n \
+char Ident[] = "Bakanov Valery Mikhailovich, http://vbakanov.ru/left_1.htm , Moscow, Russia, 2009-2025\n \
 Автор программного продукта Валерий Баканов не является ярым сторонником Объектно-Ориентированного Программирования \
 (внутри автора точно сидит Линус Торвальдс!) и поэтому большая часть кода не использует ООП\n \
 The author of the software Valery Bakanov is not an ardent supporter of Object-Oriented Programming \
@@ -321,8 +325,8 @@ char messNotTiers[] = "массив ЯРУСОВ не сформирован", // сообщения об ошибках
      messParams1[]  = "некорректен диапазон параметров(1)",
      messParams2[]  = "некорректен диапазон параметров(2)",
      messParams3[]  = "некорректен диапазон параметров(3)",
-     alarmStr[]="-W- проверьте осуществимость записи на заданный носитель данных -W-",
-     TitleF2[_256] = " Текстовое представление информации"; // заголовок F2
+     alarmStr[]     = "-W- проверьте осуществимость записи на заданный носитель данных -W-",
+     TitleF2[_256]  = " Текстовое представление информации"; // заголовок F2
 //
 // имена секций файла конфигурации системы
 struct { // ReadWriteConfig (имена секций фала конфигурации системы)
@@ -460,8 +464,8 @@ bool luaExecute = false; // флаг времени выполнения Lua (при выполнеЕнии true, и
 //
 //#define strcat(dest,src) strncat(dest,src,sizeof(dest))-strlen(dest)-5) // безопасное добавление src к dest
 //
-char first_F1[] = "-- %s: скрипт на языке Lua ver.5.3.0 rel. on 06 Jan 2015\n--\n", // начальная строка для Lua
-     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.3.0 rel. on 06 Jan 2015 -I-\n"; // начальная строка вывода данных Lua
+char first_F1[] = "-- %s: скрипт на языке Lua ver. 5.4.7 rel. on 13 Jun 2024\n--\n", // начальная строка для Lua
+     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver. 5.4.7 rel. on 13 Jun 2024 -I-\n"; // начальная строка вывода данных Lua
 //char first_F1[] = "-- %s: скрипт на языке Lua ver.5.4.4 rel. on 13 Jan 2022\n--\n", // начальная строка для Lua
 //     first_F2[] = "-I- %s: начало выполнения программы на языке Lua ver.5.4.4 rel. on 13 Jan 2022 -I-\n"; // на
 //
