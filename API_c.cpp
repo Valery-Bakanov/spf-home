@@ -4650,7 +4650,7 @@ INT __fastcall c_PutParamsTiers()
   snprintf( szStatTiers,sizeof(szStatTiers), "סנ.אנטפל.רטנ.= %.4g, ÑÊÎ= %.4g, CV= %.4g, IC= %.4g, ICL= %.4g, DC= %.4g",
             StatTiers.averWidth, StatTiers.SD, StatTiers.CV, StatTiers.IC, StatTiers.ICL, StatTiers.DC ) ;
  else
-  snprintf( szStatTiers,sizeof(szStatTiers), "סנ.אנטפל.רטנ.= %,4g, ÑÊÎ= x.x, CV= x.x, IC= x.x, ICL= x.x, DC= ץ.ץ",
+  snprintf( szStatTiers,sizeof(szStatTiers), "סנ.אנטפל.רטנ.= %.4g, ÑÊÎ= x.x, CV= x.x, IC= x.x, ICL= x.x, DC= ץ.ץ",
             StatTiers.averWidth ) ;
 //
 // --- גûקטסכÿול ÂÀÐÈÀÒÈÂÍÎÑÒÜ -------------------------------------------------

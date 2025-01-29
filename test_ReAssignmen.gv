@@ -1,0 +1,34 @@
+#
+// Valery Bakanov research computer complex (2008 and further); e881e@mail.ru, http://vbakanov.ru/left_1.htm
+#  Total edges in this directed graph: 26
+/* This file was automatically created thru program DATA_FLOW.EXE
+   from the original data file TEST_REASSIGNMEN.SET */
+#
+digraph TEST_REASSIGNMEN {
+100 -> 104 ; -Ticks 0/100 [[100]SET 0,,$C,true;  ] -> [[104]ADD $C,A,$C,true; $=1]
+100 -> 106 ; -Ticks 0/100 [[100]SET 0,,$C,true;  ] -> [[106]ADD $C,W,$C,true; $C=16]
+100 -> 108 ; -Ticks 0/100 [[100]SET 0,,$C,true;  ] -> [[108]ADD $C,WW,$C,true; $C=16 (-)]
+100 -> 110 ; -Ticks 0/100 [[100]SET 0,,$C,true;  ] -> [[110]ADD $C,WWW,$C,true; $C=6 (-)]
+101 -> 104 ; -Ticks 0/100 [[101]SET 1,,A,true;  ] -> [[104]ADD $C,A,$C,true; $=1]
+101 -> 107 ; -Ticks 0/100 [[101]SET 1,,A,true;  ] -> [[107]MUL A,B,WW,true; WW=3]
+101 -> 109 ; -Ticks 0/100 [[101]SET 1,,A,true;  ] -> [[109]DIV D,A,WWW,true; WWW=5]
+102 -> 105 ; -Ticks 0/100 [[102]SET 3,,B,true;  ] -> [[105]MUL B,D,W,true; W=15]
+102 -> 107 ; -Ticks 0/100 [[102]SET 3,,B,true;  ] -> [[107]MUL A,B,WW,true; WW=3]
+103 -> 105 ; -Ticks 0/100 [[103]SET 5,,D,true;  ] -> [[105]MUL B,D,W,true; W=15]
+103 -> 109 ; -Ticks 0/100 [[103]SET 5,,D,true;  ] -> [[109]DIV D,A,WWW,true; WWW=5]
+104 -> 106 ; -Ticks 100/100 [[104]ADD $C,A,$C,true; $=1] -> [[106]ADD $C,W,$C,true; $C=16]
+104 -> 108 ; -Ticks 100/100 [[104]ADD $C,A,$C,true; $=1] -> [[108]ADD $C,WW,$C,true; $C=16 (-)]
+104 -> 110 ; -Ticks 100/100 [[104]ADD $C,A,$C,true; $=1] -> [[110]ADD $C,WWW,$C,true; $C=6 (-)]
+105 -> 106 ; -Ticks 100/100 [[105]MUL B,D,W,true; W=15] -> [[106]ADD $C,W,$C,true; $C=16]
+106 -> 104 ; -Ticks 100/100 [[106]ADD $C,W,$C,true; $C=16] -> [[104]ADD $C,A,$C,true; $=1]
+106 -> 108 ; -Ticks 100/100 [[106]ADD $C,W,$C,true; $C=16] -> [[108]ADD $C,WW,$C,true; $C=16 (-)]
+106 -> 110 ; -Ticks 100/100 [[106]ADD $C,W,$C,true; $C=16] -> [[110]ADD $C,WWW,$C,true; $C=6 (-)]
+107 -> 108 ; -Ticks 100/100 [[107]MUL A,B,WW,true; WW=3] -> [[108]ADD $C,WW,$C,true; $C=16 (-)]
+108 -> 104 ; -Ticks 100/100 [[108]ADD $C,WW,$C,true; $C=16 (-)] -> [[104]ADD $C,A,$C,true; $=1]
+108 -> 106 ; -Ticks 100/100 [[108]ADD $C,WW,$C,true; $C=16 (-)] -> [[106]ADD $C,W,$C,true; $C=16]
+108 -> 110 ; -Ticks 100/100 [[108]ADD $C,WW,$C,true; $C=16 (-)] -> [[110]ADD $C,WWW,$C,true; $C=6 (-)]
+109 -> 110 ; -Ticks 100/100 [[109]DIV D,A,WWW,true; WWW=5] -> [[110]ADD $C,WWW,$C,true; $C=6 (-)]
+110 -> 104 ; -Ticks 100/100 [[110]ADD $C,WWW,$C,true; $C=6 (-)] -> [[104]ADD $C,A,$C,true; $=1]
+110 -> 106 ; -Ticks 100/100 [[110]ADD $C,WWW,$C,true; $C=6 (-)] -> [[106]ADD $C,W,$C,true; $C=16]
+110 -> 108 ; -Ticks 100/100 [[110]ADD $C,WWW,$C,true; $C=6 (-)] -> [[108]ADD $C,WW,$C,true; $C=16 (-)]
+}

@@ -139,7 +139,7 @@ TStringList *paramsTLD = new( TStringList ) ;
 // #define ERR_LIMITS_OP_CALC -131331 // проблемы в c_canExecOpCalc(INT Op, INT Calc)
 #define ERR_METRIC -666.777 // невозможно найти метрику вершины (оператора) или дуги
 #define ERR_CALC   -777.666 // код ошибок функций вычислений (семейство Calc...)
-#define ERR_COMMON -123456789 // код ошибки общий
+#define ERR_COMMON -13 // код ошибки общий
 #define ERR_UNCERTAIN -1 // код ошибки непон€тный
 //#define nDef -134 // фиктивные номера операторов по "=Def:^"
 #define RETURN_OK 0 // успех выполнени€ 
@@ -256,7 +256,7 @@ void /*__fastcall*/ safe_printf(int rule, char *fmt, ...); // форматный вывод в 
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-#define MAX_EDGES 10000000 // максимальный размер пула дуг информационного графа 10^7 // не учитываетс€
+#define MAX_EDGES 1e7 // максимальный размер пула дуг информационного графа 10^7
 // описание структуры каждой дуги информационного графа алгоритма
 struct me {
  INT From, To; // определ€ющие дугу узлы "откуда -> куда"
@@ -271,7 +271,7 @@ ULI Max_Edges = _128, // первоначальный захват (будет переопределено в c_ReadEdg
 // Edges(1,j) - номер оператора, к которому "приходит" дуга ("To")
 // индексацию по j начинаем с 1 (дл€ согласовани€ с правилами индексации в Lua)
 //
-#define MAX_EVENTS 1000000 // максимальный размер буфера событий 10^6 // не учитываетс€
+#define MAX_EVENTS 1e6 // максимальный размер буфера событий 10^6
 struct ev {
  INT start_Ticks, // момент начала отсчЄта
      d_Ticks, // заданна€ задержка
@@ -403,7 +403,7 @@ char* __fastcall ReplaceManySpacesOne( char* pszStr ); // замен€ет кратные пробе
 void  __fastcall DeleteSpacesTabsAround( char* str ); // удал€ет пробелы и Tabs слева и справа строки str
 char* __fastcall DeleteAllSpaces(char* str); // удал€ет ¬—≈ пробелы в строке str
 void  __fastcall ReplaceEqualLengthSubstring( char* String, char* OldSubstring, char* NewSubstring );
-char* __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке ыек
+char* __fastcall DeleteSymbolAll( char str[], char symb ); // уничтожает символ symb по все строке str
 //
 void  __fastcall Read_Config(); // читать и записывать файл конфигурации
 void  __fastcall Write_Config();
@@ -1992,6 +1992,7 @@ void __fastcall PutParamsAboutSelectOp( INT Op )
  for( i=1; i<=c_GetCountInEdgesByOp(Op); i++ ) // цикл по всем ¬’ќƒ€ў»ћ дугам данного оператора
  {
   snprintf( tmp,sizeof(str), " %d/%d", c_GetNumbInEdgeByOp(i,Op), c_GetTierByOp(c_GetNumbInEdgeByOp(i,Op)) ); // оператор/€рус
+
   strcat( str, tmp ); // добавл€ем по каждому ¬’ќƒяў≈ћ” оператору..
  }
 //
@@ -2003,13 +2004,14 @@ void __fastcall PutParamsAboutSelectOp( INT Op )
  strNcpy( str, "" ); // очистка строки
  for( i=1; i<=c_GetCountOutEdgesByOp(Op); i++ ) // цикл по всем ¬џ’ќƒ€ў»ћ дугам данного оператора
  {
-  snprintf( tmp,sizeof(str), " %d/%d", c_GetNumbOutEdgeByOp(i,Op), c_GetTierByOp(c_GetNumbOutEdgeByOp(i,Op)) ); // оператор/€рус
+  snprintf( tmp,sizeof(str), " %d/%d", c_GetNumbOutEdgeByOp(i,Op),
+                                       c_GetTierByOp(c_GetNumbOutEdgeByOp(i,Op)) ); // оператор/€рус
   strcat( str, tmp ); // добавл€ем по каждому ¬џ’ќƒяў≈ћ” оператору..
  }
 //
  if( Tier == nTiers ) // выходной €рус
   t_printf( "2. ќператор %d принадлежит выходному €русу", Op );
- else
+ else // промежуточный €рус
   t_printf( "2. ќт оператора %d завис€т %d оператор/ов: %s", Op, c_GetCountOutEdgesByOp(Op), str );
 ////////////////////////////////////////////////////////////////////////////////
  if( !Tier ) // входной (нулевой) €рус
